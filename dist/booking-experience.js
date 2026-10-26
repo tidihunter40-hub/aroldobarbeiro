@@ -4,6 +4,8 @@
   const dayChoices = document.getElementById('booking-day-choices');
   const slots = document.getElementById('booking-slots');
   const services = document.getElementById('booking-services');
+  const showcase = document.getElementById('booking-catalog-showcase');
+  const showcaseStatus = document.getElementById('showcase-status');
   const status = document.getElementById('booking-status');
   const serviceStatus = document.getElementById('service-status');
   const confirmStatus = document.getElementById('confirm-status');
@@ -116,6 +118,32 @@
       if (match) services.querySelectorAll('button')[catalog.indexOf(match)].click();
     }
   }
+  function renderShowcase() {
+    showcase.replaceChildren();
+    if (!catalog.length) { showcaseStatus.textContent = 'Os cortes e preços estão em atualização.'; return; }
+    showcaseStatus.textContent = '';
+    for (const item of catalog) {
+      const card = document.createElement('button'); card.type = 'button'; card.className = 'showcase-card';
+      card.setAttribute('aria-label', `${item.name}, ${money(item.priceCents)}. Escolher horário`);
+      const photo = document.createElement('img'); photo.src = item.photoUrl;
+      photo.alt = item.photoUrl.includes('/cortes-ia/') ? `Ilustração de IA: ${item.name}` : `Foto do serviço: ${item.name}`;
+      photo.loading = 'lazy';
+      const details = document.createElement('span'); details.className = 'showcase-details';
+      const title = document.createElement('strong'); title.textContent = item.name;
+      const duration = document.createElement('small'); duration.textContent = `${item.duration} min`;
+      const price = document.createElement('b'); price.textContent = money(item.priceCents);
+      const action = document.createElement('small'); action.className = 'showcase-action'; action.textContent = 'Escolher horário →';
+      details.append(title, duration, price);
+      if (item.description) { const note = document.createElement('small'); note.textContent = item.description; details.append(note); }
+      details.append(action); card.append(photo, details);
+      card.addEventListener('click', () => {
+        preferredService = item.name;
+        if (chosenTime) { renderServices(); show('service'); }
+        else { show('agenda'); loadAgenda(); }
+      });
+      showcase.append(card);
+    }
+  }
   async function checkService() {
     const sequence = ++checkSequence;
     next.disabled = true;
@@ -135,6 +163,9 @@
     summary.replaceChildren();
     for (const line of [`✂️ ${chosenService.name}`, `📅 ${dateLabel(day.value)}`, `🕘 ${chosenTime}`, `💰 ${money(chosenService.priceCents)}`]) {
       const item = document.createElement('p'); item.textContent = line; summary.append(item);
+    }
+    if (chosenService.description?.includes('Preço provisório')) {
+      const note = document.createElement('p'); note.textContent = 'Preço provisório. Aroldo confirma o valor com você.'; summary.append(note);
     }
   }
   next.addEventListener('click', () => { if (!next.disabled && chosenService) { renderSummary(); show('confirm'); } });
@@ -177,6 +208,7 @@
     try {
       const config = await json('/api/public/config');
       catalog = config.services.filter(item => item.photoUrl && Number.isInteger(item.priceCents));
+      renderShowcase();
       if (!config.configured || !catalog.length) { say(status, 'Agenda ainda não configurada. Fale com Aroldo pelo WhatsApp.'); return; }
       ready = true;
       await loadAgenda();
