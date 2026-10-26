@@ -4,6 +4,7 @@
   const dayChoices = document.getElementById('booking-day-choices');
   const morningSlots = document.getElementById('booking-slots-morning');
   const afternoonSlots = document.getElementById('booking-slots-afternoon');
+  const lunch = document.querySelector('.booking-lunch');
   const prevDays = document.getElementById('booking-days-prev');
   const nextDays = document.getElementById('booking-days-next');
   const services = document.getElementById('booking-services');
@@ -82,30 +83,8 @@
     renderDays();
     show('agenda', false);
   }
-  function renderPreviewSlots() {
-    morningSlots.replaceChildren();
-    afternoonSlots.replaceChildren();
-    const examples = [
-      ['08:00','available'],['08:30','available'],['09:00','blocked'],['09:30','available'],
-      ['10:00','available'],['10:30','available'],['11:00','pending'],['11:30','available'],
-      ['14:00','available'],['14:30','available'],['15:00','blocked'],['15:30','available'],
-      ['16:00','available'],['16:30','available'],['17:00','unavailable']
-    ];
-    const labels = { available: 'Livre', blocked: 'Ocupado', pending: 'Pendente', unavailable: 'Indisponível' };
-    for (const [hour, state] of examples) {
-      const card = document.createElement('button');
-      card.type = 'button';
-      card.className = `slot slot-${state}`;
-      card.disabled = true;
-      card.setAttribute('aria-label', `${hour}, exemplo visual; agenda indisponível`);
-      const time = document.createElement('strong'); time.textContent = hour;
-      const label = document.createElement('small'); label.textContent = labels[state];
-      card.append(time, label);
-      (Number(hour.slice(0, 2)) < 14 ? morningSlots : afternoonSlots).append(card);
-    }
-  }
   async function loadAgenda() {
-    if (!ready) { say(status, 'Horários ilustrativos: agenda ainda não configurada. Fale com Aroldo pelo WhatsApp.'); return; }
+    if (!ready) { say(status, 'Agenda ainda não configurada. Fale com Aroldo pelo WhatsApp.'); return; }
     const sequence = ++agendaSequence;
     morningSlots.replaceChildren();
     afternoonSlots.replaceChildren();
@@ -114,10 +93,13 @@
     try {
       const { slots: entries } = await json(`/api/public/agenda?day=${encodeURIComponent(day.value)}`);
       if (sequence !== agendaSequence) return;
-      if (!entries.length) { say(status, 'Sem horários neste dia. Escolha outra data.'); return; }
+      if (!entries.length) { lunch.hidden = true; say(status, 'Sem horários neste dia. Escolha outra data.'); return; }
       say(status, '');
+      const duringLunch = entry => entry.time >= '12:00' && entry.time < '14:00';
+      lunch.hidden = entries.some(entry => duringLunch(entry) && entry.status !== 'unavailable');
       const labels = { available: 'Livre', pending: 'Pendente', confirmed: 'Agendado', blocked: 'Ocupado', unavailable: 'Indisponível' };
       for (const entry of entries) {
+        if (duringLunch(entry) && entry.status === 'unavailable') continue;
         const button = document.createElement('button');
         button.type = 'button'; button.className = `slot slot-${entry.status}`;
         const time = document.createElement('strong');
@@ -133,7 +115,7 @@
         });
         (Number(entry.time.slice(0, 2)) < 14 ? morningSlots : afternoonSlots).append(button);
       }
-    } catch (cause) { if (sequence === agendaSequence) say(status, `${cause.message} Tente novamente.`, true); }
+    } catch (cause) { if (sequence === agendaSequence) say(status, navigator.onLine ? `${cause.message} Tente novamente.` : 'Você está offline. Conecte-se para consultar horários atualizados.', true); }
   }
   function renderServices() {
     services.replaceChildren();
@@ -265,15 +247,13 @@
       catalog = config.services.filter(item => item.photoUrl && Number.isInteger(item.priceCents));
       renderShowcase();
       if (!config.configured || !catalog.length) {
-        renderPreviewSlots();
-        say(status, 'Horários ilustrativos: agenda em configuração. Confirme pelo WhatsApp.');
+        say(status, 'Agenda em configuração. Confirme pelo WhatsApp.');
         return;
       }
       ready = true;
       await loadAgenda();
     } catch {
-      renderPreviewSlots();
-      say(status, 'Horários ilustrativos: agenda indisponível. Confirme pelo WhatsApp.', true);
+      say(status, navigator.onLine ? 'Agenda indisponível no momento. Tente novamente ou fale pelo WhatsApp.' : 'Você está offline. Conecte-se para consultar a agenda.', true);
     }
   }
   init();
