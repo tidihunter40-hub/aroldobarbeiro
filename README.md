@@ -62,7 +62,7 @@ O cookie administrativo dura 12 horas. Trocar a senha administrativa ou a chave 
 
 ### Testes
 
-Execute `node tests/booking-api.mjs`, `node tests/site-integrity.mjs`, `node tests/booking-smoke.mjs` e `node tests/pwa-smoke.mjs`. O teste de API usa um banco temporário e cobre autenticação, concorrência HTTP, serviços de durações diferentes, bloqueio, cancelamento, limites do expediente e persistência após reabrir o SQLite. O teste PWA verifica atualização e navegação offline; chamadas `/api/` são excluídas do cache, portanto não há agenda falsa quando a conexão falha.
+Execute `node tests/booking-api.mjs`, `node tests/serverless-api.mjs`, `node tests/site-integrity.mjs`, `node tests/booking-smoke.mjs` e `node tests/pwa-smoke.mjs`. O teste local de API usa um banco temporário e cobre autenticação, concorrência HTTP, serviços de durações diferentes, bloqueio, cancelamento, limites do expediente e persistência após reabrir o SQLite. O teste serverless cobre a sessão administrativa, a invalidação após troca de senha e a validação de entrada. O teste PWA verifica atualização e navegação offline; chamadas `/api/` são excluídas do cache, portanto não há agenda falsa quando a conexão falha.
 
 ### Tipografia e acessibilidade
 
