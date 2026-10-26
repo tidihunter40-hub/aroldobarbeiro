@@ -1,4 +1,4 @@
-import { createHash, createHmac, scryptSync, timingSafeEqual } from 'node:crypto';
+import { createHash, createHmac, timingSafeEqual } from 'node:crypto';
 
 const zone = 'America/Bahia';
 const fail = (status, message) => { throw Object.assign(new Error(message), { status }); };
@@ -35,29 +35,35 @@ async function rpc(name, data = {}) {
 }
 
 function requireConfig() {
-  if (!process.env.AROLDO_ADMIN_PASSWORD_HASH || !process.env.AROLDO_SESSION_SECRET) fail(503, 'Administração ainda não configurada.');
+  if (!process.env.AROLDO_ADMIN_PASSWORD || process.env.AROLDO_ADMIN_PASSWORD.length < 12 ||
+      !process.env.SUPABASE_SECRET_KEY) fail(503, 'Administração ainda não configurada.');
 }
-function sign(value) { return createHmac('sha256', process.env.AROLDO_SESSION_SECRET).update(value).digest('base64url'); }
+function sign(value) {
+  const key = createHmac('sha256', process.env.SUPABASE_SECRET_KEY).update('aroldo-admin-session-v1').digest();
+  return createHmac('sha256', key).update(value).digest('base64url');
+}
 function makeSession() {
-  const data = Buffer.from(JSON.stringify({ exp: Date.now() + 12 * 60 * 60 * 1000 })).toString('base64url');
+  const data = Buffer.from(JSON.stringify({ exp: Date.now() + 12 * 60 * 60 * 1000,
+    version: sign(`password:${process.env.AROLDO_ADMIN_PASSWORD}`) })).toString('base64url');
   return `${data}.${sign(data)}`;
 }
 function authenticated(request) {
   const session = /(?:^|;\s*)aroldo_admin=([^;]+)/.exec(request.headers.get('cookie') || '')?.[1];
-  if (!session || !process.env.AROLDO_SESSION_SECRET) return false;
+  if (!session || !process.env.SUPABASE_SECRET_KEY || !process.env.AROLDO_ADMIN_PASSWORD) return false;
   const [data, signature] = session.split('.');
   if (!data || !signature) return false;
   const expected = Buffer.from(sign(data));
   const supplied = Buffer.from(signature);
   if (supplied.length !== expected.length || !timingSafeEqual(supplied, expected)) return false;
-  try { return JSON.parse(Buffer.from(data, 'base64url').toString()).exp > Date.now(); }
+  try {
+    const payload = JSON.parse(Buffer.from(data, 'base64url').toString());
+    return payload.exp > Date.now() && payload.version === sign(`password:${process.env.AROLDO_ADMIN_PASSWORD}`);
+  }
   catch { return false; }
 }
 function checkPassword(value) {
-  const [salt, hex] = (process.env.AROLDO_ADMIN_PASSWORD_HASH || '').split(':');
-  if (!salt || !/^[0-9a-f]{128}$/.test(hex || '')) fail(503, 'Administração ainda não configurada.');
-  const expected = Buffer.from(hex, 'hex');
-  const actual = scryptSync(String(value || ''), salt, 64);
+  const expected = Buffer.from(sign(`login:${process.env.AROLDO_ADMIN_PASSWORD}`));
+  const actual = Buffer.from(sign(`login:${String(value || '')}`));
   return timingSafeEqual(expected, actual);
 }
 async function body(request) {
@@ -69,7 +75,7 @@ async function body(request) {
 async function rateLimit(request, scope, max) {
   requireConfig();
   const ip = request.headers.get('x-forwarded-for')?.split(',')[0]?.trim() || 'unknown';
-  const hash = createHash('sha256').update(`${scope}:${ip}:${process.env.AROLDO_SESSION_SECRET}`).digest('hex');
+  const hash = createHash('sha256').update(`${scope}:${ip}:${sign('rate-limit')}`).digest('hex');
   if (!await rpc('aroldo_rate_limit', { p_scope: scope, p_client_hash: hash, p_max: max })) fail(429, 'Muitas solicitações. Tente mais tarde.');
 }
 function checkRange(day) {

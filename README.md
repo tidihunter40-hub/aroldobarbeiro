@@ -55,10 +55,10 @@ O fuso da agenda é `America/Bahia`. Na prévia local é possível mudar o camin
 
 1. No SQL Editor do projeto Supabase `zjegmzuwducmaffcorut`, execute todo o arquivo `supabase/schema.sql`. Ele cria as tabelas, funções e regras de acesso. Não habilita políticas públicas: o navegador acessa apenas a função da Vercel.
 2. Importe o repositório no Vercel com o diretório raiz do projeto. `vercel.json` publica `dist/` e encaminha `/api/*` para a função. Use Node.js 20 ou superior.
-3. Configure as variáveis de ambiente **Production**: `SUPABASE_URL` (URL base sem `/rest/v1`), `SUPABASE_SECRET_KEY`, `AROLDO_ADMIN_PASSWORD_HASH` (formato `salt:hash`, com scrypt de 64 bytes em hexadecimal) e `AROLDO_SESSION_SECRET` (aleatório, pelo menos 32 caracteres). O arquivo `.env.example` mostra os nomes. A chave secreta fica apenas nas variáveis da Vercel; não coloque em `dist/` nem no GitHub. A chave publicável não é necessária porque o cliente usa a API própria.
+3. Configure as variáveis de ambiente **Production**: `SUPABASE_URL` (URL base sem `/rest/v1`), `SUPABASE_SECRET_KEY` e `AROLDO_ADMIN_PASSWORD` (senha forte escolhida pelo responsável, pelo menos 12 caracteres). O arquivo `.env.example` mostra os nomes. As credenciais ficam apenas nas variáveis da Vercel; não coloque em `dist/` nem no GitHub. A chave publicável não é necessária porque o cliente usa a API própria.
 4. Faça um novo deploy após definir as variáveis. Verifique `/api/public/config`, depois entre em `/admin.html` para configurar serviços e expediente reais. Até então o formulário de agendamento fica indisponível.
 
-O cookie administrativo dura 12 horas. Trocar `AROLDO_SESSION_SECRET` invalida as sessões. As funções SQL serializam solicitações concorrentes por dia para impedir reservas sobrepostas. O Supabase deve ter backup e política de retenção de nomes e telefones.
+O cookie administrativo dura 12 horas. Trocar a senha administrativa ou a chave secreta invalida as sessões. As funções SQL serializam solicitações concorrentes por dia para impedir reservas sobrepostas. O Supabase deve ter backup e política de retenção de nomes e telefones.
 
 ### Testes
 
