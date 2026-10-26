@@ -1,5 +1,5 @@
 const CACHE_PREFIX = 'aroldo-barber-';
-const CACHE_NAME = `${CACHE_PREFIX}v14`;
+const CACHE_NAME = `${CACHE_PREFIX}v15`;
 const APP_SHELL = './index.html';
 const PRECACHE = [
   './',
@@ -8,6 +8,7 @@ const PRECACHE = [
   './refinement.css',
   './hero.css',
   './booking.css',
+  './booking-reference.css',
   './script.js',
   './booking-experience.js',
   './manifest.webmanifest',
@@ -16,10 +17,12 @@ const PRECACHE = [
   './assets/icon-192.png',
   './assets/icon-512.png',
   './assets/concept-corte.jpg',
+  './assets/concept-ambiente.jpg',
   './assets/concept-escola.jpg',
   './assets/concept-protese.jpg',
   './assets/concept-visagismo.jpg',
   './assets/aroldo-hero-fornecida.png',
+  './assets/aroldo-oculos-recorte.png',
   './assets/corte-kids-instagram.jpg',
   './assets/corte-perfil-instagram.jpg',
   './assets/desondulacao-instagram.jpg',

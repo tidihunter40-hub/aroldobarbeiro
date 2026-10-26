@@ -2,7 +2,10 @@
   const form = document.getElementById('booking-form');
   const day = document.getElementById('booking-day');
   const dayChoices = document.getElementById('booking-day-choices');
-  const slots = document.getElementById('booking-slots');
+  const morningSlots = document.getElementById('booking-slots-morning');
+  const afternoonSlots = document.getElementById('booking-slots-afternoon');
+  const prevDays = document.getElementById('booking-days-prev');
+  const nextDays = document.getElementById('booking-days-next');
   const services = document.getElementById('booking-services');
   const showcase = document.getElementById('booking-catalog-showcase');
   const showcaseStatus = document.getElementById('showcase-status');
@@ -27,6 +30,7 @@
   let checkSequence = 0;
   let preferredService = sessionStorage.getItem('aroldo-service') || '';
   let ready = false;
+  let dayOffset = 0;
   sessionStorage.removeItem('aroldo-service');
   day.min = today;
   day.max = addDays(today, 60);
@@ -38,52 +42,96 @@
     if (!response.ok) throw new Error(data.error || 'Não foi possível consultar a agenda.');
     return data;
   }
-  function show(name) {
+  function show(name, scroll = true) {
     stage = name;
     Object.entries(stages).forEach(([key, element]) => { element.hidden = key !== name; });
     result.hidden = name !== 'result';
-    form.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    form.querySelectorAll('.booking-progress li').forEach((item, index) => {
+      item.classList.toggle('current', index === ({ agenda: 0, service: 1, confirm: 2, result: 3 }[name]));
+    });
+    if (scroll) form.scrollIntoView({ behavior: 'smooth', block: 'start' });
   }
   function renderDays() {
     dayChoices.replaceChildren();
+    const weekday = new Intl.DateTimeFormat('pt-BR', { weekday: 'short', timeZone: 'UTC' });
+    const month = new Intl.DateTimeFormat('pt-BR', { month: 'short', timeZone: 'UTC' });
     for (let i = 0; i < 7; i++) {
-      const value = addDays(today, i);
+      const value = addDays(today, dayOffset + i);
+      if (value > day.max) break;
+      const date = new Date(`${value}T12:00:00Z`);
       const button = document.createElement('button');
       button.type = 'button'; button.className = 'booking-day-choice';
-      button.textContent = i === 0 ? `Hoje · ${value.slice(8)}` : dateLabel(value).replace('-feira', '').split(' de ')[0];
+      const label = document.createElement('span');
+      label.textContent = weekday.format(date).replace('.', '').slice(0, 3).toUpperCase();
+      const number = document.createElement('b');
+      number.textContent = value.slice(8);
+      const monthLabel = document.createElement('small');
+      monthLabel.textContent = month.format(date).replace('.', '').toUpperCase();
+      button.append(label, number, monthLabel);
+      button.setAttribute('aria-label', dateLabel(value));
       button.setAttribute('aria-pressed', String(day.value === value));
       button.addEventListener('click', () => { day.value = value; resetChoice(); loadAgenda(); });
       dayChoices.append(button);
     }
+    prevDays.disabled = dayOffset === 0;
+    nextDays.disabled = dayOffset + 7 > 60;
   }
   function resetChoice() {
     chosenTime = ''; chosenService = null; next.disabled = true;
     result.replaceChildren();
     renderDays();
-    show('agenda');
+    show('agenda', false);
+  }
+  function renderPreviewSlots() {
+    morningSlots.replaceChildren();
+    afternoonSlots.replaceChildren();
+    const examples = [
+      ['08:00','available'],['08:30','available'],['09:00','blocked'],['09:30','available'],
+      ['10:00','available'],['10:30','available'],['11:00','pending'],['11:30','available'],
+      ['14:00','available'],['14:30','available'],['15:00','blocked'],['15:30','available'],
+      ['16:00','available'],['16:30','available'],['17:00','unavailable']
+    ];
+    const labels = { available: 'Livre', blocked: 'Ocupado', pending: 'Pendente', unavailable: 'Indisponível' };
+    for (const [hour, state] of examples) {
+      const card = document.createElement('button');
+      card.type = 'button';
+      card.className = `slot slot-${state}`;
+      card.disabled = true;
+      card.setAttribute('aria-label', `${hour}, exemplo visual; agenda indisponível`);
+      const time = document.createElement('strong'); time.textContent = hour;
+      const label = document.createElement('small'); label.textContent = labels[state];
+      card.append(time, label);
+      (Number(hour.slice(0, 2)) < 14 ? morningSlots : afternoonSlots).append(card);
+    }
   }
   async function loadAgenda() {
-    if (!ready) { say(status, 'Agenda ainda não configurada. Fale com Aroldo pelo WhatsApp.'); return; }
+    if (!ready) { say(status, 'Horários ilustrativos: agenda ainda não configurada. Fale com Aroldo pelo WhatsApp.'); return; }
     const sequence = ++agendaSequence;
-    slots.replaceChildren();
+    morningSlots.replaceChildren();
+    afternoonSlots.replaceChildren();
     say(status, 'Buscando horários…');
     if (!day.value || day.value < day.min || day.value > day.max) { say(status, 'Escolha uma data nos próximos 60 dias.', true); return; }
     try {
       const { slots: entries } = await json(`/api/public/agenda?day=${encodeURIComponent(day.value)}`);
       if (sequence !== agendaSequence) return;
       if (!entries.length) { say(status, 'Sem horários neste dia. Escolha outra data.'); return; }
-      say(status, 'Toque em um horário livre.');
+      say(status, '');
       const labels = { available: 'Livre', pending: 'Pendente', confirmed: 'Agendado', blocked: 'Ocupado', unavailable: 'Indisponível' };
       for (const entry of entries) {
         const button = document.createElement('button');
         button.type = 'button'; button.className = `slot slot-${entry.status}`;
-        button.textContent = `${entry.time} · ${labels[entry.status] || 'Ocupado'}`;
+        const time = document.createElement('strong');
+        time.textContent = entry.time;
+        const state = document.createElement('small');
+        state.textContent = labels[entry.status] || 'Ocupado';
+        button.append(time, state);
+        button.setAttribute('aria-label', `${entry.time}, ${labels[entry.status] || 'Ocupado'}`);
         button.disabled = entry.status !== 'available';
         button.addEventListener('click', () => {
           chosenTime = entry.time; chosenService = null; next.disabled = true;
           renderServices(); show('service');
         });
-        slots.append(button);
+        (Number(entry.time.slice(0, 2)) < 14 ? morningSlots : afternoonSlots).append(button);
       }
     } catch (cause) { if (sequence === agendaSequence) say(status, `${cause.message} Tente novamente.`, true); }
   }
@@ -175,6 +223,13 @@
   }));
   day.addEventListener('change', resetChoice);
   day.addEventListener('change', loadAgenda);
+  day.addEventListener('change', () => {
+    const difference = Math.floor((Date.parse(`${day.value}T12:00:00Z`) - Date.parse(`${today}T12:00:00Z`)) / 86400000);
+    dayOffset = Math.max(0, Math.floor(difference / 7) * 7);
+    renderDays();
+  });
+  prevDays.addEventListener('click', () => { dayOffset = Math.max(0, dayOffset - 7); day.value = addDays(today, dayOffset); resetChoice(); loadAgenda(); });
+  nextDays.addEventListener('click', () => { dayOffset = Math.min(56, dayOffset + 7); day.value = addDays(today, dayOffset); resetChoice(); loadAgenda(); });
   document.querySelectorAll('[data-service]').forEach(link => link.addEventListener('click', () => { preferredService = link.dataset.service; }));
   form.addEventListener('submit', async event => {
     event.preventDefault();
@@ -209,10 +264,17 @@
       const config = await json('/api/public/config');
       catalog = config.services.filter(item => item.photoUrl && Number.isInteger(item.priceCents));
       renderShowcase();
-      if (!config.configured || !catalog.length) { say(status, 'Agenda ainda não configurada. Fale com Aroldo pelo WhatsApp.'); return; }
+      if (!config.configured || !catalog.length) {
+        renderPreviewSlots();
+        say(status, 'Horários ilustrativos: agenda em configuração. Confirme pelo WhatsApp.');
+        return;
+      }
       ready = true;
       await loadAgenda();
-    } catch { say(status, 'Agenda indisponível no momento. Tente novamente ou fale pelo WhatsApp.', true); }
+    } catch {
+      renderPreviewSlots();
+      say(status, 'Horários ilustrativos: agenda indisponível. Confirme pelo WhatsApp.', true);
+    }
   }
   init();
   setInterval(() => {
