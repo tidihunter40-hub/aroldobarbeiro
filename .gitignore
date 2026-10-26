@@ -1,0 +1,13 @@
+data/
+.test-booking-*/
+node_modules/
+.env
+.env.*
+!.env.example
+.vercel/
+*.zip
+aroldo-barber-site-build/
+aroldo-barber-site-auditoria-*/
+aroldo-barber-site-candidato-*/
+auditoria-visual/
+preview-*.png

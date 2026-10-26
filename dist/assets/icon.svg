@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="Aroldo Barbeiro">
+  <rect width="512" height="512" rx="96" fill="#080909"/>
+  <path d="M106 391 231 117h45l130 274h-55L254 178l-94 213z" fill="#d9ad53"/>
+  <path d="M181 302h143v27H169z" fill="#d9ad53"/>
+  <path d="M161 397c73-18 150-65 221-151" fill="none" stroke="#f2d287" stroke-width="13" stroke-linecap="round"/>
+</svg>

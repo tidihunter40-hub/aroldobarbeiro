@@ -1,0 +1,48 @@
+/* Agenda e ajustes finais de leitura. */
+:root { --gold-light:#f5d995; --muted:#e5ddd0; }
+.booking { scroll-margin-top:82px; }
+.booking-grid { gap:clamp(32px,6vw,110px); }
+.booking h2 { font-family:var(--sans); font-size:clamp(36px,4vw,62px); line-height:1.06; letter-spacing:-.035em; }
+.booking-grid>div>p { max-width:500px; font-size:clamp(15px,1.2vw,18px); line-height:1.6; }
+.booking-legend { display:flex; flex-wrap:wrap; gap:14px; margin:24px 0 10px; }
+.booking-legend span { font-size:13px; font-weight:700; }
+.booking-legend span:nth-child(1) { color:#a7e6ae; }
+.booking-legend span:nth-child(2) { color:#ffdc87; }
+.booking-legend span:nth-child(3) { color:#f5a49d; }
+.booking form { align-content:start; }
+.booking label { font-size:13px; line-height:1.45; }
+.booking input,.booking select { font-size:16px; min-height:48px; }
+.booking input[type=date] { color-scheme:dark; }
+.booking-status,.booking-note,.booking-result { grid-column:1/-1; margin:5px 0; font-size:14px; line-height:1.5; color:var(--muted); }
+.booking-status.error { color:#ffb6a8; }
+.booking-slots { grid-column:1/-1; display:grid; grid-template-columns:repeat(auto-fit,minmax(130px,1fr)); gap:9px; margin:4px 0 16px; }
+.slot { min-height:47px; padding:8px 10px; border:1px solid #bad9b4; border-radius:4px; background:#14301d; color:#e9f9e6; font-size:13px; font-weight:700; }
+.slot:disabled { cursor:not-allowed; opacity:.83; }
+.slot-pending { border-color:#ffdc87; background:#332a13; color:#ffedc0; }
+.slot-confirmed,.slot-blocked { border-color:#d39089; background:#321c1c; color:#ffd0ca; }
+.slot[aria-pressed=true] { outline:3px solid var(--gold-light); outline-offset:2px; }
+.booking form button[type=submit] { grid-column:1/-1; min-height:48px; font-size:13px; }
+.booking form button:disabled { opacity:.55; cursor:not-allowed; transform:none; }
+.booking-result { padding:0; }
+.booking-result:not(:empty) { padding:15px; border:1px solid var(--gold-light); background:#1d1b13; }
+.booking-result p { margin:0 0 12px; }
+.booking-result .button { width:auto; }
+.nav a,.header-book,.service-card span,.section-heading p,.feature-copy,.bottom-panel p,.recognition p,.social-links a,.footer-content { text-shadow:0 1px 3px #000; }
+.service-card span,.work-gallery span { font-size:max(12px, .7vw); }
+.overline,.concept-note { font-size:max(11px, .65vw); }
+.brand-words small { font-size:10px; letter-spacing:.16em; }
+.nav a,.header-book { font-size:12px; }
+.hero-overline,.hero-scroll { font-size:11px; }
+.hero-index { font-size:10px; }
+.hero-actions .button,.button { font-size:12px; }
+.feature-heading .overline,.feature-heading>p:last-child,.feature-copy,.feature-prosthesis .button { font-size:12px; }
+.prosthesis-images span { font-size:11px; }
+.section-heading p,.section-heading a { font-size:12px; }
+.visagism .overline,.visagism .button,.work-intro>p,.work-intro .button { font-size:12px; }
+.work-intro>span,.recognition p,.bottom-panel p:not(.overline),.place-panel address { font-size:13px; }
+.recognition a,.about-panel>a,.school-panel .button,.social-links a,.highlight-display a { font-size:12px; }
+.bottom-panel .overline,.work-gallery span,.highlight-photos span { font-size:12px; }
+.button-whatsapp { background:#087d30; border-color:#20a04c; color:#fff; }
+@media(max-width:700px) { .booking-grid { display:block; } .booking form { margin-top:24px; } .booking h2 { font-size:clamp(34px,10vw,48px); } .booking-slots { grid-template-columns:repeat(2,minmax(0,1fr)); } }
+@media(max-width:360px) { .booking-slots { grid-template-columns:1fr 1fr; } .slot { font-size:12px; } }
+@media(max-width:700px) { .brand-words small { font-size:8px; } .header-book { font-size:11px; } .hero-overline { font-size:11px; } .hero-actions .button { font-size:11px; } .overline { font-size:11px; } }

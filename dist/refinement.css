@@ -1,0 +1,296 @@
+/* Camada de legibilidade e responsividade sobre a direção de arte aprovada. */
+:root {
+  --white: #fffaf0;
+  --muted: #e0d8c8;
+  --gold-light: #f4d58f;
+}
+
+body { font-size: 16px; line-height: 1.55; }
+h1, h2, h3 { text-wrap: balance; }
+p { line-height: 1.55; }
+.wide-wrap { width: min(100% - 48px, 1450px); }
+.button { min-height: 44px; padding: 11px 19px; font-size: 11px; line-height: 1.25; }
+.overline { font-size: 11px; line-height: 1.5; letter-spacing: .18em; }
+
+.site-header { gap: 18px; min-height: 70px; height: auto; padding-block: 8px; }
+.brand { min-width: 244px; gap: 11px; }
+.brand-words strong { font-size: 22px; line-height: 1; }
+.brand-words small { padding-left: 4px; font-size: 9px; line-height: 1.5; letter-spacing: .24em; }
+.nav { gap: clamp(9px, 1vw, 18px); }
+.nav a { padding: 16px 0; font-size: 11px; line-height: 1.2; }
+.header-book { min-height: 42px; padding: 10px 15px; font-size: 11px; }
+
+.hero-content { width: min(67%, 760px); padding-left: clamp(28px, 4.2vw, 78px); padding-right: 28px; }
+.hero h1 { font-size: clamp(50px, 4.5vw, 72px); line-height: 1.02; }
+.hero-overline { margin-bottom: 9px; font-size: 10px; line-height: 1.5; letter-spacing: .16em; }
+.hero-subtitle { margin: 9px 0 16px; font-size: clamp(11px, .95vw, 15px); line-height: 1.5; letter-spacing: .22em; }
+.hero-description { max-width: 420px; margin-bottom: 19px; font-size: clamp(13px, 1vw, 16px); line-height: 1.55; }
+.hero-actions { gap: 11px; }
+.hero-actions .button { min-height: 45px; padding-inline: 17px; }
+.hero-badges { flex-wrap: wrap; gap: 12px 20px; margin-top: 22px; }
+.hero-badges span { max-width: 130px; font-size: 10px; line-height: 1.35; }
+.image-source { right: 13px; bottom: 12px; padding: 5px 7px; background: rgba(0,0,0,.62); font-size: 10px; line-height: 1.2; }
+
+.feature-prosthesis { padding: 20px 17px; }
+.feature-heading h2 { font-size: clamp(28px, 2.1vw, 36px); line-height: 1.08; }
+.feature-heading .overline { font-size: 10px; }
+.feature-heading > p:last-child { margin: 5px 0 13px; font-size: 11px; line-height: 1.4; letter-spacing: .21em; }
+.prosthesis-images { gap: 9px; }
+.prosthesis-images > div { border-width: 1px; }
+.prosthesis-images span { padding: 7px 6px; font-size: 10px; line-height: 1.15; white-space: normal; text-align: center; }
+.feature-copy { max-width: 290px; margin: 12px auto; font-size: 12.5px; line-height: 1.5; }
+.feature-prosthesis .button { min-height: 40px; padding: 8px 12px; font-size: 10.5px; }
+
+.services { padding: 19px 19px 20px clamp(20px, 2.3vw, 38px); }
+.section-heading { gap: 16px; align-items: center; margin-bottom: 12px; }
+.section-heading h2, .visagism h2 { font-size: clamp(29px, 2.3vw, 37px); line-height: 1.05; }
+.section-heading p { margin-top: 5px; font-size: 11px; line-height: 1.4; letter-spacing: .12em; color: var(--muted); }
+.section-heading a { flex: none; font-size: 11px; }
+.service-strip { gap: 7px; }
+.service-card { height: clamp(170px, 11.6vw, 190px); }
+.service-card span { left: 10px; right: 7px; bottom: 11px; font-size: 12px; line-height: 1.22; overflow-wrap: break-word; }
+.visagism { min-height: 258px; }
+.visagism > div { width: 70%; padding: 28px 24px; }
+.visagism .overline { margin: 8px 0 15px; font-size: 10.5px; }
+.visagism p:not(.overline) { font-size: 13px; line-height: 1.5; }
+.visagism .button { min-height: 40px; padding: 9px 12px; font-size: 10px; }
+
+.work-row { min-height: 205px; }
+.work-intro { padding: 21px clamp(18px, 2vw, 34px); }
+.work-intro h2 { font-size: clamp(25px, 2vw, 33px); line-height: 1.05; letter-spacing: -.03em; white-space: normal; overflow-wrap: anywhere; }
+.work-intro > p { margin: 9px 0 10px; font-size: 10px; line-height: 1.35; letter-spacing: .14em; }
+.work-intro > span { max-width: 240px; margin-bottom: 13px; font-size: 13px; line-height: 1.45; }
+.work-intro .button { min-height: 36px; padding: 7px 12px; font-size: 10px; }
+.work-gallery { gap: 7px; padding: 8px 7px; }
+.work-gallery button { min-height: 185px; }
+.work-gallery span { left: 7px; right: 7px; bottom: 10px; font-size: 11px; line-height: 1.25; }
+.recognition { padding: 16px; }
+.recognition h2 { margin-bottom: 10px; font-size: 23px; line-height: 1.05; }
+.recognition img { height: 92px; }
+.recognition p { margin: 9px 0; font-size: 12.5px; line-height: 1.4; }
+.recognition a { font-size: 11px; line-height: 1.4; }
+
+.bottom-panel { min-height: 265px; padding: 23px 22px; }
+.bottom-panel h2 { font-size: clamp(25px, 1.9vw, 31px); line-height: 1.07; }
+.bottom-panel .overline { margin: 7px 0 12px; font-size: 10px; line-height: 1.4; letter-spacing: .13em; }
+.bottom-panel p:not(.overline) { font-size: 13.5px; line-height: 1.5; }
+.school-panel > div { width: 72%; }
+.school-panel .button { min-height: 39px; padding: 8px 12px; font-size: 10px; }
+.about-quote { margin: 14px 0; padding: 14px; font-size: 21px; line-height: 1.15; }
+.about-panel > a { font-size: 10px; line-height: 1.4; }
+.place-panel img { height: 127px; }
+.place-panel address { margin-top: 10px; font-size: 11.5px; line-height: 1.5; }
+.concept-note { margin-top: 9px; font-size: 9.5px; line-height: 1.4; letter-spacing: .06em; }
+.contact-panel .button { min-height: 42px; margin-bottom: 9px; padding: 9px 11px; font-size: 11.5px; }
+.social-links { gap: 12px; margin-top: 15px; }
+.social-links a { font-size: 10px; line-height: 1.4; }
+
+.highlights-head > p { font-size: 14px; }
+.highlight-tabs button { min-height: 44px; padding: 9px 16px; font-size: 11px; }
+.highlight-display p:not(.overline) { font-size: 14px; }
+.highlight-display a { font-size: 11px; }
+.highlight-photos span { left: 14px; right: 12px; bottom: 13px; font-size: 12px; line-height: 1.3; }
+.booking h2 { line-height: 1.02; }
+.booking label { font-size: 12px; }
+.booking input, .booking select, .booking textarea { min-height: 48px; padding: 11px 13px; font-size: 15px; }
+.booking input::placeholder, .booking textarea::placeholder { color: #c9c1b1; opacity: 1; }
+.booking form { gap: 10px 15px; }
+.footer-content p, .footer-content a, .footer-content > small { font-size: 12px; }
+.install-app[hidden] { display: none; }
+.install-app { color: var(--gold-light); }
+footer { padding-bottom: calc(28px + env(safe-area-inset-bottom)); }
+#gallery-dialog figcaption { font-size: 13px; line-height: 1.4; }
+#gallery-dialog button { width: 44px; height: 44px; }
+
+@media (max-width: 1180px) {
+  .site-header { gap: 12px; }
+  .menu-toggle { display: flex; flex-direction: column; justify-content: center; gap: 5px; order: 3; width: 44px; height: 44px; padding: 9px; background: none; border: 0; }
+  .menu-toggle span { display: block; width: 25px; height: 2px; background: var(--gold-light); }
+  .nav { position: absolute; top: 100%; left: 0; right: 0; display: none; flex-direction: column; align-items: stretch; gap: 0; max-height: calc(100dvh - 70px); overflow-y: auto; padding: 10px 24px 20px; background: #080808; border-bottom: 1px solid var(--gold); }
+  .nav.open { display: flex; }
+  .nav a { min-height: 45px; padding: 14px 9px; border-bottom: 1px solid rgba(211,170,85,.2); font-size: 13px; }
+  .header-book { margin-left: auto; }
+}
+
+@media (min-width: 901px) and (max-width: 1180px) {
+  .hero-content { width: 70%; }
+  .hero h1 { font-size: clamp(45px, 4.6vw, 56px); }
+  .hero:after { display: none; }
+  .feature-prosthesis { padding: 16px 13px; }
+  .services-row { display: block; }
+  .service-strip { grid-template-columns: repeat(8, minmax(0, 1fr)); }
+  .service-card { height: 185px; }
+  .visagism { min-height: 270px; border-left: 0; border-top: 1px solid var(--line); }
+  .work-row { grid-template-columns: 225px minmax(0, 1fr); }
+  .recognition { grid-column: 1 / -1; display: grid; grid-template-columns: 180px 180px 1fr; gap: 15px; align-items: center; min-height: 125px; }
+  .recognition img { height: 95px; }
+  .bottom-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+@media (max-width: 900px) {
+  .top-grid { display: block; }
+  .hero { min-height: 520px; }
+  .hero-content { width: min(70%, 600px); min-height: 520px; padding: 35px; }
+  .hero h1 { font-size: clamp(48px, 7vw, 66px); }
+  .hero:after { display: none; }
+  .feature-prosthesis { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr); grid-template-areas: 'title images' 'copy images' 'button images'; gap: 7px 25px; align-items: center; padding: 24px; text-align: left; border-left: 0; border-top: 1px solid var(--line); }
+  .feature-heading { grid-area: title; }
+  .prosthesis-images { grid-area: images; }
+  .prosthesis-images > div { height: 215px; }
+  .feature-copy { grid-area: copy; max-width: none; margin: 0; }
+  .feature-prosthesis > .button { grid-area: button; justify-self: start; }
+  .services-row { display: block; }
+  .service-strip { display: flex; overflow-x: auto; scroll-snap-type: x mandatory; padding-bottom: 12px; scrollbar-color: var(--gold) #151515; }
+  .service-card { flex: 0 0 145px; height: 205px; scroll-snap-align: start; }
+  .visagism { min-height: 280px; border-left: 0; border-top: 1px solid var(--line); }
+  .work-row { grid-template-columns: 225px minmax(0, 1fr); }
+  .recognition { grid-column: 1 / -1; display: grid; grid-template-columns: 180px 180px 1fr; gap: 15px; align-items: center; min-height: 125px; }
+  .recognition h2 { margin: 0; }
+  .recognition img { height: 95px; }
+  .bottom-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+@media (max-width: 700px) {
+  html { scroll-padding-top: 68px; }
+  .wide-wrap { width: min(100% - 32px, 1450px); }
+  .site-header { min-height: 64px; padding: 7px 12px; gap: 8px; }
+  .brand { gap: 7px; min-width: 0; }
+  .brand-symbol { width: 35px; height: 38px; font-size: 42px; }
+  .brand-symbol:after { width: 31px; top: 24px; }
+  .brand-words strong { font-size: clamp(15px, 4.3vw, 19px); }
+  .brand-words small { font-size: 7px; letter-spacing: .14em; }
+  .header-book { width: auto; min-width: 78px; min-height: 38px; padding: 6px 7px; font-size: 9px; line-height: 1.1; text-align: center; }
+  .header-book span { display: none; }
+  .menu-toggle { width: 38px; height: 40px; padding: 8px; }
+  .menu-toggle span { width: 22px; }
+  .nav { max-height: calc(100dvh - 64px); padding-inline: 16px; }
+  .nav a { min-height: 49px; font-size: 14px; }
+  .hero, .hero-content { min-height: 760px; }
+  .hero-photo { height: 61%; object-position: 78% center; }
+  .hero-content { justify-content: flex-end; width: 100%; padding: 0 19px 33px; }
+  .hero-overline { margin-bottom: 8px; font-size: 10px; }
+  .hero h1 { font-size: clamp(45px, 11.4vw, 64px); line-height: .98; }
+  .hero-subtitle { margin: 10px 0 14px; font-size: 10.5px; line-height: 1.5; letter-spacing: .16em; }
+  .hero-description { max-width: 370px; margin-bottom: 15px; font-size: 14px; }
+  .hero-actions { gap: 9px; }
+  .hero-actions .button { min-height: 45px; padding: 9px 13px; font-size: 10.5px; }
+  .hero-badges { gap: 7px 13px; margin-top: 17px; }
+  .hero-badges span { font-size: 9px; }
+  .image-source { top: 11px; bottom: auto; font-size: 9px; }
+  .feature-prosthesis { display: flex; flex-direction: column; align-items: stretch; gap: 14px; padding: 27px 18px; text-align: center; }
+  .feature-heading h2 { font-size: 35px; }
+  .feature-heading > p:last-child { margin-bottom: 0; }
+  .prosthesis-images { width: 100%; max-width: 480px; margin-inline: auto; }
+  .prosthesis-images > div { height: clamp(190px, 55vw, 270px); }
+  .feature-copy { max-width: 410px; margin-inline: auto; font-size: 13px; }
+  .feature-prosthesis > .button { align-self: center; justify-self: auto; }
+  .services { padding: 25px 17px 22px; }
+  .section-heading { align-items: flex-start; }
+  .section-heading h2 { font-size: 35px; }
+  .section-heading p { max-width: 330px; font-size: 10px; }
+  .section-heading a { padding: 4px 0; font-size: 10px; }
+  .service-card { flex-basis: 145px; height: 205px; }
+  .service-card span { font-size: 12px; }
+  .visagism { min-height: 320px; }
+  .visagism > img { width: 72%; }
+  .visagism:after { background: linear-gradient(90deg, #100e0c 0%, rgba(12,10,8,.94) 52%, rgba(12,10,8,.38) 100%); }
+  .visagism > div { width: 75%; padding: 29px 20px; }
+  .visagism h2 { font-size: 33px; }
+  .visagism p:not(.overline) { font-size: 13.5px; }
+  .work-row { display: block; }
+  .work-intro { padding: 26px 19px; }
+  .work-intro h2 { font-size: clamp(30px, 8vw, 42px); white-space: normal; }
+  .work-intro > span { max-width: 360px; font-size: 13px; }
+  .work-gallery { display: flex; overflow-x: auto; scroll-snap-type: x mandatory; }
+  .work-gallery button { flex: 0 0 155px; min-height: 205px; scroll-snap-align: start; }
+  .work-gallery span { font-size: 11px; }
+  .recognition { grid-template-columns: 1fr 1.2fr; gap: 12px; padding: 22px 18px; }
+  .recognition h2 { grid-column: span 2; }
+  .recognition img { height: 115px; }
+  .recognition p { font-size: 12px; }
+  .recognition a { grid-column: span 2; font-size: 11px; }
+  .bottom-grid { display: block; }
+  .bottom-panel { min-height: 0; padding: 29px 19px; border-right: 0; }
+  .bottom-panel h2 { font-size: 34px; }
+  .bottom-panel p:not(.overline) { font-size: 13.5px; }
+  .school-panel { min-height: 315px; }
+  .school-panel > div { width: min(72%, 340px); }
+  .school-panel > img { width: 70%; }
+  .school-panel:before { background: linear-gradient(90deg,#0c0b0a 22%,rgba(12,11,10,.9) 58%,rgba(12,11,10,.22)); }
+  .place-panel img { height: 170px; }
+  .place-panel address { font-size: 13px; }
+  .contact-panel .button { min-height: 46px; font-size: 12px; }
+  .social-links a { font-size: 11px; }
+  .concept-note { font-size: 10px; }
+  .highlights, .booking { padding-block: 55px; }
+  .highlights-head h2 { font-size: clamp(37px, 10vw, 50px); line-height: 1.05; }
+  .highlight-tabs { gap: 9px; margin: 23px 0; }
+  .highlight-display h3 { font-size: 42px; }
+  .highlight-photos { gap: 9px; }
+  .highlight-photos button { height: 190px; }
+  .highlight-photos span { left: 8px; right: 7px; bottom: 9px; font-size: 10.5px; }
+  .booking h2 { font-size: clamp(38px, 10vw, 53px); }
+  .booking-grid > div > p:last-child { font-size: 14px; }
+  .footer-content > span { font-size: 26px; }
+  #gallery-dialog { width: 97vw; height: min(88dvh, 760px); padding: 12px; }
+  #gallery-dialog img { max-width: calc(100% - 76px); }
+  #gallery-dialog figcaption { display: block; padding-inline: 5px; font-size: 11px; }
+  #gallery-dialog figcaption a { display: block; margin-top: 6px; }
+}
+
+@media (max-width: 360px) {
+  .site-header { padding-inline: 9px; gap: 5px; }
+  .brand-symbol { width: 31px; font-size: 38px; }
+  .brand-words strong { font-size: 14px; }
+  .brand-words small { font-size: 6.5px; }
+  .header-book { min-width: 72px; padding-inline: 4px; font-size: 8.5px; }
+  .hero, .hero-content { min-height: 795px; }
+  .hero-actions { display: grid; grid-template-columns: 1fr; width: 100%; }
+  .hero-actions .button { width: 100%; }
+  .hero-badges { gap: 5px 9px; }
+  .hero-badges span { font-size: 8.5px; }
+  .section-heading { display: block; }
+  .section-heading a { display: inline-block; margin-top: 8px; }
+  .school-panel > div { width: 76%; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+}
+
+@supports (padding: env(safe-area-inset-top)) {
+  .site-header { padding-top: calc(8px + env(safe-area-inset-top)); }
+}
+
+/* Auditoria visual: fotografias reais, leitura dos cartões e contenção. */
+.hero-photo { width: 52%; object-position: center 43%; filter: brightness(.58) contrast(1.12) saturate(.72) sepia(.1); }
+.hero-vignette { background: linear-gradient(90deg, #050505 0%, rgba(4,4,4,.98) 31%, rgba(5,5,5,.76) 53%, rgba(5,5,5,.2) 80%), linear-gradient(0deg, rgba(0,0,0,.58), transparent 40%); }
+.service-card img { filter: brightness(.7) contrast(1.1) saturate(.7) sepia(.12); }
+.service-card.concept-card::before { content: 'ILUSTRATIVA'; position: absolute; z-index: 2; top: 7px; left: 7px; padding: 3px 5px; background: rgba(0,0,0,.72); color: var(--gold-light); font: 700 8px/1.2 var(--sans); letter-spacing: .04em; }
+.service-card span { overflow-wrap: normal; }
+.work-intro h2 { overflow-wrap: normal; }
+.work-gallery button, .highlight-photos button { color: var(--white); }
+.work-gallery span, .highlight-photos span { text-shadow: 0 1px 4px #000, 0 2px 8px #000; }
+.work-gallery, .highlight-tabs { scrollbar-color: var(--gold) #17140f; }
+.work-gallery::-webkit-scrollbar, .highlight-tabs::-webkit-scrollbar { height: 7px; }
+.work-gallery::-webkit-scrollbar-thumb, .highlight-tabs::-webkit-scrollbar-thumb { background: var(--gold); border-radius: 6px; }
+.work-gallery::-webkit-scrollbar-track, .highlight-tabs::-webkit-scrollbar-track { background: #17140f; }
+.place-panel img { object-position: center 42%; }
+@media (min-width: 901px) and (max-width: 1599px) {
+  .service-strip { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  .service-card { height: clamp(155px, 13vw, 190px); }
+  .recognition h2 { font-size: clamp(16px, 1.3vw, 21px); letter-spacing: -.02em; }
+}
+@media (max-width: 900px) {
+  .hero-photo { width: 55%; }
+}
+@media (min-width: 701px) and (max-width: 900px) {
+  .recognition h2 { font-size: 17px; letter-spacing: -.02em; }
+}
+@media (max-width: 700px) {
+  .hero-photo { width: 100%; height: 61%; object-position: center 35%; filter: brightness(.68) contrast(1.07) saturate(.78); }
+  .hero-vignette { background: linear-gradient(0deg, #030303 0%, rgba(3,3,3,.97) 28%, rgba(3,3,3,.25) 67%, rgba(3,3,3,.08) 100%); }
+  .recognition h2 { font-size: 23px; }
+}
+.button-whatsapp { background: #087e30; border-color: #22a84d; color: #fff; }
+.button-whatsapp:hover { background: #076b2a; color: #fff; }

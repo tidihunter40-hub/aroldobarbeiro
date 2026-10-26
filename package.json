@@ -1,0 +1,6 @@
+{
+  "name": "aroldo-barbeiro",
+  "private": true,
+  "type": "module",
+  "engines": { "node": ">=20" }
+}
