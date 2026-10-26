@@ -86,14 +86,19 @@ function checkRange(day) {
 }
 function validateSettings(input, known) {
   const { hours, services, daysOff } = input;
+  const specialHours = input.specialHours ?? [];
+  const slotMinutes = Number(input.slotMinutes ?? 30);
   const ttl = Number(input.pendingMinutes);
   if (!Array.isArray(hours) || hours.length !== 7 || !Array.isArray(services) ||
       services.length < known.services.length || services.length > 40 || !Array.isArray(daysOff) ||
       !Number.isInteger(ttl) || ttl < 5 || ttl > 1440) fail(400, 'Configuração inválida.');
+  if (![15, 30, 60].includes(slotMinutes) || !Array.isArray(specialHours) || specialHours.length > 90)
+    fail(400, 'Intervalo ou horários especiais inválidos.');
   if (services.some(s => (s.id != null && !known.services.some(k => k.id === Number(s.id))) ||
       typeof s.name !== 'string' || s.name.trim().length < 2 || s.name.trim().length > 80 ||
+      (s.description != null && (typeof s.description !== 'string' || s.description.length > 240)) ||
       (s.priceCents != null && (!Number.isInteger(Number(s.priceCents)) || Number(s.priceCents) < 0 || Number(s.priceCents) > 10000000)) ||
-      (s.photoUrl != null && (typeof s.photoUrl !== 'string' || !/^https:\/\/[^/]+\.supabase\.co\/storage\/v1\/object\/public\/aroldo-services\/[a-f0-9-]+\.(?:jpg|png|webp)$/.test(s.photoUrl))) ||
+      (s.photoUrl != null && (typeof s.photoUrl !== 'string' || !(/^(?:https:\/\/[^/]+\.supabase\.co\/storage\/v1\/object\/public\/aroldo-services\/[a-f0-9-]+\.(?:jpg|png|webp)|\.\/assets\/cortes-ia\/[0-9]{2}_[a-z0-9_]+\.jpg)$/.test(s.photoUrl)))) ||
       (s.enabled && (s.priceCents == null || !s.photoUrl)) ||
       !Number.isInteger(Number(s.duration)) || Number(s.duration) < 30 ||
       Number(s.duration) > 480 || Number(s.duration) % 30)) fail(400, 'Duração de serviço inválida.');
@@ -108,12 +113,18 @@ function validateSettings(input, known) {
         minute(h.opens) <= minute(h.breakStart) && minute(h.breakStart) < minute(h.breakEnd) && minute(h.breakEnd) <= minute(h.closes)))))
     fail(400, 'Expediente ou intervalo inválido.');
   if (daysOff.some(day => !validDay(day))) fail(400, 'Dia sem atendimento inválido.');
+  if (specialHours.some(h => !validDay(h.day) || !Number.isFinite(minute(h.opens)) || !Number.isFinite(minute(h.closes)) || minute(h.opens) >= minute(h.closes) ||
+      ((h.breakStart || h.breakEnd) && !(Number.isFinite(minute(h.breakStart)) && Number.isFinite(minute(h.breakEnd)) &&
+        minute(h.opens) <= minute(h.breakStart) && minute(h.breakStart) < minute(h.breakEnd) && minute(h.breakEnd) <= minute(h.closes)))))
+    fail(400, 'Horário especial inválido.');
+  if (new Set(specialHours.map(h => h.day)).size !== specialHours.length) fail(400, 'Datas especiais duplicadas.');
   const origin = process.env.SUPABASE_URL?.replace(/\/$/, '');
-  if (services.some(s => s.photoUrl && !s.photoUrl.startsWith(`${origin}/storage/v1/object/public/aroldo-services/`)))
+  if (services.some(s => s.photoUrl?.startsWith('https:') && !s.photoUrl.startsWith(`${origin}/storage/v1/object/public/aroldo-services/`)))
     fail(400, 'Foto fora da biblioteca de serviços.');
   return { hours, services: services.map(s => ({ id: s.id ?? null, name: s.name.trim(), duration: Number(s.duration),
-    enabled: Boolean(s.enabled), priceCents: s.priceCents == null ? null : Number(s.priceCents), photoUrl: s.photoUrl || null })),
-    daysOff, pendingMinutes: ttl };
+    enabled: Boolean(s.enabled), priceCents: s.priceCents == null ? null : Number(s.priceCents), photoUrl: s.photoUrl || null,
+    description: s.description?.trim() || null })),
+    daysOff, specialHours, slotMinutes, pendingMinutes: ttl };
 }
 
 export default {
@@ -128,8 +139,8 @@ export default {
       if (path === '/api/public/config' && request.method === 'GET') {
         const settings = await rpc('aroldo_settings_read');
         return response({ services: settings.services.filter(x => x.enabled),
-          configured: settings.hours.some(x => x.opens && x.closes) && settings.services.some(x => x.enabled),
-          pendingMinutes: settings.pendingMinutes, timeZone: zone });
+          configured: (settings.hours.some(x => x.opens && x.closes) || settings.specialHours?.length > 0) && settings.services.some(x => x.enabled),
+          pendingMinutes: settings.pendingMinutes, slotMinutes: settings.slotMinutes || 30, timeZone: zone });
       }
       if (path === '/api/public/agenda' && request.method === 'GET') {
         const day = url.searchParams.get('day'); checkRange(day);
@@ -149,7 +160,7 @@ export default {
         const name = String(input.name || '').trim();
         const phone = String(input.phone || '').replace(/\D/g, '');
         const serviceId = Number(input.serviceId);
-        if (!Number.isFinite(start) || start % 30 || name.length < 2 || name.length > 80 ||
+        if (!Number.isFinite(start) || start % 15 || name.length < 2 || name.length > 80 ||
             !/^\d{10,13}$/.test(phone) || !Number.isInteger(serviceId)) fail(400, 'Revise nome, telefone e horário.');
         return response(await rpc('aroldo_request', { p_service_id: serviceId, p_day: day,
           p_start: start, p_name: name, p_phone: phone }), 201);
@@ -197,7 +208,7 @@ export default {
         const input = await body(request);
         const day = String(input.day || ''); checkRange(day);
         const start = minute(input.time), duration = Number(input.duration);
-        if (!Number.isFinite(start) || start % 30 || !Number.isInteger(duration) || duration < 30 || duration > 480 || duration % 30)
+        if (!Number.isFinite(start) || start % 15 || !Number.isInteger(duration) || duration < 15 || duration > 480 || duration % 15)
           fail(400, 'Hora ou duração inválida.');
         return response(await rpc('aroldo_block', { p_day: day, p_start: start, p_duration: duration }), 201);
       }

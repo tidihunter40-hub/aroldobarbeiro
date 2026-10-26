@@ -1,0 +1,22 @@
+[
+  {"name":"Degradê Baixo","priceCents":3500,"duration":30,"photoUrl":"./assets/cortes-ia/01_degrade_baixo.jpg"},
+  {"name":"Degradê Médio","priceCents":4000,"duration":30,"photoUrl":"./assets/cortes-ia/02_degrade_medio.jpg"},
+  {"name":"Degradê Alto","priceCents":4000,"duration":30,"photoUrl":"./assets/cortes-ia/03_degrade_alto.jpg"},
+  {"name":"Pompadour","priceCents":5000,"duration":30,"photoUrl":"./assets/cortes-ia/04_pompadour.jpg"},
+  {"name":"Cabelo Social","priceCents":3500,"duration":30,"photoUrl":"./assets/cortes-ia/05_cabelo_social.jpg"},
+  {"name":"Moicano","priceCents":4500,"duration":30,"photoUrl":"./assets/cortes-ia/06_moicano.jpg"},
+  {"name":"Fade Navalhado","priceCents":4500,"duration":30,"photoUrl":"./assets/cortes-ia/07_fade_navalhado.jpg"},
+  {"name":"Caesar","priceCents":3500,"duration":30,"photoUrl":"./assets/cortes-ia/08_caesar.jpg"},
+  {"name":"Disfarçado","priceCents":3500,"duration":30,"photoUrl":"./assets/cortes-ia/09_disfarcado.jpg"},
+  {"name":"Raspado","priceCents":3000,"duration":30,"photoUrl":"./assets/cortes-ia/10_raspado.jpg"},
+  {"name":"Mid Fade com Textura","priceCents":4500,"duration":30,"photoUrl":"./assets/cortes-ia/11_mid_fade_com_textura.jpg"},
+  {"name":"Crop Fade","priceCents":4000,"duration":30,"photoUrl":"./assets/cortes-ia/12_crop_fade.jpg"},
+  {"name":"Taper Fade com Risca","priceCents":4500,"duration":30,"photoUrl":"./assets/cortes-ia/13_taper_fade_com_risca.jpg"},
+  {"name":"Slick Back Fade","priceCents":5000,"duration":30,"photoUrl":"./assets/cortes-ia/14_slick_back_fade.jpg"},
+  {"name":"Quiff Moderno","priceCents":5000,"duration":30,"photoUrl":"./assets/cortes-ia/15_quiff_moderno.jpg"},
+  {"name":"Mohawk Disfarçado","priceCents":4500,"duration":30,"photoUrl":"./assets/cortes-ia/16_mohawk_disfarcado.jpg"},
+  {"name":"Low Fade com Ondas","priceCents":4500,"duration":30,"photoUrl":"./assets/cortes-ia/17_low_fade_com_ondas.jpg"},
+  {"name":"Undercut Desconectado","priceCents":4500,"duration":30,"photoUrl":"./assets/cortes-ia/18_undercut_desconectado.jpg"},
+  {"name":"Fade Alto com Spike","priceCents":5000,"duration":30,"photoUrl":"./assets/cortes-ia/19_fade_alto_com_spike.jpg"},
+  {"name":"Messy Hair Desfiado","priceCents":4500,"duration":30,"photoUrl":"./assets/cortes-ia/20_messy_hair_desfiado.jpg"}
+]

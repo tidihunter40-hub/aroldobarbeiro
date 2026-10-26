@@ -71,7 +71,7 @@
       if (sequence !== agendaSequence) return;
       if (!entries.length) { say(status, 'Sem horários neste dia. Escolha outra data.'); return; }
       say(status, 'Toque em um horário livre.');
-      const labels = { available: 'Livre', pending: 'Agendado', confirmed: 'Ocupado', blocked: 'Ocupado' };
+      const labels = { available: 'Livre', pending: 'Pendente', confirmed: 'Agendado', blocked: 'Ocupado', unavailable: 'Indisponível' };
       for (const entry of entries) {
         const button = document.createElement('button');
         button.type = 'button'; button.className = `slot slot-${entry.status}`;
@@ -93,12 +93,16 @@
       button.type = 'button'; button.className = 'booking-service-card';
       button.setAttribute('aria-pressed', String(chosenService?.id === item.id));
       const photo = document.createElement('img');
-      photo.src = item.photoUrl; photo.alt = `Trabalho real do Aroldo: ${item.name}`; photo.loading = 'lazy';
+      const isAi = item.photoUrl.includes('/cortes-ia/');
+      photo.src = item.photoUrl; photo.alt = isAi ? `Imagem ilustrativa gerada por IA: ${item.name}` : `Foto do serviço: ${item.name}`; photo.loading = 'lazy';
       const details = document.createElement('span'); details.className = 'booking-service-details';
       const name = document.createElement('strong'); name.textContent = item.name;
       const duration = document.createElement('small'); duration.textContent = `${item.duration} min`;
       const price = document.createElement('b'); price.textContent = money(item.priceCents);
-      details.append(name, duration, price); button.append(photo, details);
+      details.append(name, duration, price);
+      if (item.description) { const description = document.createElement('small'); description.textContent = item.description; details.append(description); }
+      if (isAi) { const note = document.createElement('small'); note.className = 'booking-ai-note'; note.textContent = 'Imagem ilustrativa gerada por IA'; details.append(note); }
+      button.append(photo, details);
       button.addEventListener('click', () => {
         chosenService = item;
         services.querySelectorAll('button').forEach(card => card.setAttribute('aria-pressed', String(card === button)));
@@ -166,7 +170,7 @@
       const feedback = document.createElement('p'); feedback.className = 'booking-error'; feedback.textContent = cause.message;
       result.replaceChildren(feedback); result.hidden = false;
       if (/indisponível|conflito/i.test(cause.message)) { show('agenda'); await loadAgenda(); say(status, cause.message, true); }
-    } finally { submit.disabled = false; submit.textContent = 'PEDIR MEU HORÁRIO'; }
+    } finally { submit.disabled = false; submit.textContent = 'SOLICITAR AGENDAMENTO'; }
   });
   async function init() {
     renderDays();

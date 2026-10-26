@@ -21,6 +21,7 @@ export function openBookingDb(path) {
     CREATE TABLE IF NOT EXISTS services (id INTEGER PRIMARY KEY, name TEXT NOT NULL UNIQUE, duration INTEGER NOT NULL DEFAULT 30, enabled INTEGER NOT NULL DEFAULT 0);
     CREATE TABLE IF NOT EXISTS hours (weekday INTEGER PRIMARY KEY CHECK(weekday BETWEEN 0 AND 6), opens TEXT, closes TEXT, break_start TEXT, break_end TEXT);
     CREATE TABLE IF NOT EXISTS days_off (day TEXT PRIMARY KEY);
+    CREATE TABLE IF NOT EXISTS special_hours (day TEXT PRIMARY KEY, opens TEXT NOT NULL, closes TEXT NOT NULL, break_start TEXT, break_end TEXT);
     CREATE TABLE IF NOT EXISTS appointments (id INTEGER PRIMARY KEY, day TEXT NOT NULL, starts INTEGER NOT NULL, ends INTEGER NOT NULL, service_id INTEGER, client_name TEXT, phone TEXT, status TEXT NOT NULL CHECK(status IN ('pending','confirmed','cancelled','blocked')), expires_at INTEGER, created_at INTEGER NOT NULL, updated_at INTEGER NOT NULL, FOREIGN KEY(service_id) REFERENCES services(id));
     CREATE INDEX IF NOT EXISTS appointments_day ON appointments(day,status,starts,ends);
     CREATE TABLE IF NOT EXISTS admin (id INTEGER PRIMARY KEY CHECK(id=1), salt TEXT NOT NULL, password_hash TEXT NOT NULL);
@@ -29,10 +30,12 @@ export function openBookingDb(path) {
   const columns = db.prepare('PRAGMA table_info(services)').all().map(column => column.name);
   if (!columns.includes('price_cents')) db.exec('ALTER TABLE services ADD COLUMN price_cents INTEGER');
   if (!columns.includes('photo_url')) db.exec('ALTER TABLE services ADD COLUMN photo_url TEXT');
+  if (!columns.includes('description')) db.exec('ALTER TABLE services ADD COLUMN description TEXT');
   const insert = db.prepare('INSERT OR IGNORE INTO services(name) VALUES (?)');
   for (const name of SERVICE_NAMES) insert.run(name);
   for (let day = 0; day < 7; day++) db.prepare('INSERT OR IGNORE INTO hours(weekday) VALUES (?)').run(day);
   db.prepare("INSERT OR IGNORE INTO settings(key,value) VALUES ('pending_minutes','30')").run();
+  db.prepare("INSERT OR IGNORE INTO settings(key,value) VALUES ('slot_minutes','30')").run();
   return db;
 }
 
@@ -46,22 +49,25 @@ export function setAdminPassword(db, password) {
 
 export function createBookingApi(db) {
   const readSettings = () => ({
-    services: db.prepare('SELECT id,name,duration,enabled,price_cents AS priceCents,photo_url AS photoUrl FROM services ORDER BY id').all().map(s => ({ ...s, enabled: Boolean(s.enabled) })),
+    services: db.prepare('SELECT id,name,duration,enabled,price_cents AS priceCents,photo_url AS photoUrl,description FROM services ORDER BY id').all().map(s => ({ ...s, enabled: Boolean(s.enabled) })),
     hours: db.prepare('SELECT weekday,opens,closes,break_start AS breakStart,break_end AS breakEnd FROM hours ORDER BY weekday').all(),
     daysOff: db.prepare('SELECT day FROM days_off ORDER BY day').all().map(row => row.day),
+    specialHours: db.prepare('SELECT day,opens,closes,break_start AS breakStart,break_end AS breakEnd FROM special_hours ORDER BY day').all(),
+    slotMinutes: Number(db.prepare("SELECT value FROM settings WHERE key='slot_minutes'").get().value),
     pendingMinutes: Number(db.prepare("SELECT value FROM settings WHERE key='pending_minutes'").get().value),
     adminConfigured: Boolean(db.prepare('SELECT id FROM admin WHERE id=1').get())
   });
   const active = (day, now = Date.now()) => db.prepare("SELECT id,starts,ends,status,expires_at AS expiresAt FROM appointments WHERE day=? AND (status IN ('confirmed','blocked') OR (status='pending' AND expires_at>?))").all(day, now);
   const dayWindow = day => {
     const weekday = new Date(`${day}T12:00:00Z`).getUTCDay();
-    const hours = db.prepare('SELECT * FROM hours WHERE weekday=?').get(weekday);
+    const hours = db.prepare('SELECT * FROM special_hours WHERE day=?').get(day) || db.prepare('SELECT * FROM hours WHERE weekday=?').get(weekday);
     if (!hours?.opens || !hours?.closes || db.prepare('SELECT day FROM days_off WHERE day=?').get(day)) return null;
     return { opens: minute(hours.opens), closes: minute(hours.closes), breakStart: minute(hours.break_start), breakEnd: minute(hours.break_end) };
   };
   const available = (day, start, duration, now = Date.now()) => {
     const window = dayWindow(day);
-    if (!window || start < window.opens || start + duration > window.closes || start % 30) return false;
+    const step = Number(db.prepare("SELECT value FROM settings WHERE key='slot_minutes'").get().value);
+    if (!window || start < window.opens || start + duration > window.closes || start % step) return false;
     if (Number.isFinite(window.breakStart) && start < window.breakEnd && start + duration > window.breakStart) return false;
     if (day === today()) {
       const local = new Intl.DateTimeFormat('en-GB', { timeZone: TIME_ZONE, hour: '2-digit', minute: '2-digit', hourCycle: 'h23' }).format(new Date(now));
@@ -81,7 +87,7 @@ export function createBookingApi(db) {
   };
   return {
     settings: readSettings,
-    publicConfig() { const s = readSettings(); return { services: s.services.filter(x => x.enabled), configured: s.hours.some(x => x.opens && x.closes) && s.services.some(x => x.enabled), pendingMinutes: s.pendingMinutes, timeZone: TIME_ZONE }; },
+    publicConfig() { const s = readSettings(); return { services: s.services.filter(x => x.enabled), configured: (s.hours.some(x => x.opens && x.closes) || s.specialHours.length > 0) && s.services.some(x => x.enabled), pendingMinutes: s.pendingMinutes, slotMinutes: s.slotMinutes, timeZone: TIME_ZONE }; },
     slots(day, serviceId) {
       validateRange(day);
       const service = db.prepare('SELECT * FROM services WHERE id=? AND enabled=1').get(Number(serviceId));
@@ -90,7 +96,8 @@ export function createBookingApi(db) {
       if (!window) return [];
       const occupied = active(day);
       const slots = [];
-      for (let start = Math.ceil(window.opens / 30) * 30; start + service.duration <= window.closes; start += 30) {
+      const step = Number(db.prepare("SELECT value FROM settings WHERE key='slot_minutes'").get().value);
+      for (let start = Math.ceil(window.opens / step) * step; start + service.duration <= window.closes; start += step) {
         if (Number.isFinite(window.breakStart) && start < window.breakEnd && start + service.duration > window.breakStart) continue;
         if (day === today() && !available(day, start, service.duration) && !occupied.some(x => x.starts < start + service.duration && x.ends > start)) continue;
         const conflict = occupied.find(x => x.starts < start + service.duration && x.ends > start);
@@ -104,11 +111,12 @@ export function createBookingApi(db) {
       if (!window) return [];
       const occupied = active(day);
       const entries = [];
-      for (let start = Math.ceil(window.opens / 30) * 30; start + 30 <= window.closes; start += 30) {
+      const step = Number(db.prepare("SELECT value FROM settings WHERE key='slot_minutes'").get().value);
+      for (let start = Math.ceil(window.opens / step) * step; start + step <= window.closes; start += step) {
         if (day === today() && start <= minute(new Intl.DateTimeFormat('en-GB', { timeZone: TIME_ZONE, hour: '2-digit', minute: '2-digit', hourCycle: 'h23' }).format(new Date()))) continue;
-        const conflict = occupied.find(x => x.starts < start + 30 && x.ends > start);
-        const breakTime = Number.isFinite(window.breakStart) && start < window.breakEnd && start + 30 > window.breakStart;
-        entries.push({ time: time(start), status: breakTime ? 'blocked' : conflict?.status || 'available' });
+        const conflict = occupied.find(x => x.starts < start + step && x.ends > start);
+        const breakTime = Number.isFinite(window.breakStart) && start < window.breakEnd && start + step > window.breakStart;
+        entries.push({ time: time(start), status: breakTime ? 'unavailable' : conflict?.status || 'available' });
       }
       return entries;
     },
@@ -117,7 +125,8 @@ export function createBookingApi(db) {
       const start = minute(input.time);
       const name = String(input.name || '').trim();
       const phone = String(input.phone || '').replace(/\D/g, '');
-      if (!Number.isFinite(start) || start % 30 || name.length < 2 || name.length > 80 || !/^\d{10,13}$/.test(phone)) throw error(400, 'Revise nome, telefone e horário.');
+      const step = Number(db.prepare("SELECT value FROM settings WHERE key='slot_minutes'").get().value);
+      if (!Number.isFinite(start) || start % step || name.length < 2 || name.length > 80 || !/^\d{10,13}$/.test(phone)) throw error(400, 'Revise nome, telefone e horário.');
       const service = db.prepare('SELECT * FROM services WHERE id=? AND enabled=1').get(Number(input.serviceId));
       if (!service) throw error(400, 'Serviço indisponível.');
       return transaction(() => {
@@ -162,7 +171,8 @@ export function createBookingApi(db) {
     block(day, at, duration = 30) {
       validateRange(day);
       const start = minute(at);
-      if (!Number.isFinite(start) || start % 30 || !Number.isInteger(duration) || duration < 30 || duration > 480 || duration % 30) throw error(400, 'Hora ou duração inválida.');
+      const step = Number(db.prepare("SELECT value FROM settings WHERE key='slot_minutes'").get().value);
+      if (!Number.isFinite(start) || start % step || !Number.isInteger(duration) || duration < step || duration > 480 || duration % step) throw error(400, 'Hora ou duração inválida.');
       return transaction(() => {
         if (!available(day, start, duration)) throw error(409, 'Horário indisponível.');
         const now = Date.now();
@@ -180,35 +190,48 @@ export function createBookingApi(db) {
       const services = input.services;
       const daysOff = input.daysOff;
       const ttl = Number(input.pendingMinutes);
+      const step = Number(input.slotMinutes ?? 30);
+      const specialHours = input.specialHours ?? [];
       if (!Array.isArray(hours) || hours.length !== 7 || !Array.isArray(services) || !Array.isArray(daysOff) || !Number.isInteger(ttl) || ttl < 5 || ttl > 1440) throw error(400, 'Configuração inválida.');
+      if (![15,30,60].includes(step) || !Array.isArray(specialHours) || specialHours.length > 90) throw error(400, 'Intervalo ou horários especiais inválidos.');
       const known = readSettings().services;
       if (services.length < known.length || services.length > 40 || services.some(s =>
         (s.id != null && !known.some(k => k.id === Number(s.id))) ||
         !Number.isInteger(Number(s.duration)) || Number(s.duration) < 30 || Number(s.duration) > 480 || Number(s.duration) % 30 ||
         (s.name != null && (typeof s.name !== 'string' || s.name.trim().length < 2 || s.name.trim().length > 80)) ||
+        (s.description != null && (typeof s.description !== 'string' || s.description.length > 240)) ||
         (s.priceCents != null && (!Number.isInteger(Number(s.priceCents)) || Number(s.priceCents) < 0 || Number(s.priceCents) > 10000000)) ||
         (s.enabled && ('photoUrl' in s || 'priceCents' in s) && (s.priceCents == null || !s.photoUrl)))) throw error(400, 'Serviço inválido.');
       const ids = services.filter(s => s.id != null).map(s => Number(s.id));
       if (new Set(ids).size !== known.length || known.some(s => !ids.includes(s.id))) throw error(400, 'Serviços duplicados ou ausentes.');
       if (hours.some((h, i) => Number(h.weekday) !== i || ((h.opens || h.closes) && !(Number.isFinite(minute(h.opens)) && Number.isFinite(minute(h.closes)) && minute(h.opens) < minute(h.closes))) || ((h.breakStart || h.breakEnd) && !(Number.isFinite(minute(h.breakStart)) && Number.isFinite(minute(h.breakEnd)) && minute(h.opens) <= minute(h.breakStart) && minute(h.breakStart) < minute(h.breakEnd) && minute(h.breakEnd) <= minute(h.closes))))) throw error(400, 'Expediente ou intervalo inválido.');
       if (daysOff.some(day => !validDate(day))) throw error(400, 'Dia sem atendimento inválido.');
+      if (specialHours.some(item => !validDate(item.day) || !Number.isFinite(minute(item.opens)) || !Number.isFinite(minute(item.closes)) || minute(item.opens) >= minute(item.closes) ||
+        ((item.breakStart || item.breakEnd) && !(Number.isFinite(minute(item.breakStart)) && Number.isFinite(minute(item.breakEnd)) &&
+          minute(item.opens) <= minute(item.breakStart) && minute(item.breakStart) < minute(item.breakEnd) && minute(item.breakEnd) <= minute(item.closes))))) throw error(400, 'Horário especial inválido.');
+      if (new Set(specialHours.map(item => item.day)).size !== specialHours.length) throw error(400, 'Datas especiais duplicadas.');
       return transaction(() => {
         const updateHours = db.prepare('UPDATE hours SET opens=?,closes=?,break_start=?,break_end=? WHERE weekday=?');
         hours.forEach(h => updateHours.run(h.opens || null, h.closes || null, h.breakStart || null, h.breakEnd || null, Number(h.weekday)));
-        const updateService = db.prepare('UPDATE services SET name=?,duration=?,enabled=?,price_cents=?,photo_url=? WHERE id=?');
-        const insertService = db.prepare('INSERT INTO services(name,duration,enabled,price_cents,photo_url) VALUES (?,?,?,?,?)');
+        const updateService = db.prepare('UPDATE services SET name=?,duration=?,enabled=?,price_cents=?,photo_url=?,description=? WHERE id=?');
+        const insertService = db.prepare('INSERT INTO services(name,duration,enabled,price_cents,photo_url,description) VALUES (?,?,?,?,?,?)');
         services.forEach(s => {
           const old = known.find(item => item.id === Number(s.id));
           const values = [s.name?.trim() || old?.name, Number(s.duration), s.enabled ? 1 : 0,
             s.priceCents === undefined ? old?.priceCents ?? null : s.priceCents,
-            s.photoUrl === undefined ? old?.photoUrl ?? null : s.photoUrl];
+            s.photoUrl === undefined ? old?.photoUrl ?? null : s.photoUrl,
+            s.description === undefined ? old?.description ?? null : s.description];
           if (s.id == null) insertService.run(...values);
           else updateService.run(...values, Number(s.id));
         });
         db.prepare('DELETE FROM days_off').run();
         const insertDay = db.prepare('INSERT INTO days_off(day) VALUES (?)');
         [...new Set(daysOff)].forEach(day => insertDay.run(day));
+        db.prepare('DELETE FROM special_hours').run();
+        const insertSpecial = db.prepare('INSERT INTO special_hours(day,opens,closes,break_start,break_end) VALUES (?,?,?,?,?)');
+        specialHours.forEach(item => insertSpecial.run(item.day,item.opens,item.closes,item.breakStart || null,item.breakEnd || null));
         db.prepare("UPDATE settings SET value=? WHERE key='pending_minutes'").run(String(ttl));
+        db.prepare("UPDATE settings SET value=? WHERE key='slot_minutes'").run(String(step));
         return readSettings();
       });
     }

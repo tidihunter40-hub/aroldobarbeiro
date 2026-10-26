@@ -8,7 +8,7 @@ process.env.AROLDO_ADMIN_PASSWORD = 'a-strong-test-password';
 const calls = [];
 const baseSettings = { services: [{ id: 1, name: 'Corte masculino', duration: 30, enabled: false, priceCents: null, photoUrl: null }],
   hours: Array.from({ length: 7 }, (_, weekday) => ({ weekday, opens: null, closes: null, breakStart: null, breakEnd: null })),
-  daysOff: [], pendingMinutes: 30, adminConfigured: true };
+  daysOff: [], specialHours: [], slotMinutes: 30, pendingMinutes: 30, adminConfigured: true };
 globalThis.fetch = async (url, options) => {
   calls.push({ url, body: url.includes('/storage/') ? null : JSON.parse(options.body), key: options.headers.apikey });
   if (url.endsWith('/aroldo_rate_limit')) return Response.json(true);
@@ -45,6 +45,16 @@ const validCatalog = await putSettings({ ...baseSettings, services: [baseSetting
   photoUrl: 'https://example.supabase.co/storage/v1/object/public/aroldo-services/abcdef12-3456-4567-8901-abcdef123456.jpg'
 }] });
 assert.equal(validCatalog.status, 200);
+const aiDraft = await putSettings({ ...baseSettings, services: [baseSettings.services[0], {
+  id: null, name: 'Degradê Baixo', duration: 30, enabled: false, priceCents: 3500,
+  photoUrl: './assets/cortes-ia/01_degrade_baixo.jpg', description: 'Imagem ilustrativa gerada por IA'
+}], specialHours: [{ day: '2026-11-02', opens: '09:00', closes: '16:00', breakStart: '12:00', breakEnd: '13:00' }], slotMinutes: 15 });
+assert.equal(aiDraft.status, 200);
+const duplicateSpecial = await putSettings({ ...baseSettings, specialHours: [
+  { day: '2026-11-02', opens: '09:00', closes: '16:00' },
+  { day: '2026-11-02', opens: '10:00', closes: '17:00' }
+] });
+assert.equal(duplicateSpecial.status, 400);
 
 const today = new Intl.DateTimeFormat('en-CA', { timeZone: 'America/Bahia', year: 'numeric', month: '2-digit', day: '2-digit' }).format(new Date());
 const agenda = await handler.fetch(new Request(`https://example.vercel.app/api/public/agenda?day=${today}`));

@@ -23,7 +23,7 @@ settings.hours[weekday] = { weekday, opens: '08:00', closes: '12:00', breakStart
 api.updateSettings(settings);
 assert.equal(api.publicConfig().services[0].priceCents, 3000);
 assert.equal(api.agenda(day).find(x => x.time === '08:00').status, 'available');
-assert.equal(api.agenda(day).find(x => x.time === '10:00').status, 'blocked');
+assert.equal(api.agenda(day).find(x => x.time === '10:00').status, 'unavailable');
 assert.equal(api.agenda(day).find(x => x.time === '11:30').status, 'available');
 assert.equal(api.slots(day, settings.services[0].id).some(x => x.time === '11:30'), false, 'Serviço longo não cabe no fim do dia');
 assert.equal(api.slots(day, settings.services[1].id).find(x => x.time === '11:30').status, 'available');
@@ -55,6 +55,26 @@ const expanded = api.settings();
 expanded.services.push({ id: null, name: 'Novo serviço de teste', duration: 30, enabled: false, priceCents: null, photoUrl: null });
 api.updateSettings(expanded);
 assert.ok(api.settings().services.some(service => service.name === 'Novo serviço de teste'));
+const specialDay = new Intl.DateTimeFormat('en-CA', { timeZone: 'America/Bahia', year: 'numeric', month: '2-digit', day: '2-digit' }).format(new Date(Date.now() + 4 * 86400000));
+const official = api.settings();
+official.specialHours = [{ day: specialDay, opens: '08:00', closes: '17:00', breakStart: '12:00', breakEnd: '14:00' }];
+api.updateSettings(official);
+assert.equal(api.agenda(specialDay).find(x => x.time === '12:00').status, 'unavailable');
+assert.deepEqual(['08:00', '11:30', '14:00', '16:30'].map(time => api.slots(specialDay, settings.services[1].id).find(x => x.time === time)?.status),
+  ['available', 'available', 'available', 'available']);
+assert.equal(api.slots(specialDay, settings.services[0].id).some(x => x.time === '11:30' || x.time === '16:30'), false);
+for (const time of ['08:00', '11:30', '14:00', '16:30']) {
+  const request = api.request({ ...input, day: specialDay, time, serviceId: settings.services[1].id });
+  assert.equal(request.status, 'pending');
+  api.decide(request.id, 'cancel');
+}
+assert.throws(() => api.request({ ...input, day: specialDay, time: '17:00', serviceId: settings.services[1].id }), { status: 409 });
+const fineGrid = api.settings(); fineGrid.slotMinutes = 15; api.updateSettings(fineGrid);
+assert.equal(api.agenda(specialDay).find(x => x.time === '08:15').status, 'available');
+const coarseGrid = api.settings(); coarseGrid.slotMinutes = 60; api.updateSettings(coarseGrid);
+assert.equal(api.agenda(specialDay).some(x => x.time === '08:30'), false);
+assert.throws(() => api.request({ ...input, day: specialDay, time: '08:30', serviceId: settings.services[1].id }), { status: 400 });
+const defaultGrid = api.settings(); defaultGrid.slotMinutes = 30; api.updateSettings(defaultGrid);
 db.close();
 const reopened = openBookingDb(path);
 assert.equal(createBookingApi(reopened).appointments(day, day).length, 3, 'Dados devem persistir após reabrir SQLite');

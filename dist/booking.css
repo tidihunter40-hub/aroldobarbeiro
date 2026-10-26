@@ -7,8 +7,10 @@
 .booking-legend { display:flex; flex-wrap:wrap; gap:14px; margin:24px 0 10px; }
 .booking-legend span { font-size:13px; font-weight:700; }
 .booking-legend span:nth-child(1) { color:#a7e6ae; }
-.booking-legend span:nth-child(2) { color:#ffdc87; }
-.booking-legend span:nth-child(3) { color:#f5a49d; }
+.booking-legend span:nth-child(2) { color:#f5a49d; }
+.booking-legend span:nth-child(3) { color:#ffdc87; }
+.booking-legend span:nth-child(4) { color:#a8d7ff; }
+.booking-legend span:nth-child(5) { color:#a9a59e; }
 .booking form { align-content:start; }
 .booking label { font-size:13px; line-height:1.45; }
 .booking input,.booking select { font-size:16px; min-height:48px; }
@@ -19,7 +21,9 @@
 .slot { min-height:47px; padding:8px 10px; border:1px solid #bad9b4; border-radius:4px; background:#14301d; color:#e9f9e6; font-size:13px; font-weight:700; }
 .slot:disabled { cursor:not-allowed; opacity:.83; }
 .slot-pending { border-color:#ffdc87; background:#332a13; color:#ffedc0; }
-.slot-confirmed,.slot-blocked { border-color:#d39089; background:#321c1c; color:#ffd0ca; }
+.slot-blocked { border-color:#d39089; background:#321c1c; color:#ffd0ca; }
+.slot-confirmed { border-color:#8fb9de; background:#1b2936; color:#d4e9ff; }
+.slot-unavailable { border-color:#77736b; background:#272624; color:#c9c4bb; }
 .slot[aria-pressed=true] { outline:3px solid var(--gold-light); outline-offset:2px; }
 .booking form button[type=submit] { grid-column:1/-1; min-height:48px; font-size:13px; }
 .booking form button:disabled { opacity:.55; cursor:not-allowed; transform:none; }
@@ -74,6 +78,7 @@
 .booking-service-details strong{font-size:16px;line-height:1.25}
 .booking-service-details small{color:#d7c9ae}
 .booking-service-details b{font-size:19px;color:#f5d995}
+.booking-ai-note{color:#ffdc87!important;font-size:11px;line-height:1.35}
 .booking-style-gallery{margin-top:18px;border-top:1px solid #5c4b32;padding-top:14px}
 .booking-style-gallery summary{color:#f5d995;font-size:13px;font-weight:700;cursor:pointer}
 .booking-style-gallery>div{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-top:12px}

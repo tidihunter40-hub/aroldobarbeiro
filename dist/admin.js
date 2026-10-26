@@ -8,6 +8,7 @@
   agendaDay.value = today;
   document.querySelector('[name=day]').value = today;
   let settings;
+  let agendaSequence = 0;
   const say = (message, bad = false) => { notice.textContent = message; notice.classList.toggle('error', bad); };
   async function json(url, options) {
     const response = await fetch(url, { credentials: 'same-origin', cache: 'no-store', ...options });
@@ -19,10 +20,34 @@
   function showDashboard(on) { dashboard.hidden = !on; loginPanel.hidden = on; document.getElementById('logout').hidden = !on; }
   function node(tag, value, className) { const element = document.createElement(tag); if (value != null) element.textContent = value; if (className) element.className = className; return element; }
   async function loadAgenda() {
+    const sequence = ++agendaSequence;
     const start = agendaDay.value;
     const end = range.value === 'week' ? new Date(Date.parse(`${start}T12:00:00Z`) + 6 * 86400000).toISOString().slice(0, 10) : start;
     try {
-      const { appointments } = await json(`/api/admin/appointments?from=${start}&to=${end}`);
+      const [{ appointments }, agenda] = await Promise.all([
+        json(`/api/admin/appointments?from=${start}&to=${end}`),
+        start >= today ? json(`/api/public/agenda?day=${start}`) : Promise.resolve({ slots: [] })
+      ]);
+      if (sequence !== agendaSequence) return;
+      const grid = document.getElementById('admin-slots'); grid.replaceChildren();
+      if (!agenda.slots.length) grid.append(node('p', 'Sem horários neste dia. Confira o expediente, as folgas ou a data escolhida.'));
+      for (const slot of agenda.slots) {
+        const active = appointments.find(item => item.day === start && item.status === 'blocked' &&
+          item.starts <= Number(slot.time.slice(0, 2)) * 60 + Number(slot.time.slice(3)) &&
+          item.ends > Number(slot.time.slice(0, 2)) * 60 + Number(slot.time.slice(3)));
+        const labels = { available: 'Livre', pending: 'Pendente', confirmed: 'Agendado', blocked: active ? 'Ocupado' : 'Indisponível', unavailable: 'Indisponível' };
+        const button = node('button', `${slot.time} · ${labels[slot.status]}`, `admin-slot admin-slot-${slot.status}`);
+        button.type = 'button'; button.disabled = slot.status !== 'available' && !active;
+        if (slot.status === 'available' || active) button.addEventListener('click', async () => {
+          button.disabled = true;
+          try {
+            if (active) await send(`/api/admin/blocks/${active.id}`, 'DELETE');
+            else await send('/api/admin/blocks', 'POST', { day: start, time: slot.time, duration: settings?.slotMinutes || 30 });
+            say(active ? 'Horário liberado.' : 'Horário ocupado.'); await loadAgenda();
+          } catch (cause) { say(cause.message, true); button.disabled = false; }
+        });
+        grid.append(button);
+      }
       const target = document.getElementById('appointments');
       target.replaceChildren();
       if (!appointments.length) { target.append(node('p', 'Nenhuma solicitação ou bloqueio neste período.')); return; }
@@ -52,7 +77,7 @@
       }
     } catch (cause) { say(cause.message, true); }
   }
-  function serviceRow(item = { id: '', name: '', duration: 30, priceCents: null, photoUrl: null, enabled: false }) {
+  function serviceRow(item = { id: '', name: '', duration: 30, priceCents: null, photoUrl: null, description: '', enabled: false }) {
     const row = node('div', null, 'setting-row service-setting'); row.dataset.id = item.id;
     row.dataset.photoUrl = item.photoUrl || '';
     const preview = document.createElement('img'); preview.className = 'service-preview';
@@ -79,14 +104,28 @@
         const data = await response.json();
         if (!response.ok) throw new Error(data.error || 'Não foi possível enviar a foto.');
         row.dataset.photoUrl = data.photoUrl; preview.src = data.photoUrl; preview.alt = `Foto de ${name.querySelector('input').value || 'serviço'}`;
+        ai.textContent = '';
         say('Foto enviada. Salve as configurações para usar no serviço.');
       } catch (cause) { say(cause.message, true); }
     });
     const active = node('label', 'Mostrar na agenda', 'service-active');
     const enabled = document.createElement('input'); enabled.type = 'checkbox'; enabled.checked = item.enabled;
     active.append(enabled);
-    row.append(preview, name, price, duration, photo, active);
+    const description = field('Descrição (opcional)', 'text', item.description || '', 'service-description');
+    description.querySelector('input').maxLength = 240;
+    const ai = node('span', item.photoUrl?.includes('/cortes-ia/') ? 'Imagem ilustrativa gerada por IA' : '', 'service-ai-note');
+    row.append(preview, name, price, duration, description, photo, active, ai);
     document.getElementById('services-settings').append(row);
+    return row;
+  }
+  function specialHourRow(item = { day: '', opens: '08:00', closes: '17:00', breakStart: '12:00', breakEnd: '14:00' }) {
+    const row = node('div', null, 'setting-row special-hour-row');
+    for (const [key, label, type] of [['day','Data','date'],['opens','Abre','time'],['closes','Fecha','time'],['breakStart','Intervalo início','time'],['breakEnd','Intervalo fim','time']]) {
+      const wrapper = node('label', label); const input = document.createElement('input');
+      input.type = type; input.dataset.key = key; input.value = item[key] || ''; wrapper.append(input); row.append(wrapper);
+    }
+    const remove = node('button', 'Remover', 'remove-special'); remove.type = 'button'; remove.addEventListener('click', () => row.remove()); row.append(remove);
+    document.getElementById('special-hours-settings').append(row);
   }
   function renderSettings() {
     const services = document.getElementById('services-settings'); services.replaceChildren();
@@ -102,10 +141,43 @@
     }
     document.getElementById('days-off').value = settings.daysOff.join(', ');
     document.getElementById('pending-minutes').value = settings.pendingMinutes;
+    document.getElementById('slot-minutes').value = settings.slotMinutes || 30;
+    const step = settings.slotMinutes || 30;
+    const blockTime = document.querySelector('#block-form [name=time]');
+    const blockDuration = document.querySelector('#block-form [name=duration]');
+    blockTime.step = String(step * 60);
+    blockDuration.min = String(step); blockDuration.step = String(step); blockDuration.value = String(step);
+    document.getElementById('special-hours-settings').replaceChildren();
+    for (const item of settings.specialHours || []) specialHourRow(item);
   }
   async function loadSettings() { settings = await json('/api/admin/settings'); renderSettings(); }
   document.getElementById('add-service').addEventListener('click', () => serviceRow());
-  async function enter() { showDashboard(true); await Promise.all([loadAgenda(), loadSettings()]); say('Agenda atualizada.'); }
+  document.getElementById('import-catalog').addEventListener('click', async () => {
+    try {
+      const catalog = await json('./catalogo-ia.json'); let added = 0;
+      for (const item of catalog) {
+        const names = [...document.querySelectorAll('.service-name input')].map(input => input.value.trim().toLocaleLowerCase('pt-BR'));
+        if (!names.includes(item.name.toLocaleLowerCase('pt-BR'))) { serviceRow({ ...item, id: '', enabled: false }); added++; }
+      }
+      say(`${added} cortes adicionados como rascunho. Os preços são provisórios; revise antes de salvar e ativar.`);
+    } catch (cause) { say(cause.message, true); }
+  });
+  document.getElementById('apply-official-hours').addEventListener('click', () => {
+    document.querySelectorAll('#hours-settings .setting-row').forEach(row => {
+      const open = Number(row.dataset.weekday) !== 0;
+      for (const [key, value] of [['opens','08:00'],['closes','17:00'],['breakStart','12:00'],['breakEnd','14:00']])
+        row.querySelector(`[data-key=${key}]`).value = open ? value : '';
+    });
+    say('Expediente de segunda a sábado preparado. Salve as configurações.');
+  });
+  document.getElementById('add-special-hours').addEventListener('click', () => specialHourRow());
+  document.getElementById('slot-minutes').addEventListener('change', event => {
+    const step = Number(event.target.value);
+    document.querySelector('#block-form [name=time]').step = String(step * 60);
+    const duration = document.querySelector('#block-form [name=duration]');
+    duration.min = String(step); duration.step = String(step); duration.value = String(step);
+  });
+  async function enter() { showDashboard(true); await loadSettings(); await loadAgenda(); say('Agenda atualizada.'); }
   document.getElementById('login-form').addEventListener('submit', async event => {
     event.preventDefault();
     try { await send('/api/admin/login', 'POST', { password: document.getElementById('password').value }); document.getElementById('password').value = ''; await enter(); }
@@ -132,6 +204,7 @@
         priceCents: price === '' ? null : Math.round(Number(price) * 100),
         duration: Number(row.querySelector('.service-duration input').value),
         photoUrl: row.dataset.photoUrl || null,
+        description: row.querySelector('.service-description input').value.trim(),
         enabled: row.querySelector('.service-active input').checked };
     });
     const hours = [...document.querySelectorAll('#hours-settings .setting-row')].map(row => {
@@ -140,7 +213,12 @@
       return record;
     });
     const daysOff = document.getElementById('days-off').value.split(',').map(value => value.trim()).filter(Boolean);
-    try { settings = await send('/api/admin/settings', 'PUT', { services, hours, daysOff, pendingMinutes: Number(document.getElementById('pending-minutes').value) }); say('Configurações salvas.'); renderSettings(); await loadAgenda(); }
+    const specialHours = [...document.querySelectorAll('#special-hours-settings .special-hour-row')].map(row => {
+      const item = {}; row.querySelectorAll('input').forEach(input => item[input.dataset.key] = input.value); return item;
+    });
+    try { settings = await send('/api/admin/settings', 'PUT', { services, hours, daysOff, specialHours,
+      slotMinutes: Number(document.getElementById('slot-minutes').value), pendingMinutes: Number(document.getElementById('pending-minutes').value) });
+      say('Configurações salvas.'); renderSettings(); await loadAgenda(); }
     catch (cause) { say(cause.message, true); }
   });
   json('/api/admin/settings').then(value => { settings = value; renderSettings(); showDashboard(true); return loadAgenda(); }).then(() => say('Agenda atualizada.')).catch(() => { showDashboard(false); say('Entre para consultar a agenda.'); });

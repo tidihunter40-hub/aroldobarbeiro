@@ -1,5 +1,6 @@
 :root{color-scheme:dark;--bg:#080909;--panel:#141412;--gold:#f2d38d;--text:#f8f4eb;--muted:#d6cec0}*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font:16px/1.5 Arial,sans-serif}header{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:15px max(18px,calc((100vw - 1100px)/2));border-bottom:1px solid #605036;background:#11110f}header strong{font-size:16px;letter-spacing:.08em}header strong span{color:var(--gold)}a{color:var(--gold)}main{max-width:1100px;margin:auto;padding:28px 18px 60px}h1{font-size:clamp(28px,4vw,43px);margin:0 0 8px}h2{font-size:25px;margin:0 0 8px}h3{font-size:20px;margin:24px 0 12px}p{color:var(--muted)}button,input,select{font:inherit}button{min-height:44px;padding:10px 16px;border:1px solid var(--gold);border-radius:5px;background:#b88d41;color:#090909;font-weight:700;cursor:pointer}button:hover{background:var(--gold)}button:focus-visible,input:focus-visible,select:focus-visible,a:focus-visible{outline:3px solid var(--gold);outline-offset:2px}input,select{min-height:44px;padding:9px 10px;border:1px solid #8d7a58;border-radius:4px;background:#1e1d19;color:var(--text)}label{display:grid;gap:5px;font-weight:700}#notice{min-height:24px;color:var(--gold)}#notice.error{color:#ffb5ad}.panel{padding:24px;background:var(--panel);border:1px solid #4e422d;border-radius:8px;margin:18px 0}.tabs{display:flex;gap:8px;margin-top:25px}.tabs button{background:#1e1d18;color:var(--text)}.tabs button[aria-pressed=true]{background:var(--gold);color:#090909}.toolbar{display:flex;justify-content:space-between;gap:24px;flex-wrap:wrap}.toolbar>div:last-child{display:flex;align-items:end;gap:9px;flex-wrap:wrap}.appointments{display:grid;gap:10px;margin:20px 0}.appointment{display:flex;justify-content:space-between;gap:20px;align-items:center;padding:15px;border:1px solid #706348;border-radius:5px;background:#1c1b18}.appointment p{margin:3px 0}.appointment strong{font-size:18px}.appointment .actions{display:flex;gap:7px;flex-wrap:wrap}.appointment button{min-width:92px}.appointment .cancel{background:#392421;color:#ffcdc5;border-color:#d39089}.appointment.pending{border-left:5px solid #ffd47b}.appointment.confirmed{border-left:5px solid #9cdfa8}.appointment.blocked{border-left:5px solid #f0a19a}.appointment.expired,.appointment.cancelled{opacity:.62}.block-form{display:flex;align-items:end;gap:10px;flex-wrap:wrap;padding-top:16px;border-top:1px solid #4e422d}.block-form h3{width:100%;margin:0}.block-form label{min-width:140px}.block-form button{min-width:130px}#settings-form{display:grid;gap:12px}#services-settings,#hours-settings{display:grid;gap:8px}.setting-row{display:flex;gap:12px;align-items:center;flex-wrap:wrap;padding:10px;border:1px solid #514632;border-radius:5px}.setting-row>strong{min-width:190px}.setting-row input[type=checkbox]{width:23px;min-height:23px;accent-color:var(--gold)}.setting-row input[type=number]{width:90px}.setting-row input[type=time]{width:130px}.setting-row label{font-size:13px}.setting-row .weekday{width:105px}.full{margin-top:8px}footer{text-align:center;padding:20px;color:var(--muted);font-size:13px}@media(max-width:650px){header{flex-wrap:wrap}header strong{order:-1;width:100%}.panel{padding:16px}.appointment{display:block}.appointment .actions{margin-top:12px}.appointment button{flex:1}.toolbar>div:last-child{width:100%}.toolbar label{flex:1}.toolbar input,.toolbar select{width:100%}.block-form label{flex:1 1 130px}.block-form button{width:100%}.setting-row>strong{width:100%}}
 /* Service catalog editor */
+.appointment.confirmed{border-left-color:#8fb9de}
 .service-setting{display:grid;grid-template-columns:88px minmax(140px,2fr) minmax(105px,1fr) minmax(105px,1fr);align-items:end;gap:12px;padding:14px}
 .service-setting label{font-size:13px;min-width:0}
 .service-setting input:not([type=checkbox]){width:100%;min-width:0}
@@ -10,3 +11,27 @@
 #add-service{justify-self:start;background:#242016;color:#f2d38d}
 @media(max-width:760px){.service-setting{grid-template-columns:80px 1fr 1fr}.service-preview{width:80px;height:80px}.service-name{grid-column:2/4}.service-photo{grid-column:1/4}.service-active{grid-column:1/4}}
 @media(max-width:430px){.service-setting{grid-template-columns:1fr 1fr}.service-preview{grid-column:1/2}.service-name{grid-column:1/3}.service-photo,.service-active{grid-column:1/3}}
+
+.admin-legend{display:flex;flex-wrap:wrap;gap:9px 18px;margin:20px 0 8px;font-size:13px;font-weight:700}
+.admin-legend span:nth-child(1){color:#a7e6ae}.admin-legend span:nth-child(2){color:#f5a49d}.admin-legend span:nth-child(3){color:#ffdc87}.admin-legend span:nth-child(4){color:#a8d7ff}.admin-legend span:nth-child(5){color:#a9a59e}
+.admin-slots{display:grid;grid-template-columns:repeat(auto-fit,minmax(116px,1fr));gap:8px;margin:12px 0 26px}
+.admin-slots>p{grid-column:1/-1;margin:0}
+.admin-slot{min-height:54px;border:1px solid #8ba986;background:#17301d;color:#e9f9e6;font-size:13px}
+.admin-slot-blocked{border-color:#d39089;background:#392421;color:#ffd0ca}
+.admin-slot-pending{border-color:#ffdc87;background:#362b16;color:#ffedc0}
+.admin-slot-confirmed{border-color:#8fb9de;background:#1b2936;color:#d4e9ff}
+.admin-slot-unavailable{border-color:#77736b;background:#272624;color:#c9c4bb}
+.admin-slot:disabled{cursor:default;opacity:.88}
+.catalog-actions{display:flex;flex-wrap:wrap;gap:10px}
+.catalog-actions button{background:#242016;color:#f2d38d}
+.catalog-warning{margin:0;font-size:13px;color:#ffdc87}
+.service-description{grid-column:2/5}
+.service-ai-note{grid-column:2/5;color:#ffdc87;font-size:12px;font-weight:700}
+.service-ai-note:empty{display:none}
+#apply-official-hours,#add-special-hours{justify-self:start;background:#242016;color:#f2d38d}
+#special-hours-settings{display:grid;gap:8px}
+.special-hour-row{display:grid;grid-template-columns:repeat(5,minmax(115px,1fr)) auto;align-items:end}
+.special-hour-row input{width:100%}
+.remove-special{background:#392421;color:#ffcdc5;border-color:#d39089}
+@media(max-width:760px){.service-description,.service-ai-note{grid-column:1/4}.special-hour-row{grid-template-columns:repeat(2,minmax(0,1fr))}.special-hour-row label:first-child{grid-column:1/3}}
+@media(max-width:430px){.service-description,.service-ai-note{grid-column:1/3}.admin-slots{grid-template-columns:repeat(2,minmax(0,1fr))}}

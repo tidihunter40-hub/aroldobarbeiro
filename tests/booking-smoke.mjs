@@ -7,7 +7,7 @@ const client = readFileSync(resolve('dist/booking-experience.js'), 'utf8');
 const sw = readFileSync(resolve('dist/sw.js'), 'utf8');
 assert.match(html, /id="booking-slots"/);
 assert.match(html, /id="booking-phone"/);
-assert.match(html, /PEDIR MEU HORÁRIO/);
+assert.match(html, /SOLICITAR AGENDAMENTO/);
 assert.match(html, /id="booking-services"/);
 assert.match(html, /id="booking-summary"/);
 assert.match(client, /\/api\/public\/appointments/);

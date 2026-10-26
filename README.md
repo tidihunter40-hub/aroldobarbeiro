@@ -37,7 +37,7 @@ O hero usa a fotografia fornecida para este projeto (`dist/assets/aroldo-hero-fo
 - `booking-api.mjs` e `app-server.mjs`: API local com SQLite para prévia e testes.
 - `supabase/schema.sql` e `api/index.js`: banco e API de produção na Vercel.
 - `dist/booking-experience.js`: agenda antes da escolha do serviço, cartões com foto real e preço, validação de duração, resumo e pedido pendente.
-- `dist/admin.html` e `dist/admin.js`: agenda diária ou de sete dias, confirmação, recusa, cancelamento, bloqueio, liberação e cadastro de serviços com nome, preço, duração, foto e disponibilidade.
+- `dist/admin.html` e `dist/admin.js`: grade diária com bloqueio ou liberação em um toque, consulta de sete dias, confirmação, recusa, cancelamento e cadastro de serviços com nome, preço, duração, descrição, foto e disponibilidade.
 - `data/bookings.sqlite`: banco da prévia local; não entra no GitHub nem na Vercel.
 
 Aroldo confirma cada solicitação manualmente. Um pedido pendente impede outros pedidos sobrepostos até ser confirmado, recusado ou expirar. A expiração é calculada no servidor; os registros antigos continuam no banco para histórico, com status “Expirado” no painel. Serviços com durações diferentes respeitam sobreposição, expediente e intervalo. A página pública nunca mostra nome ou telefone de outra pessoa. A agenda é consultada novamente a cada 30 segundos na página pública e a cada 15 segundos no painel, além de atualizar após ações.
@@ -46,19 +46,21 @@ Aroldo confirma cada solicitação manualmente. Um pedido pendente impede outros
 
 1. Para a prévia local, execute `node setup-admin.mjs` no diretório do projeto e crie uma senha de pelo menos 12 caracteres.
 2. Execute `node serve.mjs` e entre em `/admin.html`.
-3. Configure os dias e horários reais, intervalos, serviços ativos e duração de cada serviço. Nenhum expediente foi inventado; até salvar essa configuração, o público vê a agenda indisponível e pode conversar pelo WhatsApp.
+3. Use **Aplicar 08h–12h e 14h–17h, segunda a sábado** no painel e salve. Domingo fica fechado. Configure os serviços ativos e a duração de cada um; até ativar ao menos um serviço com foto e preço, o público vê a agenda indisponível e pode conversar pelo WhatsApp.
 4. Para produção, siga a configuração Supabase e Vercel abaixo. O banco local não é enviado à produção.
 
 Para a nova vitrine, escolha uma foto real de cada serviço no painel. O envio de fotos na prévia local guarda arquivos em `dist/assets/`; em produção, a função da Vercel envia os arquivos ao bucket público `aroldo-services` no Supabase. Cadastre preço e foto antes de ativar um serviço. A galeria opcional mostra trabalhos já publicados no perfil oficial; escolher um estilo específico não é obrigatório.
+
+O botão **Adicionar 20 cortes do catálogo IA** importa as 20 imagens fornecidas em `dist/assets/cortes-ia/`, associadas pelos números do ZIP aos nomes em `dist/catalogo-ia.json`. Os cortes entram **desativados**. As imagens são ilustrações geradas por IA e os preços e durações são provisórios; o painel e os cartões públicos identificam as imagens de IA. Aroldo pode editar tudo e substituir cada imagem por foto real antes de ativar. O intervalo entre inícios de horário pode ser 15, 30 ou 60 minutos. Dias sem atendimento e horários especiais por data prevalecem sobre a semana normal.
 
 O fuso da agenda é `America/Bahia`. Na prévia local é possível mudar o caminho do banco com `AROLDO_DB_PATH` e a porta com `PORT`. Mudanças de expediente não cancelam automaticamente agendamentos já confirmados; revise a agenda antes de alterar os horários. Confirme com Aroldo o prazo da pendência, as durações e o expediente antes de produção. Defina um processo de retenção e exclusão de dados pessoais adequado ao negócio.
 
 ### Produção: Supabase e Vercel
 
-1. No SQL Editor do projeto Supabase `zjegmzuwducmaffcorut`, execute `supabase/schema.sql` para uma instalação nova e depois `supabase/2026-10-26-service-showcase.sql`. Em um banco que já tem a primeira migração, execute apenas a segunda. Ela preserva agendamentos e serviços, adiciona preço e foto, a consulta da agenda sem serviço e o bucket de fotos. O navegador usa apenas a função da Vercel para enviar fotos.
+1. No SQL Editor do projeto Supabase `zjegmzuwducmaffcorut`, execute `supabase/schema.sql` para uma instalação nova, depois `supabase/2026-10-26-service-showcase.sql` e por fim `supabase/2026-10-26-admin-agenda.sql`. Em um banco já configurado, execute apenas as migrações ainda pendentes. A última preserva os agendamentos, define o expediente informado (segunda a sábado, 08h–12h e 14h–17h), adiciona datas especiais, descrição e intervalo configurável. O navegador usa apenas a função da Vercel para enviar fotos.
 2. Importe o repositório no Vercel com o diretório raiz do projeto. `vercel.json` publica `dist/` e encaminha `/api/*` para a função. Use Node.js 20 ou superior.
 3. Configure as variáveis de ambiente **Production**: `SUPABASE_URL` (URL base sem `/rest/v1`), `SUPABASE_SECRET_KEY` e `AROLDO_ADMIN_PASSWORD` (senha forte escolhida pelo responsável, pelo menos 12 caracteres). O arquivo `.env.example` mostra os nomes. As credenciais ficam apenas nas variáveis da Vercel; não coloque em `dist/` nem no GitHub. A chave publicável não é necessária porque o cliente usa a API própria.
-4. Faça um novo deploy após executar a nova migração e definir as variáveis. Verifique `/api/public/config` e `/api/public/agenda?day=AAAA-MM-DD`, depois entre em `/admin.html` para cadastrar fotos, preços, serviços e expediente reais. Até então o formulário de agendamento fica indisponível.
+4. Publique somente com autorização do responsável, após executar a migração e definir as variáveis. Verifique `/api/public/config` e `/api/public/agenda?day=AAAA-MM-DD`, depois entre em `/admin.html` para revisar fotos, preços, durações e serviços ativos. Os 20 cortes de IA não entram automaticamente na produção: a importação e o salvamento são ações separadas no painel.
 
 O cookie administrativo dura 12 horas. Trocar a senha administrativa ou a chave secreta invalida as sessões. As funções SQL serializam solicitações concorrentes por dia para impedir reservas sobrepostas. O Supabase deve ter backup e política de retenção de nomes e telefones.
 
@@ -82,7 +84,7 @@ O ajuste final em `dist/booking.css` aumentou rótulos e botões pequenos, prese
 
 O site tem manifest, ícones para Android/iOS, botão de instalação quando o navegador oferece essa opção e cache offline da página e das imagens locais. Para instalar, abra a prévia em `http://127.0.0.1:5180/` ou publique em HTTPS; abrir `dist/index.html` diretamente não ativa o service worker. Isso segue os [requisitos atuais de instalação de PWA](https://developer.mozilla.org/en-US/docs/Web/Progressive_web_apps/Guides/Making_PWAs_installable).
 
-Os recursos locais usam rede primeiro e recorrem ao cache quando não há conexão; o service worker é registrado com `updateViaCache: 'none'`. A versão atual é `v12`. O precache inclui apenas recursos usados pela página, inclusive a fotografia fornecida para a hero. A API e o painel administrativo não são guardados em cache. Ao publicar uma atualização, continue alterando `CACHE_NAME` em `dist/sw.js` para eliminar caches antigos. Links externos como WhatsApp e Instagram continuam dependentes de internet.
+Os recursos locais usam rede primeiro e recorrem ao cache quando não há conexão; o service worker é registrado com `updateViaCache: 'none'`. A versão atual é `v13`. O precache inclui apenas recursos usados pela página, inclusive a fotografia fornecida para a hero. A API e o painel administrativo não são guardados em cache. Ao publicar uma atualização, continue alterando `CACHE_NAME` em `dist/sw.js` para eliminar caches antigos. Links externos como WhatsApp e Instagram continuam dependentes de internet.
 
 ## Arquivos
 
