@@ -2,131 +2,180 @@
 <html lang="pt-BR">
 <head>
   <meta charset="utf-8">
+  <base href="/">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="theme-color" content="#080909">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <meta name="apple-mobile-web-app-title" content="Aroldo Barbeiro">
-  <meta name="description" content="Aroldo Barbeiro, Escola & Barbearia em Ribeira do Pombal. Conheça serviços, prótese capilar, trabalhos reais e fale com a equipe pelo WhatsApp.">
-  <title>Aroldo Barbeiro — Escola & Barbearia</title>
+  <meta name="apple-mobile-web-app-title" content="Aroldo Barber">
+  <meta name="description" content="Agende seu horário na Aroldo Barber em Ribeira do Pombal. Consulte cortes, trabalhos oficiais e formas de contato.">
+  <title>Aroldo Barber — Agende seu horário</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=DM+Sans:wght@400;500;600;700;800&family=Great+Vibes&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@700;800&family=Cormorant+Garamond:wght@400;500;600;700&family=DM+Sans:wght@400;500;600;700;800&family=Great+Vibes&family=Inter:wght@400;500;600;700&family=Sora:wght@500;600;700&display=swap" rel="stylesheet">
   <link rel="manifest" href="./manifest.webmanifest">
   <link rel="icon" type="image/svg+xml" href="./assets/icon.svg">
   <link rel="apple-touch-icon" href="./assets/icon-180.png">
   <link rel="stylesheet" href="./styles.css">
   <link rel="stylesheet" href="./refinement.css">
-  <link rel="stylesheet" href="./hero.css">
+  <link rel="stylesheet" href="./hero.css?v=2026-10-26-8">
   <link rel="stylesheet" href="./booking.css">
-  <link rel="stylesheet" href="./booking-reference.css">
-  <link rel="stylesheet" href="./responsive.css">
+  <link rel="stylesheet" href="./booking-reference.css?v=2026-10-26-2">
+  <link rel="stylesheet" href="./responsive.css?v=2026-10-26-2">
+  <link rel="stylesheet" href="./cortes-catalogo.css?v=2026-10-26-1">
+  <link rel="stylesheet" href="./site-structure.css?v=2026-10-26-2">
+  <link rel="stylesheet" href="./app-navigation.css?v=2026-10-26-12">
+  <link rel="stylesheet" href="./cut-categories.css?v=2026-10-26-1">
   <script src="./script.js" defer></script>
-  <script src="./booking-experience.js" defer></script>
+  <script src="./booking-experience.js?v=2026-10-26-2" defer></script>
+  <script src="./cortes-catalogo.js" defer></script>
 </head>
 <body>
   <a class="skip-link" href="#conteudo">Pular para o conteúdo</a>
-  <header class="site-header" id="inicio">
-    <a class="brand" href="#inicio" aria-label="Aroldo Barbeiro — início"><span class="brand-words"><strong>AROLDO <em>BARBEIRO</em></strong><small>ESCOLA &amp; BARBEARIA</small></span></a>
+  <header class="site-header">
+    <a class="brand" href="/" aria-label="Aroldo Barber — início"><img src="./assets/aroldo-logo-fachada.png" alt="Logo Aroldo Barber: rosto do barbeiro, navalha, tesoura e faixa dourada"></a>
     <button class="menu-toggle" type="button" aria-controls="nav" aria-expanded="false" aria-label="Abrir menu"><span></span><span></span><span></span></button>
-    <nav class="nav" id="nav" aria-label="Navegação principal"><a href="#inicio" aria-current="page">Início</a><a href="#servicos">Serviços</a><a href="#sobre">Sobre</a><a href="#galeria">Galeria</a><a href="#contato">Contato</a></nav>
-    <a class="header-book" href="#agendar">Agendar horário <span aria-hidden="true">↗</span></a>
+    <nav class="nav" id="nav" aria-label="Navegação principal">
+      <a href="/" aria-current="page">Início</a>
+      <a href="/agendamento">Agendamento</a>
+      <a href="/cortes">Cortes</a>
+      <a href="/galeria">Galeria</a>
+      <a href="/contato">Contato</a>
+    </nav>
+    <a class="header-book" href="/agendamento">Agendar horário <span aria-hidden="true">↗</span></a>
   </header>
-
   <main id="conteudo">
-    <div class="top-grid">
-      <section class="hero" aria-labelledby="hero-title">
-        <img class="hero-photo" src="./assets/aroldo-hero-fornecida.png" width="1536" height="1024" alt="Aroldo com tesoura profissional em uma barbearia, na fotografia fornecida para o projeto" fetchpriority="high" decoding="async">
-        <div class="hero-vignette" aria-hidden="true"></div>
-        <div class="hero-content">
-          <p class="hero-overline">AROLDO BARBEIRO <span aria-hidden="true">/</span> ESCOLA &amp; BARBEARIA</p>
-          <h1 id="hero-title"><span>AROLDO</span><span>BARBEIRO</span></h1>
-          <p class="hero-subtitle">Mais que um corte.<br>Uma presença.</p>
-          <p class="hero-description">Estilo, precisão e personalidade em cada detalhe.</p>
-          <div class="hero-actions"><a class="button button-gold" href="#agendar">Agendar meu horário <span aria-hidden="true">↗</span></a><a class="button button-outline" href="#servicos">Conhecer os serviços</a></div>
+    <section class="hero hero-home" id="inicio" aria-labelledby="hero-title">
+      <picture class="hero-picture">
+        <source media="(max-width: 700px)" srcset="./assets/aroldo-mobile-referencia.png" width="908" height="1733">
+        <img class="hero-photo" src="./assets/aroldo-hero-fachada.png" width="1855" height="848" alt="Fachada oficial da barbearia Aroldo Barber em Ribeira do Pombal" fetchpriority="high" decoding="async">
+      </picture>
+      <div class="hero-shade" aria-hidden="true"></div>
+      <div class="hero-content">
+        <p class="hero-overline">BARBEARIA PREMIUM</p>
+        <h1 id="hero-title"><span>Aroldo</span> <em>Barber</em></h1>
+        <p class="hero-subtitle"><span>Mais que um corte.</span><br><strong>Uma presença.</strong></p>
+        <p class="hero-description">Estilo, precisão e personalidade em cada detalhe.</p>
+        <div class="hero-features" aria-label="Destaques da barbearia">
+          <a class="hero-feature" href="/cortes" data-open-category="masculinos"><svg viewBox="0 0 48 48" aria-hidden="true"><circle cx="10" cy="35" r="5"/><circle cx="25" cy="35" r="5"/><path d="M14 32 39 6M28 32 10 6M36 8l4-4M10 6l-3-3"/></svg><span>Cortes<br>modernos</span></a>
+          <a class="hero-feature" href="/cortes" data-open-category="barbas"><svg viewBox="0 0 48 48" aria-hidden="true"><path d="M10 20C10 8 17 4 24 4s14 4 14 16M12 19c-3 4-2 8 1 10l3 8 8 7 8-7 3-8c3-2 4-6 1-10M15 20c4-1 6-4 9-4s5 3 9 4M17 27c2 2 4 2 6 0m2 0c2 2 4 2 6 0M19 34c3 2 7 2 10 0M17 38c2-5 4-6 7-4 3-2 5-1 7 4"/></svg><span>Barba<br>na régua</span></a>
+          <a class="hero-feature" href="/galeria"><svg viewBox="0 0 48 48" aria-hidden="true"><path d="M9 16h30l5 10-20 18L4 26l5-10Zm0 0 8 10h14l8-10M4 26h40M17 26l7 18 7-18M17 16l7 10 7-10"/></svg><span>Atendimento<br>de qualidade</span></a>
         </div>
-        <a class="hero-scroll" href="#protese" aria-label="Rolar para conhecer o site"><span aria-hidden="true"></span> EXPLORE O SITE</a>
-        <span class="hero-index" aria-hidden="true">01 <i></i> A EXPERIÊNCIA</span>
-      </section>
-
-      <section class="feature-prosthesis" id="protese" aria-labelledby="prosthesis-title">
-        <div class="feature-heading"><p class="overline">PROCEDIMENTO ESPECIALIZADO</p><h2 id="prosthesis-title">PRÓTESE CAPILAR</h2><p>RECUPERE A SUA MAIOR VERSÃO</p></div>
-        <div class="prosthesis-images"><div><img src="./assets/concept-protese.jpg" alt="Cena ilustrativa de aplicação de prótese capilar" loading="lazy"><span>CENA ILUSTRATIVA</span></div><div><img src="./assets/concept-corte.jpg" alt="Retrato ilustrativo de corte masculino" loading="lazy"><span>ESTILO ILUSTRATIVO</span></div></div>
-        <p class="feature-copy">Imagens de conceito provisórias. Veja o procedimento real no perfil oficial e converse com a equipe.</p>
-        <a class="button button-outline-gold" href="https://www.instagram.com/aroldobarbeirooficial/reel/Da8t6IGR1Lg/" target="_blank" rel="noopener noreferrer">Ver trabalho real <span aria-hidden="true">↗</span></a>
-      </section>
-    </div>
-
-    <div class="services-row">
-      <section class="services" id="servicos" aria-labelledby="services-title"><div class="section-heading"><div><h2 id="services-title">NOSSOS SERVIÇOS</h2><p>TRABALHOS DO PERFIL OFICIAL · IMAGENS ILUSTRATIVAS IDENTIFICADAS</p></div><a href="#agendar">AGENDAR <span aria-hidden="true">↗</span></a></div>
-        <div class="service-strip">
-          <a class="service-card" href="#agendar" data-service="Corte masculino"><img src="./assets/corte-perfil-instagram.jpg" alt="Corte masculino publicado no perfil oficial" loading="lazy"><span>CORTES<br>MASCULINOS</span></a>
-          <a class="service-card" href="#agendar" data-service="Barba"><img src="./assets/destaque-barbas-02.jpg" alt="Barba publicada no destaque oficial" loading="lazy"><span>BARBA</span></a>
-          <a class="service-card" href="#agendar" data-service="Corte infantil"><img src="./assets/corte-kids-instagram.jpg" alt="Corte infantil publicado no perfil oficial" loading="lazy"><span>CORTES<br>INFANTIS</span></a>
-          <a class="service-card" href="#agendar" data-service="Platinado"><img src="./assets/destaque-nevou-01.jpg" alt="Platinado publicado no destaque oficial" loading="lazy"><span>PLATINADOS</span></a>
-          <a class="service-card" href="#agendar" data-service="Desondulação capilar"><img src="./assets/desondulacao-instagram.jpg" alt="Trabalho capilar publicado no perfil oficial" loading="lazy"><span>DESONDULAÇÃO<br>CAPILAR</span></a>
-          <a class="service-card" href="#agendar" data-service="Freestyle"><img src="./assets/destaque-desenhos-01.jpg" alt="Desenho no cabelo publicado no destaque oficial" loading="lazy"><span>FREESTYLE</span></a>
-          <a class="service-card concept-card" href="#agendar" data-service="Visagismo"><img src="./assets/concept-visagismo.jpg" alt="Cena ilustrativa de atendimento" loading="lazy"><span>VISAGISMO</span></a>
-          <a class="service-card concept-card" href="#agendar" data-service="Prótese capilar"><img src="./assets/concept-protese.jpg" alt="Cena ilustrativa de prótese capilar" loading="lazy"><span>PRÓTESE<br>CAPILAR</span></a>
+        <div class="hero-actions">
+          <a class="button button-gold" href="/agendamento"><svg viewBox="0 0 32 32" aria-hidden="true"><rect x="4" y="7" width="24" height="21" rx="2"/><path d="M10 3v8M22 3v8M4 14h24M10 19h3m5 0h3m-11 5h3m5 0h3"/></svg><span>Agendar horário</span><svg viewBox="0 0 32 32" aria-hidden="true"><path d="m12 6 10 10-10 10"/></svg></a>
+          <a class="button button-outline" href="/cortes">Ver cortes</a>
         </div>
-      </section>
-      <section class="visagism" id="visagismo" aria-labelledby="visagism-title"><img src="./assets/concept-visagismo.jpg" alt="Cena ilustrativa de visagismo em barbearia" loading="lazy"><div><h2 id="visagism-title">VISAGISMO</h2><p class="overline">BELEZA COM PROPÓSITO</p><p>Aroldo apresenta o visagismo entre suas especialidades. Converse sobre corte, barba e estilo para a imagem que você busca.</p><a class="button button-outline-gold" href="#agendar">Conheça o visagismo</a><small class="concept-note">FOTO ILUSTRATIVA</small></div></section>
-    </div>
-
-    <div class="work-row" id="galeria">
-      <section class="work-intro" aria-labelledby="work-title"><h2 id="work-title">TRABALHOS<br>REAIS</h2><p>DO PERFIL OFICIAL</p><span>Cortes e estilos publicados por Aroldo Barbeiro. Abra as fotos para ver a fonte.</span><a class="button button-outline-gold" href="https://www.instagram.com/aroldobarbeirooficial/" target="_blank" rel="noopener noreferrer">Ver perfil oficial</a></section>
-      <div class="work-gallery" aria-label="Galeria de trabalhos reais"><button type="button" data-gallery="0" aria-label="Ampliar corte masculino"><img src="./assets/corte-perfil-instagram.jpg" alt="Corte masculino do perfil oficial" loading="lazy"><span>CORTE MASCULINO</span></button><button type="button" data-gallery="1" aria-label="Ampliar corte infantil"><img src="./assets/corte-kids-instagram.jpg" alt="Corte infantil do perfil oficial" loading="lazy"><span>CORTE INFANTIL</span></button><button type="button" data-gallery="2" aria-label="Ampliar platinado"><img src="./assets/destaque-nevou-01.jpg" alt="Platinado do destaque oficial" loading="lazy"><span>PLATINADO</span></button><button type="button" data-gallery="3" aria-label="Ampliar desenho no cabelo"><img src="./assets/destaque-desenhos-01.jpg" alt="Desenho no cabelo do destaque oficial" loading="lazy"><span>DESENHOS</span></button><button type="button" data-gallery="4" aria-label="Ampliar trabalho de barba"><img src="./assets/destaque-barbas-02.jpg" alt="Barba do destaque oficial" loading="lazy"><span>BARBA</span></button></div>
-      <section class="recognition" aria-labelledby="recognition-title"><h2 id="recognition-title">RECONHECIMENTO</h2><img src="./assets/destaque-premiacoes-02.jpg" alt="Registro com troféus no destaque Premiações" loading="lazy"><p>Um certificado de reconhecimento de 2020 e registros com troféus aparecem no destaque oficial.</p><a href="https://www.instagram.com/stories/highlights/17969838071171142/" target="_blank" rel="noopener noreferrer">VER REGISTROS ORIGINAIS ↗</a></section>
-    </div>
-
-    <div class="bottom-grid">
-      <section class="bottom-panel school-panel" id="escola" aria-labelledby="school-title"><img src="./assets/concept-escola.jpg" alt="Imagem ilustrativa de ensino em barbearia" loading="lazy"><div><h2 id="school-title">ESCOLA &amp; BARBEARIA</h2><p class="overline">CONHECIMENTO QUE TRANSFORMA</p><p>Além do atendimento, Aroldo apresenta uma frente de formação. Consulte a equipe sobre cursos, turmas e datas.</p><a class="button button-outline-gold" href="https://wa.me/5511948446801?text=Ol%C3%A1%2C%20gostaria%20de%20informa%C3%A7%C3%B5es%20sobre%20a%20Escola%20Aroldo%20Barber." target="_blank" rel="noopener noreferrer">Conheça a escola</a><small class="concept-note">FOTO ILUSTRATIVA</small></div></section>
-      <section class="bottom-panel about-panel" id="sobre" aria-labelledby="about-title"><h2 id="about-title">SOBRE AROLDO</h2><p class="overline">ESCOLA · BARBEARIA · RIBEIRA DO POMBAL</p><p>No perfil oficial, Aroldo mostra cortes, barbas, procedimentos capilares e os bastidores da barbearia.</p><div class="about-quote">Seu estilo fala por você.</div><a href="https://www.instagram.com/aroldobarbeirooficial/" target="_blank" rel="noopener noreferrer">CONHECER O PERFIL OFICIAL ↗</a></section>
-      <section class="bottom-panel place-panel" id="espaco" aria-labelledby="place-title"><h2 id="place-title">NOSSA BARBEARIA</h2><p class="overline">O ESPAÇO DE AROLDO</p><img src="./assets/espaco-instagram.jpg" alt="Entrada e identidade da barbearia em registro do perfil oficial" loading="lazy"><address>Ribeira do Pombal · BA<br>Rua Salustiano Guerra, 495</address><small class="concept-note">REGISTRO E ENDEREÇO DO PERFIL OFICIAL</small></section>
-      <section class="bottom-panel contact-panel" id="contato" aria-labelledby="contact-title"><h2 id="contact-title">FALE CONOSCO</h2><p>Agende seu horário ou tire suas dúvidas.</p><a class="button button-whatsapp" href="https://wa.me/5511948446801?text=Ol%C3%A1%2C%20gostaria%20de%20agendar%20um%20atendimento." target="_blank" rel="noopener noreferrer">◉ Chamar no WhatsApp</a><a class="button button-outline-gold" href="#agendar">Solicitar atendimento</a><div class="social-links"><a href="https://www.instagram.com/aroldobarbeirooficial/" target="_blank" rel="noopener noreferrer">INSTAGRAM ↗</a><a href="https://www.google.com/maps/search/?api=1&query=Rua%20Salustiano%20Guerra%20495%2C%20Ribeira%20do%20Pombal%2C%20BA" target="_blank" rel="noopener noreferrer">COMO CHEGAR ↗</a></div></section>
-    </div>
-
-    <section class="highlights" id="destaques" aria-labelledby="highlights-title"><div class="wide-wrap"><div class="highlights-head"><div><p class="overline">DO INSTAGRAM OFICIAL</p><h2 id="highlights-title">DESTAQUES DE AROLDO</h2></div><p>Seis coleções publicadas no perfil oficial, com registros de trabalhos, encontros e trajetória.</p></div><div class="highlight-tabs" role="group" aria-label="Coleções de destaques"><button type="button" data-highlight="artistas" aria-pressed="true">ARTISTAS</button><button type="button" data-highlight="premiacoes" aria-pressed="false">PREMIAÇÕES</button><button type="button" data-highlight="barbas" aria-pressed="false">BARBAS</button><button type="button" data-highlight="kids" aria-pressed="false">CORTE KIDS</button><button type="button" data-highlight="nevou" aria-pressed="false">NEVOU</button><button type="button" data-highlight="desenhos" aria-pressed="false">DESENHOS</button></div><div class="highlight-display"><div><p class="overline" id="highlight-count">01 / 06</p><h3 id="highlight-title">ARTISTAS</h3><p id="highlight-description">Encontros e bastidores publicados no destaque oficial.</p><a id="highlight-source" href="https://www.instagram.com/stories/highlights/17912568753117277/" target="_blank" rel="noopener noreferrer">VER DESTAQUE ORIGINAL ↗</a></div><div class="highlight-photos" id="highlight-photos"></div></div></div></section>
-
+      </div>
+      <a class="hero-scroll" href="/agendamento"><span aria-hidden="true"></span>ESCOLHA SEU HORÁRIO</a>
+    </section>
     <section class="booking" id="agendar" aria-labelledby="booking-title">
       <div class="booking-atmosphere" aria-hidden="true"></div>
-      <img class="booking-portrait" src="./assets/aroldo-oculos-recorte.png" alt="" aria-hidden="true" decoding="async">
-      <div class="booking-signature" aria-hidden="true"><span>Corte<br>Estilo<br>Confiança</span><small>MAIS QUE UM CORTE,<br>UMA EXPERIÊNCIA.</small></div>
       <div class="wide-wrap booking-layout">
-        <div class="booking-intro">
-          <p class="booking-eyebrow"><span></span> AGENDA AROLDO BARBEIRO <span></span></p>
-          <h2 id="booking-title">SEU PRÓXIMO CORTE<br><em>COMEÇA AQUI.</em></h2>
-          <p>Escolha o dia e horário que melhor se encaixa na sua rotina.</p>
-        </div>
+        <header class="booking-intro"><p class="booking-eyebrow">AGENDA AROLDO BARBER</p><h2 id="booking-title">Agende seu horário</h2><p>Escolha uma data e consulte a disponibilidade real.</p></header>
         <form id="booking-form" class="booking-panel">
           <div class="booking-stage" id="booking-stage-agenda">
             <div class="booking-date-bar">
               <button class="booking-date-arrow" id="booking-days-prev" type="button" aria-label="Ver dias anteriores">‹</button>
               <div id="booking-day-choices" class="booking-day-choices" role="group" aria-label="Próximos dias"></div>
               <button class="booking-date-arrow" id="booking-days-next" type="button" aria-label="Ver próximos dias">›</button>
-              <label class="booking-date-picker" for="booking-day"><span aria-hidden="true">▦</span><span>Escolher outra data</span><input id="booking-day" name="day" type="date" required></label>
             </div>
+            <input id="booking-day" name="day" type="hidden">
+            <p id="booking-status" class="booking-status" role="status" aria-live="polite">Carregando agenda…</p>
             <div class="booking-legend" aria-label="Legenda da agenda"><span><i class="legend-free"></i>Livre</span><span><i class="legend-busy"></i>Ocupado</span><span><i class="legend-pending"></i>Pendente</span><span><i class="legend-unavailable"></i>Indisponível</span></div>
-            <div id="booking-slots" class="booking-periods" role="group" aria-label="Horários">
-              <div class="booking-period"><div class="booking-period-heading"><span aria-hidden="true">☀</span><div><strong>MANHÃ</strong><small>08:00 às 12:00</small></div></div><div id="booking-slots-morning" class="booking-slot-grid"></div></div>
-              <div class="booking-lunch" aria-label="Fechado para almoço das 12 às 14 horas"><span aria-hidden="true">◷</span><strong>12:00 <span>às</span> 14:00</strong><small>FECHADO PARA ALMOÇO</small></div>
-              <div class="booking-period"><div class="booking-period-heading"><span aria-hidden="true">◕</span><div><strong>TARDE</strong><small>14:00 às 17:00</small></div></div><div id="booking-slots-afternoon" class="booking-slot-grid"></div></div>
-            </div>
+            <div id="booking-slot-periods" class="booking-periods" role="group" aria-label="Horários"></div>
           </div>
-          <div class="booking-stage" id="booking-stage-service" hidden><button type="button" class="booking-back" data-back="agenda">← Voltar aos horários</button><p class="booking-step">02 / 03 · SERVIÇOS</p><h3>Qual vai ser o corte?</h3><p class="booking-hint">Escolha seu serviço. Você pode trocar antes de confirmar.</p><div id="booking-services" class="booking-services" role="group" aria-label="Serviços disponíveis"></div><details class="booking-style-gallery"><summary>Quer ver estilos? Explore trabalhos reais do Aroldo</summary><div><img src="./assets/corte-perfil-instagram.jpg" alt="Corte publicado pelo Aroldo" loading="lazy"><img src="./assets/destaque-desenhos-01.jpg" alt="Desenho no cabelo publicado pelo Aroldo" loading="lazy"><img src="./assets/destaque-kids-02.jpg" alt="Corte infantil publicado pelo Aroldo" loading="lazy"></div><p>Você pode pedir um serviço sem escolher um estilo específico.</p></details><p id="service-status" class="booking-status" role="status" aria-live="polite"></p><button id="service-next" class="button button-gold" type="button" disabled>CONTINUAR</button></div>
+          <div class="booking-stage" id="booking-stage-service" hidden><button type="button" class="booking-back" data-back="agenda">← Voltar aos horários</button><p class="booking-step">02 / 03 · SERVIÇOS</p><h3>Escolha o serviço</h3><p class="booking-hint">Escolha o serviço para este horário.</p><p id="booking-cut-selection" class="booking-cut-selection" hidden></p><div id="booking-services" class="booking-services" role="group" aria-label="Serviços disponíveis"></div><p id="service-status" class="booking-status" role="status" aria-live="polite"></p><button id="service-next" class="button button-gold" type="button" disabled>CONTINUAR</button></div>
           <div class="booking-stage" id="booking-stage-confirm" hidden><button type="button" class="booking-back" data-back="service">← Trocar serviço</button><p class="booking-step">03 / 03 · CONFIRMAÇÃO</p><h3>Seu horário está quase pronto!</h3><div id="booking-summary" class="booking-summary"></div><label for="name">Seu nome</label><input id="name" name="name" autocomplete="name" maxlength="80" minlength="2" required><label for="booking-phone">Seu WhatsApp</label><input id="booking-phone" name="phone" type="tel" autocomplete="tel" inputmode="tel" maxlength="20" required><button class="button button-gold" type="submit">SOLICITAR AGENDAMENTO</button><p class="booking-note">Aroldo confirma seu pedido. O horário fica reservado enquanto aguarda.</p><p id="confirm-status" class="booking-status" role="status" aria-live="polite"></p></div>
           <div id="booking-result" class="booking-result" role="status" aria-live="polite"></div>
           <div class="booking-progress" aria-label="Etapas do agendamento"><strong>PRÓXIMO PASSO</strong><ol><li class="current"><b>1</b><span>Escolha o horário</span></li><li><b>2</b><span>Escolha o serviço</span></li><li><b>3</b><span>Seus dados</span></li><li><b>4</b><span>Confirmação</span></li></ol></div>
           <div class="booking-benefits"><div><b aria-hidden="true">ϟ</b><span>Agendamento rápido<small>Em poucos cliques</small></span></div><div><b aria-hidden="true">♙</b><span>Seus dados seguros<small>Privacidade garantida</small></span></div><div><b aria-hidden="true">◉</b><span>Receba a confirmação<small>Pelo WhatsApp</small></span></div><div><b aria-hidden="true">✂</b><span>Cortes de qualidade<small>Com profissionais experientes</small></span></div></div>
         </form>
-        <p id="booking-status" class="booking-status" role="status" aria-live="polite">Carregando agenda…</p>
-        <a class="booking-catalog-link" href="#cortes-precos">VER CORTES E PREÇOS ↓</a>
+        <a class="booking-catalog-link" href="/cortes">VER CATÁLOGO DE CORTES ↓</a>
       </div>
     </section>
 
-    <section class="booking-showcase" id="cortes-precos" aria-labelledby="showcase-title"><div class="wide-wrap"><p class="overline">CATÁLOGO AROLDO BARBEIRO</p><h2 id="showcase-title">Cortes e preços</h2><p>Conheça os estilos antes de escolher seu horário. Os preços exibidos são provisórios e serão confirmados por Aroldo. As imagens deste catálogo são ilustrações geradas por IA.</p><p id="showcase-status" role="status" aria-live="polite">Carregando cortes…</p><div id="booking-catalog-showcase" class="booking-catalog-showcase"></div></div></section>
+
+    <section class="booking-showcase cut-catalog" id="cortes" aria-labelledby="showcase-title">
+  <div class="wide-wrap cut-catalog-wrap">
+    <header class="cut-catalog-heading"><p class="overline">CATÁLOGO AROLDO BARBER</p><h2 id="showcase-title">Cortes e <em>estilos</em></h2><p>Escolha uma categoria para conhecer os cortes e estilos disponíveis.</p></header>
+    <div id="cut-category-choices" class="cut-category-choices" aria-label="Categorias do catálogo">
+      <button class="cut-category-card" type="button" data-category-choice="masculinos" aria-label="Ver 18 cortes masculinos">
+        <img src="./assets/categories/masculinos.webp" alt="Homem com corte masculino degradê e acabamento definido" width="960" height="1200" loading="lazy" decoding="async">
+        <span class="cut-category-bar"><svg viewBox="0 0 48 48" aria-hidden="true"><circle cx="10" cy="35" r="5"/><circle cx="25" cy="35" r="5"/><path d="M14 32 39 6M28 32 10 6M36 8l4-4M10 6l-3-3"/></svg><span class="cut-category-copy"><strong>Masculinos</strong><small>18 cortes · Ver cortes masculinos</small></span><span class="cut-category-arrow" aria-hidden="true">→</span></span>
+      </button>
+      <button class="cut-category-card" type="button" data-category-choice="infantis" aria-label="Ver 5 cortes infantis">
+        <img src="./assets/categories/infantis.webp" alt="Menino com corte infantil moderno e degradê bem executado" width="960" height="1200" loading="lazy" decoding="async">
+        <span class="cut-category-bar"><svg viewBox="0 0 48 48" aria-hidden="true"><path d="M10 22v-5C10 8 16 4 24 4s14 4 14 13v5M10 19c-4-1-6 1-6 5s3 6 7 5c2 8 7 13 13 13s11-5 13-13c4 1 7-1 7-5s-2-6-6-5M12 17c4-1 5-5 8-6 4 4 9 4 16 6M18 26h.1M30 26h.1M20 34c3 2 5 2 8 0"/></svg><span class="cut-category-copy"><strong>Infantis</strong><small>5 cortes · Ver cortes infantis</small></span><span class="cut-category-arrow" aria-hidden="true">→</span></span>
+      </button>
+      <button class="cut-category-card" type="button" data-category-choice="barbas" aria-label="Ver 5 estilos de barba">
+        <img src="./assets/categories/barbas.webp" alt="Homem com barba volumosa e contornos alinhados" width="960" height="1200" loading="lazy" decoding="async">
+        <span class="cut-category-bar"><svg viewBox="0 0 48 48" aria-hidden="true"><path d="M11 9c-4 9-3 16 1 21 2 8 7 13 12 15 5-2 10-7 12-15 4-5 5-12 1-21M12 24c3 1 5 0 8-3l4 3 4-3c3 3 5 4 8 3M16 30c2 2 4 2 8 0 4 2 6 2 8 0M21 36c2 1 4 1 6 0"/></svg><span class="cut-category-copy"><strong>Barbas</strong><small>5 estilos · Ver estilos de barba</small></span><span class="cut-category-arrow" aria-hidden="true">→</span></span>
+      </button>
+    </div>
+    <div id="cut-category-detail" class="cut-category-detail" hidden>
+      <button id="cut-category-back" class="cut-category-back" type="button">← Voltar às categorias</button>
+      <h3 id="cut-category-title" class="cut-category-title"></h3>
+      <p id="showcase-status" class="cut-catalog-status" role="status" aria-live="polite"></p>
+      <div id="booking-catalog-showcase" class="booking-catalog-showcase cut-detail-grid" aria-live="polite"></div>
+    </div>
+  </div>
+</section>
+    <section class="site-gallery" id="galeria" aria-labelledby="gallery-title">
+      <div class="wide-wrap">
+        <header class="site-section-heading">
+          <p class="overline">PORTFÓLIO DO PERFIL OFICIAL</p>
+          <h2 id="gallery-title">Trabalhos <em>reais</em></h2>
+          <p>Registros publicados por Aroldo. Escolha uma categoria para explorar.</p>
+        </header>
+        <div class="gallery-filters" role="group" aria-label="Filtrar trabalhos da galeria">
+          <button type="button" data-gallery-filter="cortes" aria-pressed="true">Cortes realizados</button>
+          <button type="button" data-gallery-filter="visagismo" aria-pressed="false">Visagismo</button>
+          <button type="button" data-gallery-filter="proteses" aria-pressed="false">Próteses capilares</button>
+          <button type="button" data-gallery-filter="barbas" aria-pressed="false">Barbas</button>
+          <button type="button" data-gallery-filter="outros" aria-pressed="false">Outros trabalhos</button>
+        </div>
+        <p id="gallery-status" class="gallery-status" role="status" aria-live="polite"></p>
+        <div id="gallery-grid" class="gallery-grid"></div>
+        <div id="gallery-empty" class="gallery-empty" hidden>
+          <p>Estamos organizando os registros oficiais desta categoria.</p>
+          <a href="https://www.instagram.com/aroldobarbeirooficial/reel/Da8t6IGR1Lg/" target="_blank" rel="noopener noreferrer" data-gallery-source>Ver publicação oficial sobre prótese capilar ↗</a>
+        </div>
+        <a class="gallery-profile-link" href="https://www.instagram.com/aroldobarbeirooficial/" target="_blank" rel="noopener noreferrer">VER PERFIL OFICIAL NO INSTAGRAM ↗</a>
+      </div>
+    </section>
+    <section class="site-contact" id="contato" aria-labelledby="contact-title">
+      <div class="wide-wrap">
+        <header class="site-section-heading">
+          <p class="overline">FALE DIRETO COM A EQUIPE</p>
+          <h2 id="contact-title">Contato</h2>
+        </header>
+        <div class="contact-cards">
+          <a class="contact-card contact-card-primary" href="https://wa.me/5511948446801?text=Ol%C3%A1%2C%20gostaria%20de%20agendar%20um%20atendimento." target="_blank" rel="noopener noreferrer">
+            <span class="contact-card-icon" aria-hidden="true">◉</span><span><strong>WhatsApp</strong><small>(11) 94844-6801 · fale e solicite seu horário</small></span><b aria-hidden="true">↗</b>
+          </a>
+          <a class="contact-card" href="https://www.google.com/maps/search/?api=1&query=Rua%20Salustiano%20Guerra%20495%2C%20Ribeira%20do%20Pombal%2C%20BA" target="_blank" rel="noopener noreferrer">
+            <span class="contact-card-icon" aria-hidden="true">⌖</span><span><strong>Visite a barbearia</strong><small>Rua Salustiano Guerra, 495 · Ribeira do Pombal, BA</small></span><b aria-hidden="true">↗</b>
+          </a>
+          <a class="contact-card" href="https://www.instagram.com/aroldobarbeirooficial/" target="_blank" rel="noopener noreferrer">
+            <span class="contact-card-icon" aria-hidden="true">◎</span><span><strong>Instagram</strong><small>@aroldobarbeirooficial</small></span><b aria-hidden="true">↗</b>
+          </a>
+          <a class="contact-card" href="/agendamento">
+            <span class="contact-card-icon" aria-hidden="true">◷</span><span><strong>Expediente e horários</strong><small>08h–12h e 14h–17h · confira os dias disponíveis na agenda</small></span><b aria-hidden="true">↗</b>
+          </a>
+        </div>
+        <a class="school-contact" href="https://wa.me/5511948446801?text=Ol%C3%A1%2C%20gostaria%20de%20informa%C3%A7%C3%B5es%20sobre%20a%20Escola%20Aroldo%20Barber." target="_blank" rel="noopener noreferrer">Informações sobre a Escola &amp; Barbearia ↗</a>
+      </div>
+    </section>
   </main>
-  <footer><div class="wide-wrap footer-content"><span>AROLDO BARBEIRO <small>ESCOLA &amp; BARBEARIA</small></span><p>Ribeira do Pombal · Bahia</p><a href="https://www.instagram.com/aroldobarbeirooficial/" target="_blank" rel="noopener noreferrer">@aroldobarbeirooficial ↗</a><a href="./admin.html">Área do Aroldo</a><button class="button button-outline-gold install-app" id="install-app" type="button" hidden>Instalar app</button><small>© <span id="year">2026</span> Aroldo Barbeiro · Site TR Design</small></div></footer>
+  <nav class="app-bottom-nav" aria-label="Navegação rápida">
+    <a href="/" aria-current="page"><svg viewBox="0 0 32 32" aria-hidden="true"><path d="m3 15 13-11 13 11M7 13v15h7v-9h4v9h7V13"/></svg><span>Início</span></a>
+    <a href="/agendamento"><svg viewBox="0 0 32 32" aria-hidden="true"><rect x="4" y="6" width="24" height="22" rx="2"/><path d="M10 3v7M22 3v7M4 13h24M10 19h3m5 0h3m-11 5h3m5 0h3"/></svg><span>Agendamento</span></a>
+    <a href="/cortes"><svg viewBox="0 0 32 32" aria-hidden="true"><circle cx="7" cy="25" r="4"/><circle cx="17" cy="25" r="4"/><path d="M10 23 27 4M20 23 7 4"/></svg><span>Cortes</span></a>
+    <a href="/galeria"><svg viewBox="0 0 32 32" aria-hidden="true"><rect x="4" y="5" width="24" height="22" rx="2"/><circle cx="11" cy="12" r="2"/><path d="m5 24 8-8 5 5 4-4 5 6"/></svg><span>Galeria</span></a>
+    <a href="/contato"><svg viewBox="0 0 32 32" aria-hidden="true"><path d="M8 4 4 8c0 10 10 20 20 20l4-4-7-7-4 4c-3-1-5-3-6-6l4-4-7-7Z"/></svg><span>Contato</span></a>
+  </nav>
+  <footer><div class="wide-wrap footer-content"><span>AROLDO BARBER <small>ESCOLA &amp; BARBEARIA</small></span><p>Ribeira do Pombal · Bahia</p><a href="https://www.instagram.com/aroldobarbeirooficial/" target="_blank" rel="noopener noreferrer">@aroldobarbeirooficial ↗</a><a href="./admin.html">Área do Aroldo</a><button class="button button-outline-gold install-app" id="install-app" type="button" hidden>Instalar app</button><small>© <span id="year">2026</span> Aroldo Barber · Site TR Design</small></div></footer>
   <dialog id="gallery-dialog" aria-label="Imagem ampliada"><button class="lightbox-close" type="button" aria-label="Fechar imagem">×</button><button class="lightbox-prev" type="button" aria-label="Imagem anterior">←</button><figure><img id="lightbox-image" alt=""><figcaption><span id="lightbox-caption"></span><a id="lightbox-link" target="_blank" rel="noopener noreferrer">VER FONTE NO INSTAGRAM ↗</a></figcaption></figure><button class="lightbox-next" type="button" aria-label="Próxima imagem">→</button></dialog>
+
 </body>
 </html>

@@ -46,10 +46,10 @@ Aroldo confirma cada solicitação manualmente. Um pedido pendente impede outros
 
 1. Para a prévia local, execute `node setup-admin.mjs` no diretório do projeto e crie uma senha de pelo menos 12 caracteres.
 2. Execute `node serve.mjs` e entre em `/admin.html`.
-3. Use **Aplicar 08h–12h e 14h–17h, segunda a sábado** no painel e salve. Domingo fica fechado. Configure os serviços ativos e a duração de cada um; até ativar ao menos um serviço com foto e preço, o público vê a agenda indisponível e pode conversar pelo WhatsApp.
+3. Use **Aplicar 08h–12h e 14h–17h, segunda a sábado** no painel e salve. Domingo fica fechado. Configure os serviços ativos, a foto e a duração de cada um; até ativar ao menos um serviço, o público vê a agenda indisponível. Serviços sem preço mostram **Valor a confirmar**, sem inventar um valor para o cliente.
 4. Para produção, siga a configuração Supabase e Vercel abaixo. O banco local não é enviado à produção.
 
-Para a nova vitrine, escolha uma foto real de cada serviço no painel. O envio de fotos na prévia local guarda arquivos em `dist/assets/`; em produção, a função da Vercel envia os arquivos ao bucket público `aroldo-services` no Supabase. Cadastre preço e foto antes de ativar um serviço. A galeria opcional mostra trabalhos já publicados no perfil oficial; escolher um estilo específico não é obrigatório.
+Para a nova vitrine, escolha uma foto real de cada serviço no painel. O envio de fotos na prévia local guarda arquivos em `dist/assets/`; em produção, a função da Vercel envia os arquivos ao bucket público `aroldo-services` no Supabase. Cadastre a foto antes de ativar um serviço e informe o preço quando estiver confirmado. A galeria opcional mostra trabalhos já publicados no perfil oficial; escolher um estilo específico não é obrigatório.
 
 O botão **Adicionar 20 cortes do catálogo IA** importa as 20 imagens fornecidas em `dist/assets/cortes-ia/`, associadas pelos números do ZIP aos nomes em `dist/catalogo-ia.json`. A importação pelo painel cria rascunhos **desativados**. As imagens são ilustrações geradas por IA e os preços e durações são provisórios; o painel e os cartões públicos identificam as imagens de IA. Aroldo pode editar tudo e substituir cada imagem por foto real quando desejar. O intervalo entre inícios de horário pode ser 15, 30 ou 60 minutos. Dias sem atendimento e horários especiais por data prevalecem sobre a semana normal.
 

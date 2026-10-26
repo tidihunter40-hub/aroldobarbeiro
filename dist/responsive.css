@@ -1,88 +1,10 @@
-/* Ajustes de toque e leitura para o painel de agendamento em telas menores. */
+/* Controles acessíveis e confortáveis para calendário e horários. */
 .booking-lunch[hidden] { display: none; }
-.booking-lunch strong { display: flex; flex-direction: column; align-items: center; }
-.booking-lunch small { max-width: 85px; }
-
-@media (max-width: 1050px) {
-  .booking-date-bar {
-    display: grid;
-    grid-template-columns: 44px minmax(0, 1fr) 44px;
-    gap: 8px;
-  }
-  .booking-date-arrow { width: 44px; height: 44px; }
-  .booking-day-choices {
-    display: flex;
-    gap: 7px;
-    min-width: 0;
-    overflow-x: auto;
-    overscroll-behavior-inline: contain;
-    scroll-snap-type: x proximity;
-    scrollbar-width: thin;
-    scrollbar-color: #bd9446 #171717;
-  }
-  .booking-day-choice {
-    flex: 0 0 66px;
-    width: 66px;
-    min-height: 74px;
-    height: 74px;
-    scroll-snap-align: start;
-    font-size: 11px;
-  }
-  .booking-day-choice b { font-size: 23px; }
-  .booking-day-choice small { font-size: 10px; }
-  .booking-date-picker {
-    grid-column: 1 / -1;
-    width: 100%;
-    height: 48px;
-    margin: 4px 0 0 !important;
-    font-size: 13px !important;
-  }
-  .booking-progress li span { font-size: 11px; }
-}
-
-@media (min-width: 761px) and (max-width: 900px) {
-  .booking-layout { width: min(100% - 32px, 820px); }
-  .booking-intro { width: 100%; padding-left: 145px; }
-  .booking .booking-panel, .booking-catalog-link, #booking-status { width: 100%; }
-  .booking-periods { grid-template-columns: minmax(0, 1fr) 90px minmax(0, 1fr); }
-  .booking-slot-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
-}
-
-@media (max-width: 760px) {
-  .booking-layout { width: min(100% - 24px, 650px); }
-  .booking .booking-panel { padding: 18px 13px; }
-  .booking-date-bar { grid-template-columns: 44px minmax(0, 1fr) 44px; gap: 7px; }
-  .booking-date-arrow { width: 44px; height: 44px; }
-  .booking-day-choices { gap: 7px; }
-  .booking-day-choice { flex-basis: 64px; width: 64px; min-height: 72px; height: 72px; font-size: 11px; }
-  .booking-day-choice b { font-size: 22px; }
-  .booking-day-choice small { font-size: 10px; }
-  .booking-date-picker { height: 48px; }
-  .booking-legend { justify-content: flex-start; gap: 10px 15px; }
-  .booking-legend span { font-size: 12px; }
-  .booking-legend i { width: 13px; height: 13px; }
-  .booking-slot-grid .slot { min-height: 64px; }
-  .booking-slot-grid .slot strong { font-size: 15px; }
-  .booking-slot-grid .slot small { font-size: 11px; }
-  .booking-lunch { gap: 10px; min-height: 64px; }
-  .booking-lunch strong { flex-direction: row; gap: 4px; font-size: 13px; white-space: nowrap; }
-  .booking-lunch small { max-width: 88px; font-size: 10px; }
-  .booking-progress li b { width: 32px; height: 32px; }
-  .booking-progress li span { font-size: 10px; line-height: 1.25; }
-  .booking-benefits span { font-size: 12px; }
-  .booking-benefits small { font-size: 11px; }
+.booking-date-arrow,.booking-slot-grid .slot,.booking-day-choice { touch-action: manipulation; }
+.booking-date-arrow:focus-visible,.booking-slot-grid .slot:focus-visible,.booking-day-choice:focus-visible,.booking-period-heading:focus-visible { outline: 3px solid #f5d995; outline-offset: 2px; }
+.booking-period-heading { -webkit-tap-highlight-color: transparent; }
+.booking-slot-grid[hidden] { display: none !important; }
+.booking-stage[hidden],.booking-result[hidden] { display: none !important; }
+@media (max-width: 1000px) {
   .booking-panel #booking-stage-service .booking-service-card { min-height: 72px; }
-}
-
-@media (max-width: 380px) {
-  .booking-slot-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-  .booking-signature { left: 12px; }
-  .booking-signature span { font-size: 28px; }
-  .booking-benefits > div { min-height: 72px; }
-}
-
-@supports (padding: env(safe-area-inset-left)) {
-  @media (max-width: 760px) {
-    .booking-layout { width: calc(100% - 24px - env(safe-area-inset-left) - env(safe-area-inset-right)); }
-  }
 }

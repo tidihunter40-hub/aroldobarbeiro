@@ -2,14 +2,13 @@
   const form = document.getElementById('booking-form');
   const day = document.getElementById('booking-day');
   const dayChoices = document.getElementById('booking-day-choices');
-  const morningSlots = document.getElementById('booking-slots-morning');
-  const afternoonSlots = document.getElementById('booking-slots-afternoon');
-  const lunch = document.querySelector('.booking-lunch');
+  const slotPeriods = document.getElementById('booking-slot-periods');
   const prevDays = document.getElementById('booking-days-prev');
   const nextDays = document.getElementById('booking-days-next');
   const services = document.getElementById('booking-services');
   const showcase = document.getElementById('booking-catalog-showcase');
   const showcaseStatus = document.getElementById('showcase-status');
+  const cutSelection = document.getElementById('booking-cut-selection');
   const status = document.getElementById('booking-status');
   const serviceStatus = document.getElementById('service-status');
   const confirmStatus = document.getElementById('confirm-status');
@@ -22,14 +21,20 @@
   const addDays = (value, count) => new Date(Date.parse(`${value}T12:00:00Z`) + count * 86400000).toISOString().slice(0, 10);
   const dateLabel = value => new Intl.DateTimeFormat('pt-BR', { weekday: 'long', day: 'numeric', month: 'long', timeZone: 'UTC' }).format(new Date(`${value}T12:00:00Z`));
   const money = cents => new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(cents / 100);
+  const priceLabel = cents => Number.isInteger(cents) ? money(cents) : 'Valor a confirmar';
+  const timeLabel = value => `${String(Math.floor(value / 60)).padStart(2, '0')}:${String(value % 60).padStart(2, '0')}`;
   const say = (element, value, bad = false) => { element.textContent = value; element.classList.toggle('error', bad); };
   let catalog = [];
+  let slotMinutes = 30;
   let chosenTime = '';
   let chosenService = null;
   let stage = 'agenda';
   let agendaSequence = 0;
   let checkSequence = 0;
   let preferredService = sessionStorage.getItem('aroldo-service') || '';
+  let selectedCut = null;
+  try { selectedCut = JSON.parse(sessionStorage.getItem('aroldo-cut') || 'null'); } catch { sessionStorage.removeItem('aroldo-cut'); }
+  sessionStorage.removeItem('aroldo-cut');
   let ready = false;
   let dayOffset = 0;
   sessionStorage.removeItem('aroldo-service');
@@ -86,20 +91,45 @@
   async function loadAgenda() {
     if (!ready) { say(status, 'Agenda ainda não configurada. Fale com Aroldo pelo WhatsApp.'); return; }
     const sequence = ++agendaSequence;
-    morningSlots.replaceChildren();
-    afternoonSlots.replaceChildren();
+    slotPeriods.replaceChildren();
     say(status, 'Buscando horários…');
     if (!day.value || day.value < day.min || day.value > day.max) { say(status, 'Escolha uma data nos próximos 60 dias.', true); return; }
     try {
       const { slots: entries } = await json(`/api/public/agenda?day=${encodeURIComponent(day.value)}`);
       if (sequence !== agendaSequence) return;
-      if (!entries.length) { lunch.hidden = true; say(status, 'Sem horários neste dia. Escolha outra data.'); return; }
+      if (!entries.length) { say(status, 'Sem horários neste dia. Escolha outra data.'); return; }
       say(status, '');
-      const duringLunch = entry => entry.time >= '12:00' && entry.time < '14:00';
-      lunch.hidden = entries.some(entry => duringLunch(entry) && entry.status !== 'unavailable');
-      const labels = { available: 'Livre', pending: 'Pendente', confirmed: 'Agendado', blocked: 'Ocupado', unavailable: 'Indisponível' };
-      for (const entry of entries) {
-        if (duringLunch(entry) && entry.status === 'unavailable') continue;
+      const labels = { available: 'Livre', pending: 'Pendente', confirmed: 'Ocupado', blocked: 'Ocupado', unavailable: 'Indisponível' };
+      const step = slotMinutes;
+      const toMinutes = value => Number(value.slice(0, 2)) * 60 + Number(value.slice(3, 5));
+      const createPeriod = (periodEntries, periodIndex) => {
+        const start = periodEntries[0].time;
+        const end = timeLabel(toMinutes(periodEntries.at(-1).time) + step);
+        const startsInMorning = start < '12:00';
+        const endsInMorning = end <= '12:00';
+        const title = startsInMorning && endsInMorning ? 'MANHÃ' : start >= '14:00' ? 'TARDE' : `PERÍODO ${periodIndex + 1}`;
+        const details = document.createElement('details');
+        details.className = 'booking-period';
+        details.open = true;
+        const heading = document.createElement('summary');
+        heading.className = 'booking-period-heading';
+        const icon = document.createElement('span');
+        icon.setAttribute('aria-hidden', 'true');
+        icon.textContent = title === 'MANHÃ' ? '☀' : title === 'TARDE' ? '◕' : '◷';
+        const label = document.createElement('span');
+        label.className = 'booking-period-label';
+        const name = document.createElement('strong');
+        name.textContent = title;
+        const hours = document.createElement('small');
+        hours.textContent = `${start} às ${end}`;
+        const toggle = document.createElement('b');
+        toggle.setAttribute('aria-hidden', 'true');
+        toggle.textContent = '⌃';
+        label.append(name, hours);
+        heading.append(icon, label, toggle);
+        const grid = document.createElement('div');
+        grid.className = 'booking-slot-grid';
+        for (const entry of periodEntries) {
         const button = document.createElement('button');
         button.type = 'button'; button.className = `slot slot-${entry.status}`;
         const time = document.createElement('strong');
@@ -113,12 +143,45 @@
           chosenTime = entry.time; chosenService = null; next.disabled = true;
           renderServices(); show('service');
         });
-        (Number(entry.time.slice(0, 2)) < 14 ? morningSlots : afternoonSlots).append(button);
+          grid.append(button);
+        }
+        details.append(heading, grid);
+        slotPeriods.append(details);
+      };
+      let periodEntries = [];
+      let periodIndex = 0;
+      for (let index = 0; index < entries.length;) {
+        const entry = entries[index];
+        if (entry.status !== 'unavailable') {
+          periodEntries.push(entry);
+          index += 1;
+          continue;
+        }
+        if (periodEntries.length) {
+          createPeriod(periodEntries, periodIndex++);
+          periodEntries = [];
+        }
+        const unavailable = [];
+        while (index < entries.length && entries[index].status === 'unavailable') {
+          unavailable.push(entries[index]);
+          index += 1;
+        }
+        const lunch = document.createElement('div');
+        lunch.className = 'booking-lunch';
+        lunch.setAttribute('aria-label', `Fechado das ${unavailable[0].time} às ${timeLabel(toMinutes(unavailable.at(-1).time) + step)}`);
+        const icon = document.createElement('span'); icon.setAttribute('aria-hidden', 'true'); icon.textContent = '◷';
+        const range = document.createElement('strong'); range.textContent = `${unavailable[0].time} às ${timeLabel(toMinutes(unavailable.at(-1).time) + step)}`;
+        const note = document.createElement('small'); note.textContent = 'FECHADO · INTERVALO';
+        lunch.append(icon, range, note);
+        slotPeriods.append(lunch);
       }
+      if (periodEntries.length) createPeriod(periodEntries, periodIndex);
     } catch (cause) { if (sequence === agendaSequence) say(status, navigator.onLine ? `${cause.message} Tente novamente.` : 'Você está offline. Conecte-se para consultar horários atualizados.', true); }
   }
   function renderServices() {
     services.replaceChildren();
+    cutSelection.hidden = !selectedCut;
+    cutSelection.textContent = selectedCut ? `Estilo escolhido: ${selectedCut.name}${Number.isInteger(selectedCut.priceCents) ? ` · ${money(selectedCut.priceCents)}` : ''}. A referência fica junto do seu pedido.` : '';
     say(serviceStatus, 'Escolha um serviço para este horário.');
     for (const item of catalog) {
       const button = document.createElement('button');
@@ -130,7 +193,7 @@
       const details = document.createElement('span'); details.className = 'booking-service-details';
       const name = document.createElement('strong'); name.textContent = item.name;
       const duration = document.createElement('small'); duration.textContent = `${item.duration} min`;
-      const price = document.createElement('b'); price.textContent = money(item.priceCents);
+      const price = document.createElement('b'); price.textContent = priceLabel(item.priceCents);
       details.append(name, duration, price);
       if (item.description) { const description = document.createElement('small'); description.textContent = item.description; details.append(description); }
       if (isAi) { const note = document.createElement('small'); note.className = 'booking-ai-note'; note.textContent = 'Imagem ilustrativa gerada por IA'; details.append(note); }
@@ -150,52 +213,61 @@
   }
   function renderShowcase() {
     showcase.replaceChildren();
-    if (!catalog.length) { showcaseStatus.textContent = 'Os cortes e preços estão em atualização.'; return; }
     showcaseStatus.textContent = '';
-    for (const item of catalog) {
-      const card = document.createElement('button'); card.type = 'button'; card.className = 'showcase-card';
-      card.setAttribute('aria-label', `${item.name}, ${money(item.priceCents)}. Escolher horário`);
-      const photo = document.createElement('img'); photo.src = item.photoUrl;
-      photo.alt = item.photoUrl.includes('/cortes-ia/') ? `Ilustração de IA: ${item.name}` : `Foto do serviço: ${item.name}`;
-      photo.loading = 'lazy';
-      const details = document.createElement('span'); details.className = 'showcase-details';
-      const title = document.createElement('strong'); title.textContent = item.name;
-      const duration = document.createElement('small'); duration.textContent = `${item.duration} min`;
-      const price = document.createElement('b'); price.textContent = money(item.priceCents);
-      const action = document.createElement('small'); action.className = 'showcase-action'; action.textContent = 'Escolher horário →';
-      details.append(title, duration, price);
-      if (item.description) { const note = document.createElement('small'); note.textContent = item.description; details.append(note); }
-      details.append(action); card.append(photo, details);
-      card.addEventListener('click', () => {
-        preferredService = item.name;
-        if (chosenTime) { renderServices(); show('service'); }
-        else { show('agenda'); loadAgenda(); }
-      });
-      showcase.append(card);
+    window.dispatchEvent(new CustomEvent('aroldo:servicos-carregados', { detail: { services: catalog } }));
+  }
+
+  const normalized = value => String(value || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLocaleLowerCase('pt-BR');
+  function categoryService(category, cutName = '') {
+    if (/barbaterapia|ozonio/.test(normalized(cutName))) {
+      return catalog.find(item => /barbaterapia|ozonio/.test(normalized(item.name))) || null;
+    }
+    const classify = service => {
+      const name = normalized(service.name);
+      if (/barba|barbaterapia|ozonio/.test(name)) return 'barbas';
+      if (/infantil|kids|crianca/.test(name)) return 'infantis';
+      if (/corte|masculino|mullet|fade|moicano|militar|pompadour|undercut/.test(name)) return 'masculinos';
+      return '';
+    };
+    return catalog.find(item => classify(item) === category) || null;
+  }
+  function handleCutChoice(event) {
+    const detail = event.detail;
+    if (!detail?.name || !['masculinos', 'infantis', 'barbas'].includes(detail.category)) return;
+    selectedCut = { name: detail.name, category: detail.category, image: detail.image || '', priceCents: Number.isInteger(detail.priceCents) ? detail.priceCents : null };
+    sessionStorage.setItem('aroldo-cut', JSON.stringify(selectedCut));
+    const exact = catalog.find(item => normalized(item.name) === normalized(detail.name));
+    preferredService = (exact || categoryService(detail.category, detail.name))?.name || '';
+    window.aroldoNavigate?.('/agendamento');
+    if (chosenTime) { renderServices(); show('service'); }
+    else {
+      show('agenda', false);
+      loadAgenda();
     }
   }
+  window.addEventListener('aroldo:selecionar-corte', handleCutChoice);
   async function checkService() {
     const sequence = ++checkSequence;
     next.disabled = true;
     if (!chosenService || !chosenTime) return;
-    say(serviceStatus, `${chosenService.name} · ${money(chosenService.priceCents)}. Conferindo o horário…`);
+    say(serviceStatus, `${chosenService.name} · ${priceLabel(chosenService.priceCents)}. Conferindo o horário…`);
     try {
       const { slots: available } = await json(`/api/public/slots?day=${encodeURIComponent(day.value)}&serviceId=${chosenService.id}`);
       if (sequence !== checkSequence) return;
       if (available.some(item => item.time === chosenTime && item.status === 'available')) {
         next.disabled = false;
-        say(serviceStatus, `${chosenService.name} · ${money(chosenService.priceCents)} · ${chosenService.duration} min`);
+        say(serviceStatus, `${chosenService.name} · ${priceLabel(chosenService.priceCents)} · ${chosenService.duration} min`);
       } else say(serviceStatus, 'Este serviço não cabe neste horário. Escolha outro serviço ou horário.', true);
     } catch (cause) { if (sequence === checkSequence) say(serviceStatus, cause.message, true); }
   }
   function renderSummary() {
     const summary = document.getElementById('booking-summary');
     summary.replaceChildren();
-    for (const line of [`✂️ ${chosenService.name}`, `📅 ${dateLabel(day.value)}`, `🕘 ${chosenTime}`, `💰 ${money(chosenService.priceCents)}`]) {
+    for (const line of [selectedCut ? `✂️ ${selectedCut.name} · serviço: ${chosenService.name}` : `✂️ ${chosenService.name}`, `📅 ${dateLabel(day.value)}`, `🕘 ${chosenTime}`, `💰 ${priceLabel(chosenService.priceCents)}`]) {
       const item = document.createElement('p'); item.textContent = line; summary.append(item);
     }
-    if (chosenService.description?.includes('Preço provisório')) {
-      const note = document.createElement('p'); note.textContent = 'Preço provisório. Aroldo confirma o valor com você.'; summary.append(note);
+    if (chosenService.priceCents == null || chosenService.description?.includes('Preço provisório')) {
+      const note = document.createElement('p'); note.textContent = 'Aroldo confirma o valor com você antes do atendimento.'; summary.append(note);
     }
   }
   next.addEventListener('click', () => { if (!next.disabled && chosenService) { renderSummary(); show('confirm'); } });
@@ -226,10 +298,11 @@
         body: JSON.stringify({ serviceId: chosenService.id, day: day.value, time: chosenTime, name, phone }) });
       result.replaceChildren();
       const title = document.createElement('h3'); title.textContent = 'Pronto! Agora é só aguardar a confirmação.';
-      const detail = document.createElement('p'); detail.textContent = `${booking.service} · ${dateLabel(booking.day)} às ${booking.time} · pedido #${booking.id}.`;
+      const detail = document.createElement('p'); detail.textContent = `${selectedCut ? `${selectedCut.name} · ` : ''}${booking.service} · ${dateLabel(booking.day)} às ${booking.time} · pedido #${booking.id}.`;
       const note = document.createElement('p'); note.textContent = 'Aroldo vê seu pedido no painel. O horário fica reservado por um período limitado enquanto aguarda.';
       const whatsapp = document.createElement('a'); whatsapp.className = 'button button-outline-gold';
-      whatsapp.href = `https://wa.me/5511948446801?text=${encodeURIComponent(`Olá, Aroldo! Pedi o horário #${booking.id} para ${booking.day} às ${booking.time}, serviço ${booking.service}. Aguardo sua confirmação.`)}`;
+      const whatsappMessage = `Olá, Aroldo! Pedi o horário #${booking.id} para ${booking.day} às ${booking.time}, serviço ${booking.service}${selectedCut ? `, estilo desejado ${selectedCut.name}` : ''}. Aguardo sua confirmação.`;
+      whatsapp.href = `https://wa.me/5511948446801?text=${encodeURIComponent(whatsappMessage)}`;
       whatsapp.target = '_blank'; whatsapp.rel = 'noopener noreferrer'; whatsapp.textContent = 'Avisar pelo WhatsApp ↗';
       result.append(title, detail, note, whatsapp);
       show('result');
@@ -244,7 +317,8 @@
     renderDays();
     try {
       const config = await json('/api/public/config');
-      catalog = config.services.filter(item => item.photoUrl && Number.isInteger(item.priceCents));
+      slotMinutes = Number(config.slotMinutes) || 30;
+      catalog = config.services.filter(item => item.photoUrl);
       renderShowcase();
       if (!config.configured || !catalog.length) {
         say(status, 'Agenda em configuração. Confirme pelo WhatsApp.');

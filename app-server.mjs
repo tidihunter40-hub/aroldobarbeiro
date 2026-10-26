@@ -5,7 +5,7 @@ import { extname, resolve, sep } from 'node:path';
 import { createBookingApi, openBookingDb } from './booking-api.mjs';
 
 const root = resolve('dist');
-const mime = { '.html': 'text/html; charset=utf-8', '.css': 'text/css; charset=utf-8', '.js': 'text/javascript; charset=utf-8', '.webmanifest': 'application/manifest+json; charset=utf-8', '.png': 'image/png', '.jpg': 'image/jpeg', '.svg': 'image/svg+xml' };
+const mime = { '.html': 'text/html; charset=utf-8', '.css': 'text/css; charset=utf-8', '.js': 'text/javascript; charset=utf-8', '.webmanifest': 'application/manifest+json; charset=utf-8', '.png': 'image/png', '.jpg': 'image/jpeg', '.webp': 'image/webp', '.svg': 'image/svg+xml' };
 const send = (response, status, value, headers = {}) => response.writeHead(status, { 'Content-Type': 'application/json; charset=utf-8', 'Cache-Control': 'no-store', ...headers }).end(JSON.stringify(value));
 const body = async request => {
   let raw = '';
@@ -94,7 +94,8 @@ export function createServer(dbPath = process.env.AROLDO_DB_PATH || resolve('dat
         if (unblock && request.method === 'DELETE') return send(response, 200, api.unblock(unblock[1]));
         return send(response, 404, { error: 'Rota não encontrada.' });
       }
-      const file = resolve(root, '.' + decodeURIComponent(path.replace(/\/$/, '/index.html')));
+      const screenPath = ['/agendamento', '/cortes', '/galeria', '/contato'].includes(path) ? '/index.html' : path;
+      const file = resolve(root, '.' + decodeURIComponent(screenPath.replace(/\/$/, '/index.html')));
       if (file !== root && !file.startsWith(root + sep)) { response.writeHead(403).end(); return; }
       const content = await readFile(file);
       response.writeHead(200, { 'Content-Type': mime[extname(file)] || 'application/octet-stream', 'Cache-Control': file.endsWith('admin.html') || file.endsWith('admin.js') ? 'no-store' : file.endsWith('.html') || file.endsWith('.js') ? 'no-cache' : 'public, max-age=3600' }).end(content);

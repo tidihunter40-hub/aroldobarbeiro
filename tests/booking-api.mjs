@@ -73,6 +73,8 @@ const fineGrid = api.settings(); fineGrid.slotMinutes = 15; api.updateSettings(f
 assert.equal(api.agenda(specialDay).find(x => x.time === '08:15').status, 'available');
 const coarseGrid = api.settings(); coarseGrid.slotMinutes = 60; api.updateSettings(coarseGrid);
 assert.equal(api.agenda(specialDay).some(x => x.time === '08:30'), false);
+const withoutPrice = api.settings(); withoutPrice.services[0].priceCents = null; api.updateSettings(withoutPrice);
+assert.equal(api.publicConfig().services[0].priceCents, null, 'Serviço pode receber pedido com valor a confirmar');
 assert.throws(() => api.request({ ...input, day: specialDay, time: '08:30', serviceId: settings.services[1].id }), { status: 400 });
 const defaultGrid = api.settings(); defaultGrid.slotMinutes = 30; api.updateSettings(defaultGrid);
 db.close();

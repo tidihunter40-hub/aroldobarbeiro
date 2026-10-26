@@ -4,7 +4,11 @@
   "outputDirectory": "dist",
   "regions": ["gru1"],
   "rewrites": [
-    { "source": "/api/:path*", "destination": "/api/index" }
+    { "source": "/api/:path*", "destination": "/api/index" },
+    { "source": "/agendamento", "destination": "/index.html" },
+    { "source": "/cortes", "destination": "/index.html" },
+    { "source": "/galeria", "destination": "/index.html" },
+    { "source": "/contato", "destination": "/index.html" }
   ],
   "headers": [
     { "source": "/(.*)", "headers": [

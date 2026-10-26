@@ -252,3 +252,84 @@ html { scroll-padding-top: 84px; }
   .hero-photo, .hero-vignette, .hero-overline, .hero h1, .hero-subtitle, .hero-description, .hero-actions, .hero-scroll span::after { animation: none; }
   .site-header, .header-book, .nav a::after { transition: none; }
 }
+
+/* Nova hero aprovada: fachada completa, texto integrado à arte e áreas de ação acessíveis. */
+.hero {
+  width: 100%;
+  height: min(100svh,45.71vw);
+  min-height: 0;
+  aspect-ratio: 1855 / 848;
+  overflow: hidden;
+}
+.hero::before,.hero::after,.hero-vignette,.hero-scroll,.hero-index { display: none; }
+.hero-photo {
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center center;
+  animation: none;
+}
+.hero-content {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 1px;
+  height: 1px;
+  min-height: 0;
+  padding: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+.hero-hitbox {
+  position: absolute;
+  z-index: 4;
+  display: block;
+  border: 0;
+  border-radius: 5px;
+  background: transparent;
+}
+.hero-hitbox:focus-visible { outline: 3px solid #fff; outline-offset: 2px; }
+.hero-hitbox-booking { left: 6.45%; top: 72%; width: 15.1%; height: 7.7%; }
+.hero-hitbox-services { left: 22.25%; top: 72%; width: 12.5%; height: 7.7%; }
+.hero-hitbox-instagram { left: 33.5%; top: 26%; width: 14.5%; height: 6.5%; }
+.hero-hitbox-whatsapp { left: 68.5%; top: 20.5%; width: 16%; height: 9%; }
+.hero-hitbox-explore { left: 6.4%; top: 86%; width: 11%; height: 7%; }
+@media (max-width: 700px) {
+  .hero { height: min(520px,120vw); min-height: 0; aspect-ratio: auto; }
+  .hero-photo { object-position: left center; }
+  .hero-hitbox-booking { left: 17.8%; top: 72%; width: 42%; height: 7.7%; }
+  .hero-hitbox-services { left: 61.7%; top: 72%; width: 34.5%; height: 7.7%; }
+  .hero-hitbox-instagram,.hero-hitbox-whatsapp { display: none; }
+  .hero-hitbox-explore { left: 17.8%; top: 86%; width: 28%; height: 7%; }
+}
+
+/* Arte nova do Aroldo: navegação e chamadas vêm integradas na referência desktop. */
+@media (min-width: 701px) {
+  .hero {
+    height: min(100svh, 56.31vw);
+    aspect-ratio: 1671 / 941;
+  }
+  .hero > picture { position: absolute; inset: 0; display: block; }
+  .hero-photo { inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: center; }
+  .hero-logo-resize { position: absolute; z-index: 3; inset: 0; overflow: hidden; pointer-events: none; }
+  .hero-logo-resize::before { content: ''; position: absolute; z-index: 1; left: 4.4%; top: 0; width: 8.7%; height: 9.3%; background: #040506; }
+  .hero-logo-resize::after { content: ''; position: absolute; z-index: 2; left: 0; top: 8.6%; width: 100%; height: 1px; background: rgba(255,255,255,.16); }
+  .hero-official-logo { position: absolute; z-index: 3; left: 4.45%; top: .15%; width: 7.6%; height: 8.5%; object-fit: cover; clip-path: ellipse(50% 50% at 50% 50%); }
+  .site-header:not(.is-scrolled) { visibility: hidden; opacity: 0; pointer-events: none; }
+  .site-header.is-scrolled { visibility: visible; opacity: 1; pointer-events: auto; }
+  .hero-hitbox-logo { left: 4.5%; top: .5%; width: 9.5%; height: 9%; }
+  .hero-hitbox-nav-home { left: 25%; top: 1.8%; width: 5.5%; height: 6%; }
+  .hero-hitbox-nav-services { left: 32.5%; top: 1.8%; width: 6.5%; height: 6%; }
+  .hero-hitbox-nav-gallery { left: 42.5%; top: 1.8%; width: 6.5%; height: 6%; }
+  .hero-hitbox-nav-about { left: 52.2%; top: 1.8%; width: 5.5%; height: 6%; }
+  .hero-hitbox-nav-contact { left: 60.8%; top: 1.8%; width: 6.5%; height: 6%; }
+  .hero-hitbox-booking-header { left: 79.8%; top: 1.8%; width: 15.4%; height: 6%; }
+  .hero-hitbox-booking { left: 4.2%; top: 69.4%; width: 17.2%; height: 8.2%; }
+  .hero-hitbox-services { left: 22.2%; top: 69.4%; width: 14.2%; height: 8.2%; }
+  .hero-hitbox-instagram { left: 36.5%; top: 33.5%; width: 14.5%; height: 7%; }
+  .hero-hitbox-whatsapp { left: 71%; top: 29.5%; width: 16.5%; height: 8%; }
+  .hero-hitbox-explore { display: none; }
+}
+@media (max-width: 700px) { .hero-logo-resize, .hero-official-logo { display: none; } }

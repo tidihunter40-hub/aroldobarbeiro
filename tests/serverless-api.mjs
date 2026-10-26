@@ -45,6 +45,11 @@ const validCatalog = await putSettings({ ...baseSettings, services: [baseSetting
   photoUrl: 'https://example.supabase.co/storage/v1/object/public/aroldo-services/abcdef12-3456-4567-8901-abcdef123456.jpg'
 }] });
 assert.equal(validCatalog.status, 200);
+const priceToConfirm = await putSettings({ ...baseSettings, services: [baseSettings.services[0], {
+  id: null, name: 'Barba', duration: 30, enabled: true, priceCents: null,
+  photoUrl: 'https://example.supabase.co/storage/v1/object/public/aroldo-services/abcdef12-3456-4567-8901-abcdef123456.jpg'
+}] });
+assert.equal(priceToConfirm.status, 200);
 const aiDraft = await putSettings({ ...baseSettings, services: [baseSettings.services[0], {
   id: null, name: 'Degradê Baixo', duration: 30, enabled: false, priceCents: 3500,
   photoUrl: './assets/cortes-ia/01_degrade_baixo.jpg', description: 'Imagem ilustrativa gerada por IA'

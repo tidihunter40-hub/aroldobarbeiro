@@ -1,0 +1,170 @@
+[
+  {
+    "categoria": "masculinos",
+    "nome": "Mullet",
+    "imagem": "./assets/cortes/masculinos/mullet.webp",
+    "imagem_png": "imagens/masculinos/mullet.png"
+  },
+  {
+    "categoria": "masculinos",
+    "nome": "Moicano",
+    "imagem": "./assets/cortes/masculinos/moicano.webp",
+    "imagem_png": "imagens/masculinos/moicano.png"
+  },
+  {
+    "categoria": "masculinos",
+    "nome": "Taper Fade",
+    "imagem": "./assets/cortes/masculinos/taper-fade.webp",
+    "imagem_png": "imagens/masculinos/taper-fade.png"
+  },
+  {
+    "categoria": "masculinos",
+    "nome": "Militar",
+    "imagem": "./assets/cortes/masculinos/militar.webp",
+    "imagem_png": "imagens/masculinos/militar.png"
+  },
+  {
+    "categoria": "masculinos",
+    "nome": "High Fade",
+    "imagem": "./assets/cortes/masculinos/high-fade.webp",
+    "imagem_png": "imagens/masculinos/high-fade.png"
+  },
+  {
+    "categoria": "masculinos",
+    "nome": "Tradicional",
+    "imagem": "./assets/cortes/masculinos/tradicional.webp",
+    "imagem_png": "imagens/masculinos/tradicional.png"
+  },
+  {
+    "categoria": "masculinos",
+    "nome": "Taper Fade Moderno",
+    "imagem": "./assets/cortes/masculinos/taper-fade-moderno.webp",
+    "imagem_png": "imagens/masculinos/taper-fade-moderno.png"
+  },
+  {
+    "categoria": "masculinos",
+    "nome": "Afro com Nudred",
+    "imagem": "./assets/cortes/masculinos/afro-com-nudred.webp",
+    "imagem_png": "imagens/masculinos/afro-com-nudred.png"
+  },
+  {
+    "categoria": "masculinos",
+    "nome": "Social Clássico",
+    "imagem": "./assets/cortes/masculinos/social-classico.webp",
+    "imagem_png": "imagens/masculinos/social-classico.png"
+  },
+  {
+    "categoria": "masculinos",
+    "nome": "Mid Fade",
+    "imagem": "./assets/cortes/masculinos/mid-fade.webp",
+    "imagem_png": "imagens/masculinos/mid-fade.png"
+  },
+  {
+    "categoria": "masculinos",
+    "nome": "Razor Part",
+    "imagem": "./assets/cortes/masculinos/razor-part.webp",
+    "imagem_png": "imagens/masculinos/razor-part.png"
+  },
+  {
+    "categoria": "masculinos",
+    "nome": "Low Fade",
+    "imagem": "./assets/cortes/masculinos/low-fade.webp",
+    "imagem_png": "imagens/masculinos/low-fade.png"
+  },
+  {
+    "categoria": "masculinos",
+    "nome": "Faux Hawx",
+    "imagem": "./assets/cortes/masculinos/faux-hawx.webp",
+    "imagem_png": "imagens/masculinos/faux-hawx.png"
+  },
+  {
+    "categoria": "masculinos",
+    "nome": "Buzz Cut",
+    "imagem": "./assets/cortes/masculinos/buzz-cut.webp",
+    "imagem_png": "imagens/masculinos/buzz-cut.png"
+  },
+  {
+    "categoria": "masculinos",
+    "nome": "Short Fringe",
+    "imagem": "./assets/cortes/masculinos/short-fringe.webp",
+    "imagem_png": "imagens/masculinos/short-fringe.png"
+  },
+  {
+    "categoria": "masculinos",
+    "nome": "Undercut",
+    "imagem": "./assets/cortes/masculinos/undercut.webp",
+    "imagem_png": "imagens/masculinos/undercut.png"
+  },
+  {
+    "categoria": "masculinos",
+    "nome": "Old Money",
+    "imagem": "./assets/cortes/masculinos/old-money.webp",
+    "imagem_png": "imagens/masculinos/old-money.png"
+  },
+  {
+    "categoria": "masculinos",
+    "nome": "Pompadour",
+    "imagem": "./assets/cortes/masculinos/pompadour.webp",
+    "imagem_png": "imagens/masculinos/pompadour.png"
+  },
+  {
+    "categoria": "infantis",
+    "nome": "Taper Fade Cacheado",
+    "imagem": "./assets/cortes/infantis/taper-fade-cacheado.webp",
+    "imagem_png": "imagens/infantis/taper-fade-cacheado.png"
+  },
+  {
+    "categoria": "infantis",
+    "nome": "Side Part",
+    "imagem": "./assets/cortes/infantis/side-part.webp",
+    "imagem_png": "imagens/infantis/side-part.png"
+  },
+  {
+    "categoria": "infantis",
+    "nome": "Razor Part",
+    "imagem": "./assets/cortes/infantis/razor-partiu.webp",
+    "imagem_png": "imagens/infantis/razor-partiu.png"
+  },
+  {
+    "categoria": "infantis",
+    "nome": "Clássico na Tesoura",
+    "imagem": "./assets/cortes/infantis/classico-na-tesoura.webp",
+    "imagem_png": "imagens/infantis/classico-na-tesoura.png"
+  },
+  {
+    "categoria": "infantis",
+    "nome": "Tigelinha",
+    "imagem": "./assets/cortes/infantis/tigelinha.webp",
+    "imagem_png": "imagens/infantis/tigelinha.png"
+  },
+  {
+    "categoria": "barbas",
+    "nome": "Barba Lenhador",
+    "imagem": "./assets/cortes/barbas/barba-lenhador.webp",
+    "imagem_png": "imagens/barbas/barba-lenhador.png"
+  },
+  {
+    "categoria": "barbas",
+    "nome": "Barba Social",
+    "imagem": "./assets/cortes/barbas/barba-social.webp",
+    "imagem_png": "imagens/barbas/barba-social.png"
+  },
+  {
+    "categoria": "barbas",
+    "nome": "Barba Cavanhaque",
+    "imagem": "./assets/cortes/barbas/barba-cavanhaque.webp",
+    "imagem_png": "imagens/barbas/barba-cavanhaque.png"
+  },
+  {
+    "categoria": "barbas",
+    "nome": "Barba Espartana",
+    "imagem": "./assets/cortes/barbas/barba-espartana.webp",
+    "imagem_png": "imagens/barbas/barba-espartana.png"
+  },
+  {
+    "categoria": "barbas",
+    "nome": "Barba Italiana",
+    "imagem": "./assets/cortes/barbas/barba-italiana.webp",
+    "imagem_png": "imagens/barbas/barba-italiana.png"
+  }
+]

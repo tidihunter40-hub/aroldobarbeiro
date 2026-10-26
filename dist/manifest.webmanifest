@@ -1,8 +1,8 @@
 {
   "id": "./",
-  "name": "Aroldo Barbeiro — Escola & Barbearia",
-  "short_name": "Aroldo Barbeiro",
-  "description": "Serviços, trabalhos e contato da Escola & Barbearia Aroldo Barbeiro em Ribeira do Pombal.",
+  "name": "Aroldo Barber — Escola & Barbearia",
+  "short_name": "Aroldo Barber",
+  "description": "Agende seu horário, explore cortes e trabalhos oficiais e entre em contato com Aroldo Barber em Ribeira do Pombal.",
   "lang": "pt-BR",
   "start_url": "./",
   "scope": "./",

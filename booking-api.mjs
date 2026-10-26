@@ -201,7 +201,7 @@ export function createBookingApi(db) {
         (s.name != null && (typeof s.name !== 'string' || s.name.trim().length < 2 || s.name.trim().length > 80)) ||
         (s.description != null && (typeof s.description !== 'string' || s.description.length > 240)) ||
         (s.priceCents != null && (!Number.isInteger(Number(s.priceCents)) || Number(s.priceCents) < 0 || Number(s.priceCents) > 10000000)) ||
-        (s.enabled && ('photoUrl' in s || 'priceCents' in s) && (s.priceCents == null || !s.photoUrl)))) throw error(400, 'Serviço inválido.');
+        (s.enabled && ('photoUrl' in s || 'priceCents' in s) && !s.photoUrl))) throw error(400, 'Serviço inválido.');
       const ids = services.filter(s => s.id != null).map(s => Number(s.id));
       if (new Set(ids).size !== known.length || known.some(s => !ids.includes(s.id))) throw error(400, 'Serviços duplicados ou ausentes.');
       if (hours.some((h, i) => Number(h.weekday) !== i || ((h.opens || h.closes) && !(Number.isFinite(minute(h.opens)) && Number.isFinite(minute(h.closes)) && minute(h.opens) < minute(h.closes))) || ((h.breakStart || h.breakEnd) && !(Number.isFinite(minute(h.breakStart)) && Number.isFinite(minute(h.breakEnd)) && minute(h.opens) <= minute(h.breakStart) && minute(h.breakStart) < minute(h.breakEnd) && minute(h.breakEnd) <= minute(h.closes))))) throw error(400, 'Expediente ou intervalo inválido.');

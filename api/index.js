@@ -99,7 +99,7 @@ function validateSettings(input, known) {
       (s.description != null && (typeof s.description !== 'string' || s.description.length > 240)) ||
       (s.priceCents != null && (!Number.isInteger(Number(s.priceCents)) || Number(s.priceCents) < 0 || Number(s.priceCents) > 10000000)) ||
       (s.photoUrl != null && (typeof s.photoUrl !== 'string' || !(/^(?:https:\/\/[^/]+\.supabase\.co\/storage\/v1\/object\/public\/aroldo-services\/[a-f0-9-]+\.(?:jpg|png|webp)|\.\/assets\/cortes-ia\/[0-9]{2}_[a-z0-9_]+\.jpg)$/.test(s.photoUrl)))) ||
-      (s.enabled && (s.priceCents == null || !s.photoUrl)) ||
+      (s.enabled && !s.photoUrl) ||
       !Number.isInteger(Number(s.duration)) || Number(s.duration) < 30 ||
       Number(s.duration) > 480 || Number(s.duration) % 30)) fail(400, 'Duração de serviço inválida.');
   const currentIds = services.filter(s => s.id != null).map(s => Number(s.id));
