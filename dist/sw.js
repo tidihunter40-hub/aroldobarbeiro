@@ -1,5 +1,5 @@
 const CACHE_PREFIX = 'aroldo-barber-';
-const CACHE_NAME = `${CACHE_PREFIX}v11`;
+const CACHE_NAME = `${CACHE_PREFIX}v12`;
 const APP_SHELL = './index.html';
 const PRECACHE = [
   './',
@@ -9,7 +9,7 @@ const PRECACHE = [
   './hero.css',
   './booking.css',
   './script.js',
-  './booking-client.js',
+  './booking-experience.js',
   './manifest.webmanifest',
   './assets/icon.svg',
   './assets/icon-180.png',

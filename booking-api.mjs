@@ -26,6 +26,9 @@ export function openBookingDb(path) {
     CREATE TABLE IF NOT EXISTS admin (id INTEGER PRIMARY KEY CHECK(id=1), salt TEXT NOT NULL, password_hash TEXT NOT NULL);
     CREATE TABLE IF NOT EXISTS sessions (token_hash TEXT PRIMARY KEY, expires_at INTEGER NOT NULL);
   `);
+  const columns = db.prepare('PRAGMA table_info(services)').all().map(column => column.name);
+  if (!columns.includes('price_cents')) db.exec('ALTER TABLE services ADD COLUMN price_cents INTEGER');
+  if (!columns.includes('photo_url')) db.exec('ALTER TABLE services ADD COLUMN photo_url TEXT');
   const insert = db.prepare('INSERT OR IGNORE INTO services(name) VALUES (?)');
   for (const name of SERVICE_NAMES) insert.run(name);
   for (let day = 0; day < 7; day++) db.prepare('INSERT OR IGNORE INTO hours(weekday) VALUES (?)').run(day);
@@ -43,7 +46,7 @@ export function setAdminPassword(db, password) {
 
 export function createBookingApi(db) {
   const readSettings = () => ({
-    services: db.prepare('SELECT id,name,duration,enabled FROM services ORDER BY id').all().map(s => ({ ...s, enabled: Boolean(s.enabled) })),
+    services: db.prepare('SELECT id,name,duration,enabled,price_cents AS priceCents,photo_url AS photoUrl FROM services ORDER BY id').all().map(s => ({ ...s, enabled: Boolean(s.enabled) })),
     hours: db.prepare('SELECT weekday,opens,closes,break_start AS breakStart,break_end AS breakEnd FROM hours ORDER BY weekday').all(),
     daysOff: db.prepare('SELECT day FROM days_off ORDER BY day').all().map(row => row.day),
     pendingMinutes: Number(db.prepare("SELECT value FROM settings WHERE key='pending_minutes'").get().value),
@@ -94,6 +97,20 @@ export function createBookingApi(db) {
         slots.push({ time: time(start), status: conflict ? conflict.status : 'available' });
       }
       return slots;
+    },
+    agenda(day) {
+      validateRange(day);
+      const window = dayWindow(day);
+      if (!window) return [];
+      const occupied = active(day);
+      const entries = [];
+      for (let start = Math.ceil(window.opens / 30) * 30; start + 30 <= window.closes; start += 30) {
+        if (day === today() && start <= minute(new Intl.DateTimeFormat('en-GB', { timeZone: TIME_ZONE, hour: '2-digit', minute: '2-digit', hourCycle: 'h23' }).format(new Date()))) continue;
+        const conflict = occupied.find(x => x.starts < start + 30 && x.ends > start);
+        const breakTime = Number.isFinite(window.breakStart) && start < window.breakEnd && start + 30 > window.breakStart;
+        entries.push({ time: time(start), status: breakTime ? 'blocked' : conflict?.status || 'available' });
+      }
+      return entries;
     },
     request(input) {
       const day = String(input.day || ''); validateRange(day);
@@ -165,14 +182,29 @@ export function createBookingApi(db) {
       const ttl = Number(input.pendingMinutes);
       if (!Array.isArray(hours) || hours.length !== 7 || !Array.isArray(services) || !Array.isArray(daysOff) || !Number.isInteger(ttl) || ttl < 5 || ttl > 1440) throw error(400, 'Configuração inválida.');
       const known = readSettings().services;
-      if (services.length !== known.length || services.some(s => !known.some(k => k.id === Number(s.id)) || !Number.isInteger(Number(s.duration)) || Number(s.duration) < 30 || Number(s.duration) > 480 || Number(s.duration) % 30)) throw error(400, 'Duração de serviço inválida.');
+      if (services.length < known.length || services.length > 40 || services.some(s =>
+        (s.id != null && !known.some(k => k.id === Number(s.id))) ||
+        !Number.isInteger(Number(s.duration)) || Number(s.duration) < 30 || Number(s.duration) > 480 || Number(s.duration) % 30 ||
+        (s.name != null && (typeof s.name !== 'string' || s.name.trim().length < 2 || s.name.trim().length > 80)) ||
+        (s.priceCents != null && (!Number.isInteger(Number(s.priceCents)) || Number(s.priceCents) < 0 || Number(s.priceCents) > 10000000)) ||
+        (s.enabled && ('photoUrl' in s || 'priceCents' in s) && (s.priceCents == null || !s.photoUrl)))) throw error(400, 'Serviço inválido.');
+      const ids = services.filter(s => s.id != null).map(s => Number(s.id));
+      if (new Set(ids).size !== known.length || known.some(s => !ids.includes(s.id))) throw error(400, 'Serviços duplicados ou ausentes.');
       if (hours.some((h, i) => Number(h.weekday) !== i || ((h.opens || h.closes) && !(Number.isFinite(minute(h.opens)) && Number.isFinite(minute(h.closes)) && minute(h.opens) < minute(h.closes))) || ((h.breakStart || h.breakEnd) && !(Number.isFinite(minute(h.breakStart)) && Number.isFinite(minute(h.breakEnd)) && minute(h.opens) <= minute(h.breakStart) && minute(h.breakStart) < minute(h.breakEnd) && minute(h.breakEnd) <= minute(h.closes))))) throw error(400, 'Expediente ou intervalo inválido.');
       if (daysOff.some(day => !validDate(day))) throw error(400, 'Dia sem atendimento inválido.');
       return transaction(() => {
         const updateHours = db.prepare('UPDATE hours SET opens=?,closes=?,break_start=?,break_end=? WHERE weekday=?');
         hours.forEach(h => updateHours.run(h.opens || null, h.closes || null, h.breakStart || null, h.breakEnd || null, Number(h.weekday)));
-        const updateService = db.prepare('UPDATE services SET duration=?,enabled=? WHERE id=?');
-        services.forEach(s => updateService.run(Number(s.duration), s.enabled ? 1 : 0, Number(s.id)));
+        const updateService = db.prepare('UPDATE services SET name=?,duration=?,enabled=?,price_cents=?,photo_url=? WHERE id=?');
+        const insertService = db.prepare('INSERT INTO services(name,duration,enabled,price_cents,photo_url) VALUES (?,?,?,?,?)');
+        services.forEach(s => {
+          const old = known.find(item => item.id === Number(s.id));
+          const values = [s.name?.trim() || old?.name, Number(s.duration), s.enabled ? 1 : 0,
+            s.priceCents === undefined ? old?.priceCents ?? null : s.priceCents,
+            s.photoUrl === undefined ? old?.photoUrl ?? null : s.photoUrl];
+          if (s.id == null) insertService.run(...values);
+          else updateService.run(...values, Number(s.id));
+        });
         db.prepare('DELETE FROM days_off').run();
         const insertDay = db.prepare('INSERT INTO days_off(day) VALUES (?)');
         [...new Set(daysOff)].forEach(day => insertDay.run(day));

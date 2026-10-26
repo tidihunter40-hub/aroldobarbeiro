@@ -26,8 +26,9 @@ for (const file of localFiles) {
 }
 
 const services = [...html.matchAll(/data-service="([^"]+)"/g)].map(match => match[1]);
-const bookingClient = read('booking-client.js');
+const bookingClient = read('booking-experience.js');
 assert.match(bookingClient, /\/api\/public\/config/, 'Serviços devem vir da API');
+assert.match(bookingClient, /\/api\/public\/agenda/, 'Agenda deve aparecer antes da escolha do serviço');
 for (const service of services) assert.ok(readFileSync(resolve('booking-api.mjs'), 'utf8').includes(service), `Serviço sem cadastro na API: ${service}`);
 
 const assetBytes = [...precache]

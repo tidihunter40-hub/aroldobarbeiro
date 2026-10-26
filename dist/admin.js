@@ -52,14 +52,45 @@
       }
     } catch (cause) { say(cause.message, true); }
   }
+  function serviceRow(item = { id: '', name: '', duration: 30, priceCents: null, photoUrl: null, enabled: false }) {
+    const row = node('div', null, 'setting-row service-setting'); row.dataset.id = item.id;
+    row.dataset.photoUrl = item.photoUrl || '';
+    const preview = document.createElement('img'); preview.className = 'service-preview';
+    preview.alt = item.photoUrl ? `Foto de ${item.name}` : 'Foto ainda não cadastrada';
+    if (item.photoUrl) preview.src = item.photoUrl;
+    const field = (label, type, value, className) => {
+      const wrapper = node('label', label, className);
+      const input = document.createElement('input'); input.type = type; input.value = value ?? '';
+      wrapper.append(input); return wrapper;
+    };
+    const name = field('Nome', 'text', item.name, 'service-name'); name.querySelector('input').maxLength = 80;
+    const price = field('Preço (R$)', 'number', item.priceCents == null ? '' : (item.priceCents / 100).toFixed(2), 'service-price');
+    const priceInput = price.querySelector('input'); priceInput.min = 0; priceInput.max = 100000; priceInput.step = '0.01'; priceInput.inputMode = 'decimal';
+    const duration = field('Duração (min)', 'number', item.duration, 'service-duration');
+    const durationInput = duration.querySelector('input'); durationInput.min = 30; durationInput.max = 480; durationInput.step = 30;
+    const photo = field('Foto real (JPG, PNG ou WebP, até 3 MB)', 'file', '', 'service-photo');
+    photo.querySelector('input').accept = 'image/jpeg,image/png,image/webp';
+    photo.querySelector('input').addEventListener('change', async event => {
+      const file = event.target.files[0]; if (!file) return;
+      if (file.size > 3145728) { say('Escolha uma foto de até 3 MB.', true); return; }
+      say('Enviando foto…');
+      try {
+        const response = await fetch('/api/admin/service-photo', { method: 'POST', credentials: 'same-origin', headers: { 'Content-Type': file.type }, body: file });
+        const data = await response.json();
+        if (!response.ok) throw new Error(data.error || 'Não foi possível enviar a foto.');
+        row.dataset.photoUrl = data.photoUrl; preview.src = data.photoUrl; preview.alt = `Foto de ${name.querySelector('input').value || 'serviço'}`;
+        say('Foto enviada. Salve as configurações para usar no serviço.');
+      } catch (cause) { say(cause.message, true); }
+    });
+    const active = node('label', 'Mostrar na agenda', 'service-active');
+    const enabled = document.createElement('input'); enabled.type = 'checkbox'; enabled.checked = item.enabled;
+    active.append(enabled);
+    row.append(preview, name, price, duration, photo, active);
+    document.getElementById('services-settings').append(row);
+  }
   function renderSettings() {
     const services = document.getElementById('services-settings'); services.replaceChildren();
-    for (const item of settings.services) {
-      const row = node('div', null, 'setting-row'); row.dataset.id = item.id;
-      const enabled = document.createElement('input'); enabled.type = 'checkbox'; enabled.checked = item.enabled; enabled.setAttribute('aria-label', `Ativar ${item.name}`);
-      const duration = document.createElement('input'); duration.type = 'number'; duration.min = 30; duration.max = 480; duration.step = 30; duration.value = item.duration; duration.setAttribute('aria-label', `Duração em minutos de ${item.name}`);
-      row.append(enabled, node('strong', item.name), node('span', 'Duração (min):'), duration); services.append(row);
-    }
+    for (const item of settings.services) serviceRow(item);
     const hours = document.getElementById('hours-settings'); hours.replaceChildren();
     const names = ['Domingo','Segunda','Terça','Quarta','Quinta','Sexta','Sábado'];
     for (const item of settings.hours) {
@@ -73,6 +104,7 @@
     document.getElementById('pending-minutes').value = settings.pendingMinutes;
   }
   async function loadSettings() { settings = await json('/api/admin/settings'); renderSettings(); }
+  document.getElementById('add-service').addEventListener('click', () => serviceRow());
   async function enter() { showDashboard(true); await Promise.all([loadAgenda(), loadSettings()]); say('Agenda atualizada.'); }
   document.getElementById('login-form').addEventListener('submit', async event => {
     event.preventDefault();
@@ -93,7 +125,15 @@
   });
   document.getElementById('settings-form').addEventListener('submit', async event => {
     event.preventDefault();
-    const services = [...document.querySelectorAll('#services-settings .setting-row')].map(row => ({ id: Number(row.dataset.id), enabled: row.querySelector('[type=checkbox]').checked, duration: Number(row.querySelector('[type=number]').value) }));
+    const services = [...document.querySelectorAll('#services-settings .service-setting')].map(row => {
+      const price = row.querySelector('.service-price input').value;
+      return { id: row.dataset.id ? Number(row.dataset.id) : null,
+        name: row.querySelector('.service-name input').value.trim(),
+        priceCents: price === '' ? null : Math.round(Number(price) * 100),
+        duration: Number(row.querySelector('.service-duration input').value),
+        photoUrl: row.dataset.photoUrl || null,
+        enabled: row.querySelector('.service-active input').checked };
+    });
     const hours = [...document.querySelectorAll('#hours-settings .setting-row')].map(row => {
       const record = { weekday: Number(row.dataset.weekday) };
       row.querySelectorAll('input').forEach(input => record[input.dataset.key] = input.value);

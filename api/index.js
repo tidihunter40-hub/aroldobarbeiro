@@ -1,4 +1,4 @@
-import { createHash, createHmac, timingSafeEqual } from 'node:crypto';
+import { createHash, createHmac, randomUUID, timingSafeEqual } from 'node:crypto';
 
 const zone = 'America/Bahia';
 const fail = (status, message) => { throw Object.assign(new Error(message), { status }); };
@@ -88,19 +88,32 @@ function validateSettings(input, known) {
   const { hours, services, daysOff } = input;
   const ttl = Number(input.pendingMinutes);
   if (!Array.isArray(hours) || hours.length !== 7 || !Array.isArray(services) ||
-      services.length !== known.services.length || !Array.isArray(daysOff) ||
+      services.length < known.services.length || services.length > 40 || !Array.isArray(daysOff) ||
       !Number.isInteger(ttl) || ttl < 5 || ttl > 1440) fail(400, 'Configuração inválida.');
-  if (services.some(s => !known.services.some(k => k.id === Number(s.id)) ||
+  if (services.some(s => (s.id != null && !known.services.some(k => k.id === Number(s.id))) ||
+      typeof s.name !== 'string' || s.name.trim().length < 2 || s.name.trim().length > 80 ||
+      (s.priceCents != null && (!Number.isInteger(Number(s.priceCents)) || Number(s.priceCents) < 0 || Number(s.priceCents) > 10000000)) ||
+      (s.photoUrl != null && (typeof s.photoUrl !== 'string' || !/^https:\/\/[^/]+\.supabase\.co\/storage\/v1\/object\/public\/aroldo-services\/[a-f0-9-]+\.(?:jpg|png|webp)$/.test(s.photoUrl))) ||
+      (s.enabled && (s.priceCents == null || !s.photoUrl)) ||
       !Number.isInteger(Number(s.duration)) || Number(s.duration) < 30 ||
       Number(s.duration) > 480 || Number(s.duration) % 30)) fail(400, 'Duração de serviço inválida.');
-  if (new Set(services.map(s => Number(s.id))).size !== services.length) fail(400, 'Serviços duplicados.');
+  const currentIds = services.filter(s => s.id != null).map(s => Number(s.id));
+  if (new Set(currentIds).size !== known.services.length ||
+      known.services.some(s => !currentIds.includes(s.id)) ||
+      new Set(services.map(s => s.name.trim().toLocaleLowerCase('pt-BR'))).size !== services.length)
+    fail(400, 'Serviços duplicados ou ausentes.');
   if (hours.some((h, i) => Number(h.weekday) !== i ||
       ((h.opens || h.closes) && !(Number.isFinite(minute(h.opens)) && Number.isFinite(minute(h.closes)) && minute(h.opens) < minute(h.closes))) ||
       ((h.breakStart || h.breakEnd) && !(Number.isFinite(minute(h.breakStart)) && Number.isFinite(minute(h.breakEnd)) &&
         minute(h.opens) <= minute(h.breakStart) && minute(h.breakStart) < minute(h.breakEnd) && minute(h.breakEnd) <= minute(h.closes)))))
     fail(400, 'Expediente ou intervalo inválido.');
   if (daysOff.some(day => !validDay(day))) fail(400, 'Dia sem atendimento inválido.');
-  return { hours, services, daysOff, pendingMinutes: ttl };
+  const origin = process.env.SUPABASE_URL?.replace(/\/$/, '');
+  if (services.some(s => s.photoUrl && !s.photoUrl.startsWith(`${origin}/storage/v1/object/public/aroldo-services/`)))
+    fail(400, 'Foto fora da biblioteca de serviços.');
+  return { hours, services: services.map(s => ({ id: s.id ?? null, name: s.name.trim(), duration: Number(s.duration),
+    enabled: Boolean(s.enabled), priceCents: s.priceCents == null ? null : Number(s.priceCents), photoUrl: s.photoUrl || null })),
+    daysOff, pendingMinutes: ttl };
 }
 
 export default {
@@ -117,6 +130,10 @@ export default {
         return response({ services: settings.services.filter(x => x.enabled),
           configured: settings.hours.some(x => x.opens && x.closes) && settings.services.some(x => x.enabled),
           pendingMinutes: settings.pendingMinutes, timeZone: zone });
+      }
+      if (path === '/api/public/agenda' && request.method === 'GET') {
+        const day = url.searchParams.get('day'); checkRange(day);
+        return response({ slots: await rpc('aroldo_agenda', { p_day: day }) });
       }
       if (path === '/api/public/slots' && request.method === 'GET') {
         const day = url.searchParams.get('day'); checkRange(day);
@@ -149,6 +166,27 @@ export default {
       if (path === '/api/admin/settings' && request.method === 'PUT') {
         const input = validateSettings(await body(request), await rpc('aroldo_settings_read'));
         return response(await rpc('aroldo_settings_update', { p_input: input }));
+      }
+      if (path === '/api/admin/service-photo' && request.method === 'POST') {
+        const type = request.headers.get('content-type') || '';
+        const extensions = { 'image/jpeg': 'jpg', 'image/png': 'png', 'image/webp': 'webp' };
+        if (!extensions[type]) fail(415, 'Escolha uma foto JPG, PNG ou WebP.');
+        if (Number(request.headers.get('content-length')) > 3145728) fail(413, 'Foto maior que 3 MB.');
+        const bytes = Buffer.from(await request.arrayBuffer());
+        if (!bytes.length || bytes.length > 3145728) fail(413, 'Foto vazia ou maior que 3 MB.');
+        const valid = type === 'image/jpeg' ? bytes[0] === 0xff && bytes[1] === 0xd8 && bytes[2] === 0xff :
+          type === 'image/png' ? bytes.subarray(0, 8).equals(Buffer.from([137,80,78,71,13,10,26,10])) :
+          bytes.toString('ascii', 0, 4) === 'RIFF' && bytes.toString('ascii', 8, 12) === 'WEBP';
+        if (!valid) fail(400, 'Arquivo de imagem inválido.');
+        const base = process.env.SUPABASE_URL?.replace(/\/$/, '');
+        const key = process.env.SUPABASE_SECRET_KEY;
+        if (!base || !key) fail(503, 'Banco ainda não configurado.');
+        const filename = `${randomUUID()}.${extensions[type]}`;
+        const uploaded = await fetch(`${base}/storage/v1/object/aroldo-services/${filename}`, {
+          method: 'POST', headers: { apikey: key, 'Content-Type': type, 'Cache-Control': 'max-age=31536000' }, body: bytes
+        });
+        if (!uploaded.ok) fail(503, 'Não foi possível salvar a foto. Confira a migração do banco.');
+        return response({ photoUrl: `${base}/storage/v1/object/public/aroldo-services/${filename}` }, 201);
       }
       if (path === '/api/admin/appointments' && request.method === 'GET') {
         const from = url.searchParams.get('from'), to = url.searchParams.get('to');

@@ -6,12 +6,16 @@ process.env.SUPABASE_SECRET_KEY = 'server-only-test-key';
 process.env.AROLDO_ADMIN_PASSWORD = 'a-strong-test-password';
 
 const calls = [];
+const baseSettings = { services: [{ id: 1, name: 'Corte masculino', duration: 30, enabled: false, priceCents: null, photoUrl: null }],
+  hours: Array.from({ length: 7 }, (_, weekday) => ({ weekday, opens: null, closes: null, breakStart: null, breakEnd: null })),
+  daysOff: [], pendingMinutes: 30, adminConfigured: true };
 globalThis.fetch = async (url, options) => {
-  calls.push({ url, body: JSON.parse(options.body), key: options.headers.apikey });
+  calls.push({ url, body: url.includes('/storage/') ? null : JSON.parse(options.body), key: options.headers.apikey });
   if (url.endsWith('/aroldo_rate_limit')) return Response.json(true);
-  if (url.endsWith('/aroldo_settings_read')) return Response.json({
-    services: [], hours: [], daysOff: [], pendingMinutes: 30, adminConfigured: true
-  });
+  if (url.endsWith('/aroldo_agenda')) return Response.json([{ time: '09:00', status: 'available' }]);
+  if (url.includes('/storage/v1/object/aroldo-services/')) return Response.json({ Key: 'uploaded' }, { status: 200 });
+  if (url.endsWith('/aroldo_settings_read')) return Response.json(baseSettings);
+  if (url.endsWith('/aroldo_settings_update')) return Response.json(options.body ? JSON.parse(options.body).p_input : {});
   throw Error(`Unexpected RPC: ${url}`);
 };
 
@@ -30,6 +34,31 @@ assert.match(login.headers.get('set-cookie'), /HttpOnly; Secure; SameSite=Strict
 
 const settings = await handler.fetch(new Request('https://example.vercel.app/api/admin/settings', { headers: { Cookie: cookie } }));
 assert.equal(settings.status, 200);
+
+const putSettings = value => handler.fetch(new Request('https://example.vercel.app/api/admin/settings', {
+  method: 'PUT', headers: { Cookie: cookie, 'Content-Type': 'application/json' }, body: JSON.stringify(value)
+}));
+const missingPhoto = await putSettings({ ...baseSettings, services: [{ ...baseSettings.services[0], enabled: true, priceCents: 3000 }] });
+assert.equal(missingPhoto.status, 400);
+const validCatalog = await putSettings({ ...baseSettings, services: [baseSettings.services[0], {
+  id: null, name: 'Novo serviço', duration: 60, enabled: true, priceCents: 4500,
+  photoUrl: 'https://example.supabase.co/storage/v1/object/public/aroldo-services/abcdef12-3456-4567-8901-abcdef123456.jpg'
+}] });
+assert.equal(validCatalog.status, 200);
+
+const today = new Intl.DateTimeFormat('en-CA', { timeZone: 'America/Bahia', year: 'numeric', month: '2-digit', day: '2-digit' }).format(new Date());
+const agenda = await handler.fetch(new Request(`https://example.vercel.app/api/public/agenda?day=${today}`));
+assert.equal(agenda.status, 200);
+assert.equal((await agenda.json()).slots[0].time, '09:00');
+const unauthorizedPhoto = await handler.fetch(new Request('https://example.vercel.app/api/admin/service-photo', {
+  method: 'POST', headers: { 'Content-Type': 'image/jpeg' }, body: Buffer.from([0xff, 0xd8, 0xff, 0x00])
+}));
+assert.equal(unauthorizedPhoto.status, 401);
+const photo = await handler.fetch(new Request('https://example.vercel.app/api/admin/service-photo', {
+  method: 'POST', headers: { Cookie: cookie, 'Content-Type': 'image/jpeg' }, body: Buffer.from([0xff, 0xd8, 0xff, 0x00])
+}));
+assert.equal(photo.status, 201);
+assert.match((await photo.json()).photoUrl, /^https:\/\/example\.supabase\.co\/storage\/v1\/object\/public\/aroldo-services\//);
 
 const tampered = await handler.fetch(new Request('https://example.vercel.app/api/admin/settings', { headers: { Cookie: cookie + 'x' } }));
 assert.equal(tampered.status, 401);

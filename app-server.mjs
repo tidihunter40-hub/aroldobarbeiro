@@ -1,5 +1,6 @@
 import http from 'node:http';
-import { readFile } from 'node:fs/promises';
+import { readFile, writeFile } from 'node:fs/promises';
+import { randomUUID } from 'node:crypto';
 import { extname, resolve, sep } from 'node:path';
 import { createBookingApi, openBookingDb } from './booking-api.mjs';
 
@@ -31,9 +32,10 @@ export function createServer(dbPath = process.env.AROLDO_DB_PATH || resolve('dat
         if (!['GET', 'HEAD'].includes(request.method)) {
           const origin = request.headers.origin;
           if (origin && new URL(origin).host !== request.headers.host) return send(response, 403, { error: 'Origem não autorizada.' });
-          if (!String(request.headers['content-type'] || '').startsWith('application/json')) return send(response, 415, { error: 'Envie JSON.' });
+          if (path !== '/api/admin/service-photo' && !String(request.headers['content-type'] || '').startsWith('application/json')) return send(response, 415, { error: 'Envie JSON.' });
         }
         if (path === '/api/public/config' && request.method === 'GET') return send(response, 200, api.publicConfig());
+        if (path === '/api/public/agenda' && request.method === 'GET') return send(response, 200, { slots: api.agenda(url.searchParams.get('day')) });
         if (path === '/api/public/slots' && request.method === 'GET') return send(response, 200, { slots: api.slots(url.searchParams.get('day'), url.searchParams.get('serviceId')) });
         if (path === '/api/public/appointments' && request.method === 'POST') {
           const key = request.socket.remoteAddress || 'unknown';
@@ -65,6 +67,25 @@ export function createServer(dbPath = process.env.AROLDO_DB_PATH || resolve('dat
         if (path === '/api/admin/logout' && request.method === 'POST') { api.logout(session); return send(response, 200, { ok: true }, { 'Set-Cookie': cookie(request, '', 0) }); }
         if (path === '/api/admin/settings' && request.method === 'GET') return send(response, 200, api.settings());
         if (path === '/api/admin/settings' && request.method === 'PUT') return send(response, 200, api.updateSettings(await body(request)));
+        if (path === '/api/admin/service-photo' && request.method === 'POST') {
+          const type = request.headers['content-type'];
+          const ext = { 'image/jpeg': 'jpg', 'image/png': 'png', 'image/webp': 'webp' }[type];
+          if (!ext) return send(response, 415, { error: 'Escolha uma foto JPG, PNG ou WebP.' });
+          const chunks = []; let size = 0;
+          for await (const chunk of request) {
+            size += chunk.length;
+            if (size > 3145728) return send(response, 413, { error: 'Foto maior que 3 MB.' });
+            chunks.push(chunk);
+          }
+          const bytes = Buffer.concat(chunks);
+          const valid = type === 'image/jpeg' ? bytes[0] === 0xff && bytes[1] === 0xd8 && bytes[2] === 0xff :
+            type === 'image/png' ? bytes.subarray(0, 8).equals(Buffer.from([137,80,78,71,13,10,26,10])) :
+            bytes.toString('ascii', 0, 4) === 'RIFF' && bytes.toString('ascii', 8, 12) === 'WEBP';
+          if (!valid) return send(response, 400, { error: 'Arquivo de imagem inválido.' });
+          const filename = `service-${randomUUID()}.${ext}`;
+          await writeFile(resolve(root, 'assets', filename), bytes);
+          return send(response, 201, { photoUrl: `./assets/${filename}` });
+        }
         if (path === '/api/admin/appointments' && request.method === 'GET') return send(response, 200, { appointments: api.appointments(url.searchParams.get('from'), url.searchParams.get('to')) });
         if (path === '/api/admin/blocks' && request.method === 'POST') { const input = await body(request); return send(response, 201, api.block(input.day, input.time, Number(input.duration))); }
         const action = /^\/api\/admin\/appointments\/(\d+)\/(confirm|cancel)$/.exec(path);
