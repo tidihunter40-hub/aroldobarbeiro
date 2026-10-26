@@ -50,6 +50,8 @@
   }
   function show(name, scroll = true) {
     stage = name;
+    document.getElementById('agendar').dataset.step = name;
+    document.body.dataset.bookingStep = name;
     Object.entries(stages).forEach(([key, element]) => { element.hidden = key !== name; });
     result.hidden = name !== 'result';
     form.querySelectorAll('.booking-progress li').forEach((item, index) => {
@@ -181,7 +183,14 @@
   function renderServices() {
     services.replaceChildren();
     cutSelection.hidden = !selectedCut;
-    cutSelection.textContent = selectedCut ? `Estilo escolhido: ${selectedCut.name}${Number.isInteger(selectedCut.priceCents) ? ` · ${money(selectedCut.priceCents)}` : ''}. A referência fica junto do seu pedido.` : '';
+    cutSelection.replaceChildren();
+    if (selectedCut) {
+      const crown = document.createElement('span'); crown.className = 'booking-cut-crown'; crown.setAttribute('aria-hidden', 'true'); crown.textContent = '♛';
+      const copy = document.createElement('span');
+      const title = document.createElement('strong'); title.textContent = `Estilo escolhido: ${selectedCut.name}${Number.isInteger(selectedCut.priceCents) ? ` · ${money(selectedCut.priceCents)}` : ''}`;
+      const note = document.createElement('small'); note.textContent = 'A referência fica junto do seu pedido.';
+      copy.append(title, note); cutSelection.append(crown, copy);
+    }
     say(serviceStatus, 'Escolha um serviço para este horário.');
     for (const item of catalog) {
       const button = document.createElement('button');
@@ -191,13 +200,20 @@
       const isAi = item.photoUrl.includes('/cortes-ia/');
       photo.src = item.photoUrl; photo.alt = isAi ? `Imagem ilustrativa gerada por IA: ${item.name}` : `Foto do serviço: ${item.name}`; photo.loading = 'lazy';
       const details = document.createElement('span'); details.className = 'booking-service-details';
+      const heading = document.createElement('span'); heading.className = 'booking-service-heading';
+      const icon = document.createElement('span'); icon.className = 'booking-service-icon'; icon.setAttribute('aria-hidden', 'true');
+      const category = /barba/i.test(item.name) ? 'barbas' : /infantil/i.test(item.name) ? 'infantis' : 'masculinos';
+      const iconArt = document.querySelector(`[data-category-choice="${category}"] svg`)?.cloneNode(true);
+      if (iconArt) icon.append(iconArt);
+      const copy = document.createElement('span'); copy.className = 'booking-service-copy';
       const name = document.createElement('strong'); name.textContent = item.name;
-      const duration = document.createElement('small'); duration.textContent = `${item.duration} min`;
+      const duration = document.createElement('small'); duration.textContent = `◷ ${item.duration} min`;
       const price = document.createElement('b'); price.textContent = priceLabel(item.priceCents);
-      details.append(name, duration, price);
+      copy.append(name, duration); heading.append(icon, copy); details.append(heading, price);
       if (item.description) { const description = document.createElement('small'); description.textContent = item.description; details.append(description); }
       if (isAi) { const note = document.createElement('small'); note.className = 'booking-ai-note'; note.textContent = 'Imagem ilustrativa gerada por IA'; details.append(note); }
       button.append(photo, details);
+      button.setAttribute('aria-label', `${item.name}, ${item.duration} minutos, ${priceLabel(item.priceCents)}`);
       button.addEventListener('click', () => {
         chosenService = item;
         services.querySelectorAll('button').forEach(card => card.setAttribute('aria-pressed', String(card === button)));

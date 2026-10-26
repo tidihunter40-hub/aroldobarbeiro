@@ -26,8 +26,9 @@
   <link rel="stylesheet" href="./site-structure.css?v=2026-10-26-2">
   <link rel="stylesheet" href="./app-navigation.css?v=2026-10-26-12">
   <link rel="stylesheet" href="./cut-categories.css?v=2026-10-26-1">
+  <link rel="stylesheet" href="./service-step.css?v=2026-10-26-2">
   <script src="./script.js" defer></script>
-  <script src="./booking-experience.js?v=2026-10-26-2" defer></script>
+  <script src="./booking-experience.js?v=2026-10-26-3" defer></script>
   <script src="./cortes-catalogo.js" defer></script>
 </head>
 <body>
@@ -68,7 +69,7 @@
       </div>
       <a class="hero-scroll" href="/agendamento"><span aria-hidden="true"></span>ESCOLHA SEU HORÁRIO</a>
     </section>
-    <section class="booking" id="agendar" aria-labelledby="booking-title">
+    <section class="booking" id="agendar" aria-labelledby="booking-title" data-step="agenda">
       <div class="booking-atmosphere" aria-hidden="true"></div>
       <div class="wide-wrap booking-layout">
         <header class="booking-intro"><p class="booking-eyebrow">AGENDA AROLDO BARBER</p><h2 id="booking-title">Agende seu horário</h2><p>Escolha uma data e consulte a disponibilidade real.</p></header>
@@ -84,7 +85,7 @@
             <div class="booking-legend" aria-label="Legenda da agenda"><span><i class="legend-free"></i>Livre</span><span><i class="legend-busy"></i>Ocupado</span><span><i class="legend-pending"></i>Pendente</span><span><i class="legend-unavailable"></i>Indisponível</span></div>
             <div id="booking-slot-periods" class="booking-periods" role="group" aria-label="Horários"></div>
           </div>
-          <div class="booking-stage" id="booking-stage-service" hidden><button type="button" class="booking-back" data-back="agenda">← Voltar aos horários</button><p class="booking-step">02 / 03 · SERVIÇOS</p><h3>Escolha o serviço</h3><p class="booking-hint">Escolha o serviço para este horário.</p><p id="booking-cut-selection" class="booking-cut-selection" hidden></p><div id="booking-services" class="booking-services" role="group" aria-label="Serviços disponíveis"></div><p id="service-status" class="booking-status" role="status" aria-live="polite"></p><button id="service-next" class="button button-gold" type="button" disabled>CONTINUAR</button></div>
+          <div class="booking-stage" id="booking-stage-service" hidden><button type="button" class="booking-back" data-back="agenda">← Voltar aos horários</button><p class="booking-step">02 / 03 · SERVIÇOS</p><h3>Escolha o <em>serviço</em></h3><p class="booking-hint">Escolha o serviço para este horário.</p><p id="booking-cut-selection" class="booking-cut-selection" hidden></p><div id="booking-services" class="booking-services" role="group" aria-label="Serviços disponíveis"></div><p id="service-status" class="booking-status" role="status" aria-live="polite"></p><button id="service-next" class="button button-gold" type="button" disabled>CONTINUAR <span aria-hidden="true">→</span></button></div>
           <div class="booking-stage" id="booking-stage-confirm" hidden><button type="button" class="booking-back" data-back="service">← Trocar serviço</button><p class="booking-step">03 / 03 · CONFIRMAÇÃO</p><h3>Seu horário está quase pronto!</h3><div id="booking-summary" class="booking-summary"></div><label for="name">Seu nome</label><input id="name" name="name" autocomplete="name" maxlength="80" minlength="2" required><label for="booking-phone">Seu WhatsApp</label><input id="booking-phone" name="phone" type="tel" autocomplete="tel" inputmode="tel" maxlength="20" required><button class="button button-gold" type="submit">SOLICITAR AGENDAMENTO</button><p class="booking-note">Aroldo confirma seu pedido. O horário fica reservado enquanto aguarda.</p><p id="confirm-status" class="booking-status" role="status" aria-live="polite"></p></div>
           <div id="booking-result" class="booking-result" role="status" aria-live="polite"></div>
           <div class="booking-progress" aria-label="Etapas do agendamento"><strong>PRÓXIMO PASSO</strong><ol><li class="current"><b>1</b><span>Escolha o horário</span></li><li><b>2</b><span>Escolha o serviço</span></li><li><b>3</b><span>Seus dados</span></li><li><b>4</b><span>Confirmação</span></li></ol></div>
