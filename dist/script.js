@@ -34,11 +34,12 @@ const screens = new Map([
   ['/agendamento', document.getElementById('agendar')],
   ['/cortes', document.getElementById('cortes')],
   ['/galeria', document.getElementById('galeria')],
+  ['/servicos-precos', document.getElementById('servicos-precos')],
   ['/contato', document.getElementById('contato')]
 ]);
 const legacyRoutes = { '#inicio': '/', '#agendar': '/agendamento', '#cortes': '/cortes', '#galeria': '/galeria', '#contato': '/contato' };
 const routeLinks = [...document.querySelectorAll('a[href^="/"]')].filter(link => screens.has(link.getAttribute('href')));
-const routeTitles = { '/': 'Início', '/agendamento': 'Agendamento', '/cortes': 'Cortes', '/galeria': 'Galeria', '/contato': 'Contato' };
+const routeTitles = { '/': 'Início', '/agendamento': 'Agendamento', '/cortes': 'Cortes', '/galeria': 'Galeria', '/servicos-precos': 'Serviços & Preços', '/contato': 'Contato' };
 function showRoute(path, { push = false, focus = false } = {}) {
   const route = screens.has(path) ? path : '/';
   if (push && location.pathname !== route) history.pushState({ route }, '', route);

@@ -19,6 +19,130 @@
   const send = (url, method, value = {}) => json(url, { method, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(value) });
   function showDashboard(on) { dashboard.hidden = !on; loginPanel.hidden = on; document.getElementById('logout').hidden = !on; }
   function node(tag, value, className) { const element = document.createElement(tag); if (value != null) element.textContent = value; if (className) element.className = className; return element; }
+  const galleryPanel = node('section', null, 'panel admin-gallery'); galleryPanel.id = 'gallery-view'; galleryPanel.hidden = true;
+  const galleryHeading = node('h2', 'Galeria de trabalhos');
+  const galleryInfo = node('p', 'Organize capas e novos trabalhos reais, com autorização dos clientes. As fotografias originais do site permanecem disponíveis.');
+  const galleryIntro = node('textarea'); galleryIntro.maxLength = 120; galleryIntro.rows = 2; galleryIntro.required = true;
+  const galleryDescription = node('textarea'); galleryDescription.maxLength = 360; galleryDescription.rows = 3; galleryDescription.required = true;
+  const galleryRows = node('div', null, 'admin-gallery-rows');
+  const galleryCategoriesEditor = node('div', null, 'admin-gallery-categories');
+  const addTransformation = node('button', '+ Adicionar antes e depois'); addTransformation.type = 'button';
+  const saveGallery = node('button', 'Salvar Galeria'); saveGallery.type = 'submit';
+  const galleryForm = node('form');
+  const labeled = (label, input) => { const wrapper = node('label', label); wrapper.append(input); return wrapper; };
+  galleryForm.append(node('h3', 'Categorias e fotografias'), galleryCategoriesEditor,
+    node('h3', 'Próteses capilares · apresentação'), labeled('Frase principal', galleryIntro),
+    labeled('Descrição', galleryDescription), node('h3', 'Antes e depois'), galleryRows, addTransformation, saveGallery);
+  galleryPanel.append(galleryHeading, galleryInfo, galleryForm);
+  document.getElementById('dashboard').append(galleryPanel);
+  const galleryTab = node('button', 'Galeria'); galleryTab.type = 'button'; galleryTab.dataset.view = 'gallery'; galleryTab.setAttribute('aria-pressed', 'false'); galleryTab.hidden = true;
+  document.querySelector('.tabs').append(galleryTab);
+  const galleryCategoryLabels = { cortes: 'Cortes realizados', visagismo: 'Visagismo', proteses: 'Próteses capilares', barbas: 'Barbas', outros: 'Outros trabalhos' };
+  function galleryImageField(label, initial, onUploaded) {
+    const wrapper = node('label', label);
+    const preview = document.createElement('img'); preview.className = 'admin-gallery-preview'; preview.alt = `Prévia: ${label}`;
+    if (initial) preview.src = initial; else preview.hidden = true;
+    const input = document.createElement('input'); input.type = 'file'; input.accept = 'image/jpeg,image/png,image/webp';
+    input.addEventListener('change', async () => {
+      const file = input.files?.[0]; if (!file) return;
+      if (file.size > 3145728) { say('Cada foto deve ter até 3 MB.', true); input.value = ''; return; }
+      input.disabled = true; say('Enviando foto…');
+      try {
+        const response = await fetch('/api/admin/service-photo', { method: 'POST', credentials: 'same-origin', headers: { 'Content-Type': file.type }, body: file });
+        const data = await response.json(); if (!response.ok) throw new Error(data.error || 'Falha no envio.');
+        onUploaded(data.photoUrl); preview.src = data.photoUrl; preview.hidden = false;
+        say('Foto enviada. Salve a Galeria para publicar.');
+      } catch (cause) { say(cause.message, true); }
+      finally { input.disabled = false; input.value = ''; }
+    });
+    wrapper.append(preview, input);
+    return { wrapper, preview };
+  }
+  function galleryWorkRow(target, item = {}) {
+    const row = node('div', null, 'admin-gallery-row admin-gallery-work'); row.dataset.src = item.src || '';
+    const caption = document.createElement('input'); caption.type = 'text'; caption.maxLength = 90; caption.value = item.caption || '';
+    const photo = galleryImageField('Foto real do trabalho', item.src, url => { row.dataset.src = url; });
+    const remove = node('button', 'Remover trabalho'); remove.type = 'button'; remove.addEventListener('click', () => row.remove());
+    row.append(labeled('Legenda', caption), photo.wrapper, remove);
+    target.append(row);
+  }
+  function renderGalleryCategories(data) {
+    galleryCategoriesEditor.replaceChildren();
+    for (const [category, title] of Object.entries(galleryCategoryLabels)) {
+      const details = node('details', null, 'admin-gallery-category'); details.dataset.category = category;
+      const summary = node('summary', title);
+      const coverUrl = data.covers?.[category] || '';
+      details.dataset.cover = coverUrl;
+      const cover = galleryImageField('Capa real da categoria (opcional)', coverUrl, url => { details.dataset.cover = url; });
+      const removeCover = node('button', 'Usar capa padrão'); removeCover.type = 'button';
+      removeCover.addEventListener('click', () => { details.dataset.cover = ''; cover.preview.hidden = true; });
+      const works = node('div', null, 'admin-gallery-rows'); works.dataset.works = '';
+      for (const item of data.works?.[category] || []) galleryWorkRow(works, item);
+      const add = node('button', '+ Adicionar trabalho real'); add.type = 'button'; add.addEventListener('click', () => galleryWorkRow(works));
+      details.append(summary, cover.wrapper, removeCover, node('p', 'Fotografias adicionais desta categoria'), works, add);
+      galleryCategoriesEditor.append(details);
+    }
+  }
+  function transformationRow(item = {}) {
+    const row = node('div', null, 'admin-gallery-row');
+    const caption = document.createElement('input'); caption.type = 'text'; caption.maxLength = 90; caption.required = true; caption.value = item.caption || '';
+    row.append(labeled('Descrição do resultado', caption));
+    for (const key of ['before', 'after']) {
+      const wrapper = node('label', key === 'before' ? 'Foto antes' : 'Foto depois');
+      const preview = document.createElement('img'); preview.alt = key === 'before' ? 'Prévia antes' : 'Prévia depois';
+      preview.className = 'admin-gallery-preview'; preview.hidden = !item[key]; if (item[key]) preview.src = item[key];
+      const input = document.createElement('input'); input.type = 'file'; input.accept = 'image/jpeg,image/png,image/webp';
+      input.addEventListener('change', async () => {
+        const file = input.files?.[0]; if (!file) return;
+        if (file.size > 3145728) { say('Cada foto deve ter até 3 MB.', true); input.value = ''; return; }
+        input.disabled = true; say('Enviando foto…');
+        try {
+          const response = await fetch('/api/admin/service-photo', { method: 'POST', credentials: 'same-origin', headers: { 'Content-Type': file.type }, body: file });
+          const data = await response.json(); if (!response.ok) throw new Error(data.error || 'Falha no envio.');
+          row.dataset[key] = data.photoUrl; preview.src = data.photoUrl; preview.hidden = false;
+          say('Foto enviada. Salve a Galeria para publicar o par.');
+        } catch (cause) { say(cause.message, true); }
+        finally { input.disabled = false; input.value = ''; }
+      });
+      wrapper.append(preview, input); row.append(wrapper);
+    }
+    row.dataset.before = item.before || ''; row.dataset.after = item.after || '';
+    const actions = node('div', null, 'admin-gallery-actions');
+    for (const [label, action] of [['↑ Subir', () => row.previousElementSibling?.before(row)], ['↓ Descer', () => row.nextElementSibling?.after(row)], ['Remover', () => row.remove()]]) {
+      const button = node('button', label); button.type = 'button'; button.addEventListener('click', action); actions.append(button);
+    }
+    row.append(actions); galleryRows.append(row);
+  }
+  addTransformation.addEventListener('click', () => transformationRow());
+  async function loadGallerySettings() {
+    try {
+      const data = await json('/api/admin/gallery');
+      galleryTab.hidden = false;
+      galleryIntro.value = data.intro || '';
+      galleryDescription.value = data.description || '';
+      galleryRows.replaceChildren();
+      for (const item of data.transformations || []) transformationRow(item);
+      renderGalleryCategories(data);
+    } catch (cause) { say(`Galeria: ${cause.message}`, true); }
+  }
+  galleryForm.addEventListener('submit', async event => {
+    event.preventDefault();
+    const transformations = [...galleryRows.children].map(row => ({ caption: row.querySelector('input[type=text]').value.trim(), before: row.dataset.before, after: row.dataset.after }));
+    if (transformations.some(item => !item.before || !item.after)) { say('Envie as duas fotos de cada transformação.', true); return; }
+    const covers = {}, works = {};
+    for (const details of galleryCategoriesEditor.children) {
+      const category = details.dataset.category;
+      if (details.dataset.cover) covers[category] = details.dataset.cover;
+      works[category] = [...details.querySelector('[data-works]').children].map(row => ({ caption: row.querySelector('input[type=text]').value.trim(), src: row.dataset.src }));
+    }
+    if (Object.values(works).flat().some(item => !item.src || !item.caption)) { say('Envie a foto e escreva a legenda de cada trabalho.', true); return; }
+    saveGallery.disabled = true;
+    try {
+      await send('/api/admin/gallery', 'PUT', { intro: galleryIntro.value.trim(), description: galleryDescription.value.trim(), transformations, covers, works });
+      say('Galeria salva.');
+    } catch (cause) { say(cause.message, true); }
+    finally { saveGallery.disabled = false; }
+  });
   async function loadAgenda() {
     const sequence = ++agendaSequence;
     const start = agendaDay.value;
@@ -177,7 +301,7 @@
     const duration = document.querySelector('#block-form [name=duration]');
     duration.min = String(step); duration.step = String(step); duration.value = String(step);
   });
-  async function enter() { showDashboard(true); await loadSettings(); await loadAgenda(); say('Agenda atualizada.'); }
+  async function enter() { showDashboard(true); await loadSettings(); await loadAgenda(); await loadGallerySettings(); say('Agenda atualizada.'); }
   document.getElementById('login-form').addEventListener('submit', async event => {
     event.preventDefault();
     try { await send('/api/admin/login', 'POST', { password: document.getElementById('password').value }); document.getElementById('password').value = ''; await enter(); }
@@ -188,6 +312,7 @@
     document.querySelectorAll('[data-view]').forEach(item => item.setAttribute('aria-pressed', String(item === button)));
     document.getElementById('agenda-view').hidden = button.dataset.view !== 'agenda';
     document.getElementById('settings-view').hidden = button.dataset.view !== 'settings';
+    galleryPanel.hidden = button.dataset.view !== 'gallery';
   }));
   agendaDay.addEventListener('change', loadAgenda); range.addEventListener('change', loadAgenda);
   document.getElementById('block-form').addEventListener('submit', async event => {
@@ -221,6 +346,6 @@
       say('Configurações salvas.'); renderSettings(); await loadAgenda(); }
     catch (cause) { say(cause.message, true); }
   });
-  json('/api/admin/settings').then(value => { settings = value; renderSettings(); showDashboard(true); return loadAgenda(); }).then(() => say('Agenda atualizada.')).catch(() => { showDashboard(false); say('Entre para consultar a agenda.'); });
+  json('/api/admin/settings').then(value => { settings = value; renderSettings(); showDashboard(true); return Promise.all([loadAgenda(), loadGallerySettings()]); }).then(() => say('Agenda atualizada.')).catch(() => { showDashboard(false); say('Entre para consultar a agenda.'); });
   setInterval(() => { if (!document.hidden && !dashboard.hidden) loadAgenda(); }, 15000);
 })();

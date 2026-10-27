@@ -4,7 +4,7 @@ import { mkdirSync } from 'node:fs';
 import { dirname } from 'node:path';
 
 export const TIME_ZONE = 'America/Bahia';
-const SERVICE_NAMES = ['Corte masculino', 'Barba', 'Corte infantil', 'Platinado', 'Desondulação capilar', 'Freestyle', 'Visagismo', 'Prótese capilar'];
+const SERVICE_NAMES = ['Corte masculino', 'Barba', 'Corte infantil', 'Platinado', 'Desondulação capilar', 'Freestyle', 'Visagismo', 'Prótese capilar', 'Avaliação de Prótese Capilar'];
 const DAY_MS = 86400000;
 const today = () => new Intl.DateTimeFormat('en-CA', { timeZone: TIME_ZONE, year: 'numeric', month: '2-digit', day: '2-digit' }).format(new Date());
 const validDate = value => /^\d{4}-\d{2}-\d{2}$/.test(value || '') && !Number.isNaN(Date.parse(`${value}T12:00:00Z`)) && new Date(`${value}T12:00:00Z`).toISOString().slice(0, 10) === value;
@@ -36,6 +36,7 @@ export function openBookingDb(path) {
   for (let day = 0; day < 7; day++) db.prepare('INSERT OR IGNORE INTO hours(weekday) VALUES (?)').run(day);
   db.prepare("INSERT OR IGNORE INTO settings(key,value) VALUES ('pending_minutes','30')").run();
   db.prepare("INSERT OR IGNORE INTO settings(key,value) VALUES ('slot_minutes','30')").run();
+  db.prepare("INSERT OR IGNORE INTO settings(key,value) VALUES ('gallery_protese','')").run();
   return db;
 }
 
@@ -195,13 +196,12 @@ export function createBookingApi(db) {
       if (!Array.isArray(hours) || hours.length !== 7 || !Array.isArray(services) || !Array.isArray(daysOff) || !Number.isInteger(ttl) || ttl < 5 || ttl > 1440) throw error(400, 'Configuração inválida.');
       if (![15,30,60].includes(step) || !Array.isArray(specialHours) || specialHours.length > 90) throw error(400, 'Intervalo ou horários especiais inválidos.');
       const known = readSettings().services;
-      if (services.length < known.length || services.length > 40 || services.some(s =>
+      if (services.length < known.length || services.length > 100 || services.some(s =>
         (s.id != null && !known.some(k => k.id === Number(s.id))) ||
         !Number.isInteger(Number(s.duration)) || Number(s.duration) < 30 || Number(s.duration) > 480 || Number(s.duration) % 30 ||
         (s.name != null && (typeof s.name !== 'string' || s.name.trim().length < 2 || s.name.trim().length > 80)) ||
         (s.description != null && (typeof s.description !== 'string' || s.description.length > 240)) ||
-        (s.priceCents != null && (!Number.isInteger(Number(s.priceCents)) || Number(s.priceCents) < 0 || Number(s.priceCents) > 10000000)) ||
-        (s.enabled && ('photoUrl' in s || 'priceCents' in s) && !s.photoUrl))) throw error(400, 'Serviço inválido.');
+        (s.priceCents != null && (!Number.isInteger(Number(s.priceCents)) || Number(s.priceCents) < 0 || Number(s.priceCents) > 10000000)))) throw error(400, 'Serviço inválido.');
       const ids = services.filter(s => s.id != null).map(s => Number(s.id));
       if (new Set(ids).size !== known.length || known.some(s => !ids.includes(s.id))) throw error(400, 'Serviços duplicados ou ausentes.');
       if (hours.some((h, i) => Number(h.weekday) !== i || ((h.opens || h.closes) && !(Number.isFinite(minute(h.opens)) && Number.isFinite(minute(h.closes)) && minute(h.opens) < minute(h.closes))) || ((h.breakStart || h.breakEnd) && !(Number.isFinite(minute(h.breakStart)) && Number.isFinite(minute(h.breakEnd)) && minute(h.opens) <= minute(h.breakStart) && minute(h.breakStart) < minute(h.breakEnd) && minute(h.breakEnd) <= minute(h.closes))))) throw error(400, 'Expediente ou intervalo inválido.');

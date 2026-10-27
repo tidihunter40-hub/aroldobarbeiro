@@ -9,6 +9,7 @@
     { "source": "/agendamento", "destination": "/index.html" },
     { "source": "/cortes", "destination": "/index.html" },
     { "source": "/galeria", "destination": "/index.html" },
+    { "source": "/servicos-precos", "destination": "/index.html" },
     { "source": "/contato", "destination": "/index.html" }
   ],
   "headers": [

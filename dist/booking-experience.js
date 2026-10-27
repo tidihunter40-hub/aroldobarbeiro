@@ -8,6 +8,7 @@
   const services = document.getElementById('booking-services');
   const showcase = document.getElementById('booking-catalog-showcase');
   const showcaseStatus = document.getElementById('showcase-status');
+  const preselected = document.getElementById('booking-preselected');
   const cutSelection = document.getElementById('booking-cut-selection');
   const status = document.getElementById('booking-status');
   const serviceStatus = document.getElementById('service-status');
@@ -32,6 +33,7 @@
   let agendaSequence = 0;
   let checkSequence = 0;
   let preferredService = sessionStorage.getItem('aroldo-service') || '';
+  let preferredServiceId = null;
   let selectedCut = null;
   try { selectedCut = JSON.parse(sessionStorage.getItem('aroldo-cut') || 'null'); } catch { sessionStorage.removeItem('aroldo-cut'); }
   sessionStorage.removeItem('aroldo-cut');
@@ -85,7 +87,7 @@
     nextDays.disabled = dayOffset + 7 > 60;
   }
   function resetChoice() {
-    chosenTime = ''; chosenService = null; next.disabled = true;
+    chosenTime = ''; chosenService = catalog.find(item => item.id === preferredServiceId) || null; next.disabled = true;
     result.replaceChildren();
     renderDays();
     show('agenda', false);
@@ -141,9 +143,15 @@
         button.append(time, state);
         button.setAttribute('aria-label', `${entry.time}, ${labels[entry.status] || 'Ocupado'}`);
         button.disabled = entry.status !== 'available';
-        button.addEventListener('click', () => {
-          chosenTime = entry.time; chosenService = null; next.disabled = true;
+        button.addEventListener('click', async () => {
+          chosenTime = entry.time;
+          chosenService = catalog.find(item => item.id === preferredServiceId) || null;
+          next.disabled = true;
           renderServices(); show('service');
+          if (chosenService && await checkService() && chosenTime === entry.time) {
+            renderSummary();
+            show('confirm');
+          }
         });
           grid.append(button);
         }
@@ -196,9 +204,10 @@
       const button = document.createElement('button');
       button.type = 'button'; button.className = 'booking-service-card';
       button.setAttribute('aria-pressed', String(chosenService?.id === item.id));
-      const photo = document.createElement('img');
-      const isAi = item.photoUrl.includes('/cortes-ia/');
-      photo.src = item.photoUrl; photo.alt = isAi ? `Imagem ilustrativa gerada por IA: ${item.name}` : `Foto do serviço: ${item.name}`; photo.loading = 'lazy';
+      const photo = item.photoUrl ? document.createElement('img') : document.createElement('span');
+      const isAi = Boolean(item.photoUrl?.includes('/cortes-ia/'));
+      if (item.photoUrl) { photo.src = item.photoUrl; photo.alt = isAi ? `Imagem ilustrativa gerada por IA: ${item.name}` : `Foto do serviço: ${item.name}`; photo.loading = 'lazy'; }
+      else { photo.className = 'booking-service-placeholder'; photo.textContent = '✂'; photo.setAttribute('aria-hidden', 'true'); }
       const details = document.createElement('span'); details.className = 'booking-service-details';
       const heading = document.createElement('span'); heading.className = 'booking-service-heading';
       const icon = document.createElement('span'); icon.className = 'booking-service-icon'; icon.setAttribute('aria-hidden', 'true');
@@ -216,12 +225,13 @@
       button.setAttribute('aria-label', `${item.name}, ${item.duration} minutos, ${priceLabel(item.priceCents)}`);
       button.addEventListener('click', () => {
         chosenService = item;
+        if (preferredServiceId !== null) { preferredServiceId = item.id; showPreselected(); }
         services.querySelectorAll('button').forEach(card => card.setAttribute('aria-pressed', String(card === button)));
         checkService();
       });
       services.append(button);
     }
-    if (preferredService) {
+    if (preferredService && preferredServiceId === null) {
       const match = catalog.find(item => item.name === preferredService);
       preferredService = '';
       if (match) services.querySelectorAll('button')[catalog.indexOf(match)].click();
@@ -250,6 +260,8 @@
   function handleCutChoice(event) {
     const detail = event.detail;
     if (!detail?.name || !['masculinos', 'infantis', 'barbas'].includes(detail.category)) return;
+    preferredServiceId = null;
+    showPreselected();
     selectedCut = { name: detail.name, category: detail.category, image: detail.image || '', priceCents: Number.isInteger(detail.priceCents) ? detail.priceCents : null };
     sessionStorage.setItem('aroldo-cut', JSON.stringify(selectedCut));
     const exact = catalog.find(item => normalized(item.name) === normalized(detail.name));
@@ -262,10 +274,28 @@
     }
   }
   window.addEventListener('aroldo:selecionar-corte', handleCutChoice);
+  function showPreselected() {
+    const item = catalog.find(service => service.id === preferredServiceId);
+    preselected.hidden = !item;
+    preselected.textContent = item ? `✦ Serviço selecionado: ${item.name} · ${priceLabel(item.priceCents)}` : '';
+  }
+  window.addEventListener('aroldo:selecionar-servico', event => {
+    const item = catalog.find(service => service.id === Number(event.detail?.id));
+    if (!item) return;
+    preferredService = '';
+    preferredServiceId = item.id;
+    chosenService = item;
+    chosenTime = '';
+    selectedCut = null;
+    showPreselected();
+    show('agenda', false);
+    window.aroldoNavigate?.('/agendamento');
+    loadAgenda();
+  });
   async function checkService() {
     const sequence = ++checkSequence;
     next.disabled = true;
-    if (!chosenService || !chosenTime) return;
+    if (!chosenService || !chosenTime) return false;
     say(serviceStatus, `${chosenService.name} · ${priceLabel(chosenService.priceCents)}. Conferindo o horário…`);
     try {
       const { slots: available } = await json(`/api/public/slots?day=${encodeURIComponent(day.value)}&serviceId=${chosenService.id}`);
@@ -273,8 +303,10 @@
       if (available.some(item => item.time === chosenTime && item.status === 'available')) {
         next.disabled = false;
         say(serviceStatus, `${chosenService.name} · ${priceLabel(chosenService.priceCents)} · ${chosenService.duration} min`);
+        return true;
       } else say(serviceStatus, 'Este serviço não cabe neste horário. Escolha outro serviço ou horário.', true);
     } catch (cause) { if (sequence === checkSequence) say(serviceStatus, cause.message, true); }
+    return false;
   }
   function renderSummary() {
     const summary = document.getElementById('booking-summary');
@@ -300,7 +332,11 @@
   });
   prevDays.addEventListener('click', () => { dayOffset = Math.max(0, dayOffset - 7); day.value = addDays(today, dayOffset); resetChoice(); loadAgenda(); });
   nextDays.addEventListener('click', () => { dayOffset = Math.min(56, dayOffset + 7); day.value = addDays(today, dayOffset); resetChoice(); loadAgenda(); });
-  document.querySelectorAll('[data-service]').forEach(link => link.addEventListener('click', () => { preferredService = link.dataset.service; }));
+  document.querySelectorAll('[data-service]').forEach(link => link.addEventListener('click', () => {
+    preferredServiceId = null;
+    showPreselected();
+    preferredService = link.dataset.service;
+  }));
   form.addEventListener('submit', async event => {
     event.preventDefault();
     if (!chosenService || !chosenTime || stage !== 'confirm') return;
@@ -334,7 +370,7 @@
     try {
       const config = await json('/api/public/config');
       slotMinutes = Number(config.slotMinutes) || 30;
-      catalog = config.services.filter(item => item.photoUrl);
+      catalog = config.services;
       renderShowcase();
       if (!config.configured || !catalog.length) {
         say(status, 'Agenda em configuração. Confirme pelo WhatsApp.');
@@ -344,6 +380,7 @@
       await loadAgenda();
     } catch {
       say(status, navigator.onLine ? 'Agenda indisponível no momento. Tente novamente ou fale pelo WhatsApp.' : 'Você está offline. Conecte-se para consultar a agenda.', true);
+      window.dispatchEvent(new Event('aroldo:servicos-erro'));
     }
   }
   init();

@@ -46,7 +46,7 @@ try {
     assert.ok(dimensions.scrollWidth <= dimensions.innerWidth + 1, `${width}px: rolagem horizontal (${dimensions.scrollWidth}px)`);
     assert.equal(await page.locator('main > section:not([hidden])').count(), 1, `${width}px: deve haver uma tela ativa`);
     if (width <= 1000) {
-      assert.equal(await page.locator('.app-bottom-nav a:visible').count(), 5, `${width}px: cinco atalhos visíveis`);
+      assert.equal(await page.locator('.app-bottom-nav a:visible').count(), 6, `${width}px: seis atalhos visíveis`);
       assert.equal(await page.locator('.hero-feature:visible').count(), width <= 700 ? 3 : 0);
       assert.equal(await page.locator('.app-bottom-nav a[aria-current="page"]').count(), 1, `${width}px: apenas o início selecionado`);
       if (width <= 700) {
@@ -103,7 +103,7 @@ try {
   assert.equal(await page.locator('main > section:not([hidden])').count(), 1);
   await page.goBack();
   assert.equal(new URL(page.url()).pathname, '/');
-  for (const path of ['/cortes', '/galeria', '/contato', '/agendamento']) {
+  for (const path of ['/cortes', '/galeria', '/servicos-precos', '/contato', '/agendamento']) {
     await page.locator(`.app-bottom-nav a[href="${path}"]`).click();
     assert.equal(new URL(page.url()).pathname, path);
     assert.equal(await page.locator('.app-bottom-nav a[aria-current="page"]').getAttribute('href'), path);
@@ -170,7 +170,7 @@ try {
   await page.locator('#service-next').click();
   assert.equal(await page.locator('#booking-stage-confirm').isVisible(), true);
   await page.locator('.menu-toggle').click();
-  assert.equal(await page.locator('.nav.open a:visible').count(), 5);
+  assert.equal(await page.locator('.nav.open a:visible').count(), 6);
   await page.locator('.nav.open a[href="/"]').click();
   assert.equal(new URL(page.url()).pathname, '/');
   console.log('Rotas, botão de agenda, menu, recarregamento e voltar: OK');

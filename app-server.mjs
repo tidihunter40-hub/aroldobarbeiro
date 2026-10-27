@@ -3,6 +3,7 @@ import { readFile, writeFile } from 'node:fs/promises';
 import { randomUUID } from 'node:crypto';
 import { extname, resolve, sep } from 'node:path';
 import { createBookingApi, openBookingDb } from './booking-api.mjs';
+import { defaultGallery, validateGallery } from './gallery-data.mjs';
 
 const root = resolve('dist');
 const mime = { '.html': 'text/html; charset=utf-8', '.css': 'text/css; charset=utf-8', '.js': 'text/javascript; charset=utf-8', '.webmanifest': 'application/manifest+json; charset=utf-8', '.png': 'image/png', '.jpg': 'image/jpeg', '.webp': 'image/webp', '.svg': 'image/svg+xml' };
@@ -21,6 +22,10 @@ const publicRequests = new Map();
 export function createServer(dbPath = process.env.AROLDO_DB_PATH || resolve('data', 'bookings.sqlite')) {
   const db = openBookingDb(dbPath);
   const api = createBookingApi(db);
+  const readGallery = () => {
+    const saved = db.prepare("SELECT value FROM settings WHERE key='gallery_protese'").get()?.value;
+    return saved ? JSON.parse(saved) : defaultGallery;
+  };
   const server = http.createServer(async (request, response) => {
     try {
       const url = new URL(request.url, 'http://localhost');
@@ -35,6 +40,7 @@ export function createServer(dbPath = process.env.AROLDO_DB_PATH || resolve('dat
           if (path !== '/api/admin/service-photo' && !String(request.headers['content-type'] || '').startsWith('application/json')) return send(response, 415, { error: 'Envie JSON.' });
         }
         if (path === '/api/public/config' && request.method === 'GET') return send(response, 200, api.publicConfig());
+        if (path === '/api/public/gallery' && request.method === 'GET') return send(response, 200, readGallery());
         if (path === '/api/public/agenda' && request.method === 'GET') return send(response, 200, { slots: api.agenda(url.searchParams.get('day')) });
         if (path === '/api/public/slots' && request.method === 'GET') return send(response, 200, { slots: api.slots(url.searchParams.get('day'), url.searchParams.get('serviceId')) });
         if (path === '/api/public/appointments' && request.method === 'POST') {
@@ -67,6 +73,12 @@ export function createServer(dbPath = process.env.AROLDO_DB_PATH || resolve('dat
         if (path === '/api/admin/logout' && request.method === 'POST') { api.logout(session); return send(response, 200, { ok: true }, { 'Set-Cookie': cookie(request, '', 0) }); }
         if (path === '/api/admin/settings' && request.method === 'GET') return send(response, 200, api.settings());
         if (path === '/api/admin/settings' && request.method === 'PUT') return send(response, 200, api.updateSettings(await body(request)));
+        if (path === '/api/admin/gallery' && request.method === 'GET') return send(response, 200, readGallery());
+        if (path === '/api/admin/gallery' && request.method === 'PUT') {
+          const gallery = validateGallery(await body(request), photo => /^\.\/assets\/service-[a-f0-9-]+\.(?:jpg|png|webp)$/.test(photo));
+          db.prepare("UPDATE settings SET value=? WHERE key='gallery_protese'").run(JSON.stringify(gallery));
+          return send(response, 200, gallery);
+        }
         if (path === '/api/admin/service-photo' && request.method === 'POST') {
           const type = request.headers['content-type'];
           const ext = { 'image/jpeg': 'jpg', 'image/png': 'png', 'image/webp': 'webp' }[type];
@@ -94,7 +106,7 @@ export function createServer(dbPath = process.env.AROLDO_DB_PATH || resolve('dat
         if (unblock && request.method === 'DELETE') return send(response, 200, api.unblock(unblock[1]));
         return send(response, 404, { error: 'Rota não encontrada.' });
       }
-      const screenPath = ['/agendamento', '/cortes', '/galeria', '/contato'].includes(path) ? '/index.html' : path;
+      const screenPath = ['/agendamento', '/cortes', '/galeria', '/servicos-precos', '/contato'].includes(path) ? '/index.html' : path;
       const file = resolve(root, '.' + decodeURIComponent(screenPath.replace(/\/$/, '/index.html')));
       if (file !== root && !file.startsWith(root + sep)) { response.writeHead(403).end(); return; }
       const content = await readFile(file);

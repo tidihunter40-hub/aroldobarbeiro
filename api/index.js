@@ -1,4 +1,5 @@
 import { createHash, createHmac, randomUUID, timingSafeEqual } from 'node:crypto';
+import { defaultGallery, validateGallery } from '../gallery-data.mjs';
 
 const zone = 'America/Bahia';
 const fail = (status, message) => { throw Object.assign(new Error(message), { status }); };
@@ -90,7 +91,7 @@ function validateSettings(input, known) {
   const slotMinutes = Number(input.slotMinutes ?? 30);
   const ttl = Number(input.pendingMinutes);
   if (!Array.isArray(hours) || hours.length !== 7 || !Array.isArray(services) ||
-      services.length < known.services.length || services.length > 40 || !Array.isArray(daysOff) ||
+      services.length < known.services.length || services.length > 100 || !Array.isArray(daysOff) ||
       !Number.isInteger(ttl) || ttl < 5 || ttl > 1440) fail(400, 'Configuração inválida.');
   if (![15, 30, 60].includes(slotMinutes) || !Array.isArray(specialHours) || specialHours.length > 90)
     fail(400, 'Intervalo ou horários especiais inválidos.');
@@ -99,7 +100,6 @@ function validateSettings(input, known) {
       (s.description != null && (typeof s.description !== 'string' || s.description.length > 240)) ||
       (s.priceCents != null && (!Number.isInteger(Number(s.priceCents)) || Number(s.priceCents) < 0 || Number(s.priceCents) > 10000000)) ||
       (s.photoUrl != null && (typeof s.photoUrl !== 'string' || !(/^(?:https:\/\/[^/]+\.supabase\.co\/storage\/v1\/object\/public\/aroldo-services\/[a-f0-9-]+\.(?:jpg|png|webp)|\.\/assets\/cortes-ia\/[0-9]{2}_[a-z0-9_]+\.jpg)$/.test(s.photoUrl)))) ||
-      (s.enabled && !s.photoUrl) ||
       !Number.isInteger(Number(s.duration)) || Number(s.duration) < 30 ||
       Number(s.duration) > 480 || Number(s.duration) % 30)) fail(400, 'Duração de serviço inválida.');
   const currentIds = services.filter(s => s.id != null).map(s => Number(s.id));

@@ -11,10 +11,12 @@ const sw = read('sw.js');
 
 const mainNav = html.match(/<nav class="nav"[^>]*>([\s\S]*?)<\/nav>/)?.[1] || '';
 const navItems = [...mainNav.matchAll(/<a href="(\/[^"]*)"[^>]*>([^<]+)<\/a>/g)].map(match => [match[1], match[2].trim()]);
-assert.deepEqual(navItems, [['/','Início'],['/agendamento','Agendamento'],['/cortes','Cortes'],['/galeria','Galeria'],['/contato','Contato']], 'Menu público deve ter somente os cinco destinos aprovados');
+assert.deepEqual(navItems, [['/','Início'],['/agendamento','Agendamento'],['/cortes','Cortes'],['/galeria','Galeria'],['/servicos-precos','Serviços &amp; Preços'],['/contato','Contato']], 'Menu público deve ter os seis destinos aprovados');
 const bottomNav = html.match(/<nav class="app-bottom-nav"[^>]*>([\s\S]*?)<\/nav>/)?.[1] || '';
-assert.deepEqual([...bottomNav.matchAll(/<a href="(\/[^"]*)"/g)].map(match => match[1]), navItems.map(([path]) => path), 'Barra inferior deve refletir as cinco telas');
-assert.doesNotMatch(mainNav, /Sobre|Serviços/i, 'Menu público não deve incluir seções removidas');
+assert.deepEqual([...bottomNav.matchAll(/<a href="(\/[^"]*)"/g)].map(match => match[1]), navItems.map(([path]) => path), 'Barra inferior deve refletir as seis telas');
+assert.doesNotMatch(mainNav, /Sobre/i, 'Menu público não deve incluir seções removidas');
+assert.match(html, /id="servicos-precos"/, 'Vitrine de serviços e preços deve ter uma tela própria');
+assert.deepEqual([...html.matchAll(/data-price-category="([^"]+)"/g)].map(match => match[1]), ['cabelo','barba','coloracao','combos'], 'Vitrine deve ter as quatro categorias');
 assert.match(html, /<section class="hero hero-home" id="inicio"/, 'A fachada deve abrir a navegação pública');
 assert.match(html, /id="agendar"/, 'A agenda deve permanecer disponível no fluxo público');
 assert.deepEqual([...html.matchAll(/data-category-choice="([^"]+)"/g)].map(match => match[1]), ['masculinos','infantis','barbas'], 'Entrada do catálogo deve conter três categorias');

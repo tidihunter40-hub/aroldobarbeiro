@@ -38,8 +38,8 @@ assert.equal(settings.status, 200);
 const putSettings = value => handler.fetch(new Request('https://example.vercel.app/api/admin/settings', {
   method: 'PUT', headers: { Cookie: cookie, 'Content-Type': 'application/json' }, body: JSON.stringify(value)
 }));
-const missingPhoto = await putSettings({ ...baseSettings, services: [{ ...baseSettings.services[0], enabled: true, priceCents: 3000 }] });
-assert.equal(missingPhoto.status, 400);
+const withoutPhoto = await putSettings({ ...baseSettings, services: [{ ...baseSettings.services[0], enabled: true, priceCents: 3000 }] });
+assert.equal(withoutPhoto.status, 200);
 const validCatalog = await putSettings({ ...baseSettings, services: [baseSettings.services[0], {
   id: null, name: 'Novo serviço', duration: 60, enabled: true, priceCents: 4500,
   photoUrl: 'https://example.supabase.co/storage/v1/object/public/aroldo-services/abcdef12-3456-4567-8901-abcdef123456.jpg'

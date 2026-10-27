@@ -28,10 +28,12 @@
   <link rel="stylesheet" href="./cut-categories.css?v=2026-10-26-1">
   <link rel="stylesheet" href="./service-step.css?v=2026-10-26-2">
   <link rel="stylesheet" href="./protese.css?v=2026-10-26-1">
+  <link rel="stylesheet" href="./services-prices.css?v=2026-10-26-3">
   <script src="./script.js" defer></script>
   <script src="./booking-experience.js?v=2026-10-26-3" defer></script>
   <script src="./cortes-catalogo.js" defer></script>
   <script src="./protese.js?v=2026-10-26-1" defer></script>
+  <script src="./services-prices.js?v=2026-10-26-3" defer></script>
 </head>
 <body>
   <a class="skip-link" href="#conteudo">Pular para o conteúdo</a>
@@ -43,6 +45,7 @@
       <a href="/agendamento">Agendamento</a>
       <a href="/cortes">Cortes</a>
       <a href="/galeria">Galeria</a>
+      <a href="/servicos-precos">Serviços &amp; Preços</a>
       <a href="/contato">Contato</a>
     </nav>
     <a class="header-book" href="/agendamento">Agendar horário <span aria-hidden="true">↗</span></a>
@@ -74,7 +77,7 @@
     <section class="booking" id="agendar" aria-labelledby="booking-title" data-step="agenda">
       <div class="booking-atmosphere" aria-hidden="true"></div>
       <div class="wide-wrap booking-layout">
-        <header class="booking-intro"><p class="booking-eyebrow">AGENDA AROLDO BARBER</p><h2 id="booking-title">Agende seu horário</h2><p>Escolha uma data e consulte a disponibilidade real.</p></header>
+        <header class="booking-intro"><p class="booking-eyebrow">AGENDA AROLDO BARBER</p><h2 id="booking-title">Agende seu horário</h2><p>Escolha uma data e consulte a disponibilidade real.</p><p id="booking-preselected" class="booking-preselected" hidden></p></header>
         <form id="booking-form" class="booking-panel">
           <div class="booking-stage" id="booking-stage-agenda">
             <div class="booking-date-bar">
@@ -123,6 +126,62 @@
     </div>
   </div>
 </section>
+    <section class="services-prices" id="servicos-precos" aria-labelledby="services-prices-title">
+      <div class="services-prices-landing" id="services-prices-landing">
+      <div class="services-prices-hero">
+        <div class="services-prices-hero-shade"></div>
+        <div class="wide-wrap services-prices-hero-content">
+          <img class="services-prices-logo" src="./assets/aroldo-logo-oficial.png" alt="Aroldo Barber" width="280" height="170">
+          <p class="services-prices-overline">QUALIDADE <span>•</span> ESTILO <span>•</span> CUIDADO PARA O SEU VISUAL</p>
+          <h2 id="services-prices-title"><span>SERVIÇOS</span> <b>&amp;</b> <em>PREÇOS</em></h2>
+          <p class="services-prices-intro">Escolha seu cuidado. Agende em poucos passos.</p>
+        </div>
+      </div>
+      <div class="wide-wrap services-prices-content">
+        <p id="services-prices-status" class="services-prices-status" role="status" aria-live="polite">Carregando serviços e preços…</p>
+        <div class="services-prices-categories">
+          <button class="services-prices-category" type="button" data-price-category="cabelo" aria-label="Ver serviços e preços de cabelo">
+            <div class="services-prices-category-head"><img src="./assets/concept-corte.jpg" alt="" loading="lazy"><span class="services-prices-category-shade"></span><small class="services-prices-image-note">Imagem ilustrativa</small><div class="services-prices-category-title"><span class="services-prices-icon" aria-hidden="true">✂</span><div><h3>CABELO</h3><p>Cortes e tratamentos capilares</p></div></div></div>
+            <span class="services-prices-category-action">AGENDAR <b aria-hidden="true">›</b></span>
+          </button>
+          <button class="services-prices-category" type="button" data-price-category="barba" aria-label="Ver serviços e preços de barba">
+            <div class="services-prices-category-head"><img src="./assets/concept-barba.jpg" alt="" loading="lazy"><span class="services-prices-category-shade"></span><small class="services-prices-image-note">Imagem ilustrativa</small><div class="services-prices-category-title"><span class="services-prices-icon" aria-hidden="true">♢</span><div><h3>BARBA</h3><p>Serviços e cuidados com a barba</p></div></div></div>
+            <span class="services-prices-category-action">AGENDAR <b aria-hidden="true">›</b></span>
+          </button>
+          <button class="services-prices-category" type="button" data-price-category="coloracao" aria-label="Ver serviços e preços de coloração">
+            <div class="services-prices-category-head"><img src="./assets/concept-platinado.jpg" alt="" loading="lazy"><span class="services-prices-category-shade"></span><small class="services-prices-image-note">Imagem ilustrativa</small><div class="services-prices-category-title"><span class="services-prices-icon" aria-hidden="true">◈</span><div><h3>COLORAÇÃO</h3><p>Nevou, luzes e pigmentação</p></div></div></div>
+            <span class="services-prices-category-action">AGENDAR <b aria-hidden="true">›</b></span>
+          </button>
+          <button class="services-prices-category" type="button" data-price-category="combos" aria-label="Ver combos e preços">
+            <div class="services-prices-category-head services-prices-combo-head"><img src="./assets/concept-corte.jpg" alt="" loading="lazy"><img src="./assets/concept-barba.jpg" alt="" loading="lazy"><span class="services-prices-category-shade"></span><small class="services-prices-image-note">Imagem ilustrativa</small><div class="services-prices-category-title"><span class="services-prices-icon" aria-hidden="true">✦</span><div><h3>COMBOS</h3><p>Cabelo + barba com preços especiais</p></div></div></div>
+            <span class="services-prices-category-action">AGENDAR <b aria-hidden="true">›</b></span>
+          </button>
+        </div>
+        <div class="services-prices-values" aria-label="Diferenciais"><span>◇ <b>PROFISSIONAL<br>QUALIFICADO</b></span><span>⬡ <b>PRODUTOS DE<br>ALTA QUALIDADE</b></span><span>♛ <b>ESTILO E<br>PERSONALIDADE</b></span><span>◷ <b>ATENDIMENTO<br>RÁPIDO E PRÁTICO</b></span></div>
+      </div>
+      </div>
+      <div class="services-prices-detail" id="services-prices-detail" hidden>
+        <div class="services-prices-detail-hero">
+          <button type="button" class="services-prices-back" id="services-prices-back">← <span>VOLTAR</span></button>
+          <img class="services-prices-detail-logo" src="./assets/aroldo-logo-oficial.png" alt="Aroldo Barber" width="240" height="150">
+          <small class="services-prices-detail-image-note">Imagem ilustrativa</small>
+          <div class="wide-wrap services-prices-detail-hero-inner"><span class="services-prices-detail-icon" id="services-prices-detail-icon" aria-hidden="true">✂</span><div><h2 id="services-prices-detail-title">CABELO</h2><p id="services-prices-detail-subtitle">CORTES E TRATAMENTOS</p><p class="services-prices-detail-hint" id="services-prices-detail-hint">Escolha o serviço, veja o preço e agende seu horário.</p></div></div>
+        </div>
+        <div class="wide-wrap services-prices-detail-content">
+          <div id="services-prices-detail-list" class="services-prices-detail-list"></div>
+          <div class="services-prices-booking-bar" id="services-prices-booking-bar">
+            <div class="services-prices-booking-heading"><span aria-hidden="true">▦</span><div><h3>AGENDAR HORÁRIO</h3><p>Selecione a data e o horário para o seu atendimento.</p></div></div>
+            <p id="services-prices-selected" class="services-prices-selected" role="status" aria-live="polite">Escolha um serviço acima para começar.</p>
+            <div class="services-prices-booking-fields">
+              <label><span aria-hidden="true">▦</span><span>DATA<input id="services-prices-day" type="date" aria-label="Data do atendimento"></span></label>
+              <label><span aria-hidden="true">◷</span><span>HORÁRIO<select id="services-prices-time" aria-label="Horário do atendimento"><option value="">Selecionar</option></select></span></label>
+            </div>
+            <a id="services-prices-whatsapp" class="services-prices-whatsapp" href="#services-prices-booking-bar" aria-disabled="true"><svg viewBox="0 0 32 32" aria-hidden="true"><path d="M16 3a13 13 0 0 0-11 20L3 29l6-2a13 13 0 1 0 7-24Z"/><path d="M10 10c-1 1-1 3 0 5 2 4 5 6 9 7 2 0 3-1 4-3l-4-2-2 2c-2-1-4-3-5-5l2-2-2-4Z"/></svg> AGENDAR PELO WHATSAPP <b aria-hidden="true">›</b></a>
+            <p id="services-prices-booking-status" class="services-prices-booking-status" role="status" aria-live="polite">Aroldo confirma a disponibilidade pelo WhatsApp.</p>
+          </div>
+        </div>
+      </div>
+    </section>
     <section class="site-gallery" id="galeria" aria-labelledby="gallery-title">
       <div class="wide-wrap">
         <header class="site-section-heading">
@@ -149,13 +208,13 @@
           <div id="protese-detail" hidden>
             <div class="protese-hero">
               <img src="./assets/concept-protese.jpg" alt="Visual ilustrativo de prótese capilar" loading="lazy">
-              <div class="protese-hero-copy"><span class="protese-rule"></span><p class="overline">AROLDO BARBER · PRÓTESE CAPILAR</p><h3>PRÓTESE <em>CAPILAR</em></h3><strong id="protese-intro">Uma nova versão de você começa aqui.</strong><p id="protese-description">Soluções de prótese capilar desenvolvidas com cuidado, técnica e atenção ao seu estilo.</p><a class="protese-cta" href="/contato">FALE SOBRE UMA AVALIAÇÃO <span aria-hidden="true">→</span></a><small>Imagem ilustrativa. Consulte os registros reais abaixo.</small></div>
+              <div class="protese-hero-copy"><span class="protese-rule"></span><p class="overline">AROLDO BARBER · PRÓTESE CAPILAR</p><h3>PRÓTESE <em>CAPILAR</em></h3><strong id="protese-intro">Uma nova versão de você começa aqui.</strong><p id="protese-description">Soluções de prótese capilar desenvolvidas com cuidado, técnica e atenção ao seu estilo.</p><a class="protese-cta" href="/agendamento" data-service="Avaliação de Prótese Capilar">QUERO AGENDAR UMA AVALIAÇÃO <span aria-hidden="true">→</span></a><small>Imagem ilustrativa. Consulte os registros reais abaixo.</small></div>
             </div>
             <section class="protese-transformations" aria-labelledby="protese-transformations-title"><div class="protese-section-heading"><div><h4 id="protese-transformations-title">TRANSFORMAÇÕES <em>REAIS</em></h4><p>Resultados publicados com autorização dos clientes.</p></div><div id="protese-controls" hidden><button type="button" id="protese-prev" aria-label="Resultado anterior">‹</button><button type="button" id="protese-next" aria-label="Próximo resultado">›</button></div></div><div id="protese-results" class="protese-results"></div><p id="protese-empty" class="protese-empty">Em breve, fotos reais e autorizadas de antes e depois. <a href="https://www.instagram.com/aroldobarbeirooficial/reel/Da8t6IGR1Lg/" target="_blank" rel="noopener noreferrer">Veja a publicação oficial ↗</a></p></section>
             <section class="protese-work" aria-labelledby="protese-work-title"><div class="protese-section-heading"><div><h4 id="protese-work-title">REGISTROS DO <em>ATENDIMENTO</em></h4><p>Fotografias reais cadastradas na Galeria.</p></div></div><div id="protese-work-grid" class="gallery-grid"></div></section>
             <section class="protese-benefits" aria-labelledby="protese-benefits-title"><h4 id="protese-benefits-title">PRINCIPAIS <em>BENEFÍCIOS</em></h4><div class="protese-benefit-grid"><article><b aria-hidden="true">✧</b><div><h5>Aparência Natural</h5><p>Soluções desenvolvidas para proporcionar um visual harmonioso.</p></div></article><article><b aria-hidden="true">✂</b><div><h5>Visual Personalizado</h5><p>Escolha de estilo considerando as características de cada cliente.</p></div></article><article><b aria-hidden="true">☆</b><div><h5>Transformação Estética</h5><p>Uma alternativa para renovar o visual sem procedimento cirúrgico.</p></div></article><article><b aria-hidden="true">◇</b><div><h5>Acompanhamento Profissional</h5><p>Orientações sobre aplicação, manutenção e cuidados.</p></div></article></div></section>
             <section class="protese-process" aria-labelledby="protese-process-title"><div class="protese-section-heading"><div><h4 id="protese-process-title">COMO FUNCIONA</h4><p>Um processo simples e personalizado.</p></div></div><div class="protese-steps"><article><b>01</b><h5>Avaliação</h5><p>O profissional analisa as necessidades e expectativas do cliente.</p></article><article><b>02</b><h5>Personalização e Aplicação</h5><p>Definição da solução adequada e realização do procedimento.</p></article><article><b>03</b><h5>Cuidados e Manutenção</h5><p>Orientações para conservação, higienização e manutenção da prótese.</p></article></div></section>
-            <div class="protese-final"><div><h4>PRONTO PARA TRANSFORMAR <em>SEU VISUAL?</em></h4><p>Converse com a equipe sobre uma avaliação e descubra a melhor solução para o seu caso.</p></div><a class="protese-cta" href="/contato">FALAR SOBRE PRÓTESE CAPILAR <span aria-hidden="true">→</span></a></div>
+            <div class="protese-final"><div><h4>PRONTO PARA TRANSFORMAR <em>SEU VISUAL?</em></h4><p>Agende uma avaliação e descubra a melhor solução para o seu caso.</p></div><a class="protese-cta" href="/agendamento" data-service="Avaliação de Prótese Capilar">AGENDAR AVALIAÇÃO DE PRÓTESE CAPILAR <span aria-hidden="true">→</span></a></div>
           </div>
         </div>
       </div>
@@ -189,6 +248,7 @@
     <a href="/agendamento"><svg viewBox="0 0 32 32" aria-hidden="true"><rect x="4" y="6" width="24" height="22" rx="2"/><path d="M10 3v7M22 3v7M4 13h24M10 19h3m5 0h3m-11 5h3m5 0h3"/></svg><span>Agendamento</span></a>
     <a href="/cortes"><svg viewBox="0 0 32 32" aria-hidden="true"><circle cx="7" cy="25" r="4"/><circle cx="17" cy="25" r="4"/><path d="M10 23 27 4M20 23 7 4"/></svg><span>Cortes</span></a>
     <a href="/galeria"><svg viewBox="0 0 32 32" aria-hidden="true"><rect x="4" y="5" width="24" height="22" rx="2"/><circle cx="11" cy="12" r="2"/><path d="m5 24 8-8 5 5 4-4 5 6"/></svg><span>Galeria</span></a>
+    <a href="/servicos-precos"><svg viewBox="0 0 32 32" aria-hidden="true"><path d="M6 4h20v24H6zM11 10h10M11 16h4m3 0h3m-10 6h4m3 0h3"/></svg><span>Serviços<br>&amp; Preços</span></a>
     <a href="/contato"><svg viewBox="0 0 32 32" aria-hidden="true"><path d="M8 4 4 8c0 10 10 20 20 20l4-4-7-7-4 4c-3-1-5-3-6-6l4-4-7-7Z"/></svg><span>Contato</span></a>
   </nav>
   <footer><div class="wide-wrap footer-content"><span>AROLDO BARBER <small>ESCOLA &amp; BARBEARIA</small></span><p>Ribeira do Pombal · Bahia</p><a href="https://www.instagram.com/aroldobarbeirooficial/" target="_blank" rel="noopener noreferrer">@aroldobarbeirooficial ↗</a><a href="./admin.html">Área do Aroldo</a><button class="button button-outline-gold install-app" id="install-app" type="button" hidden>Instalar app</button><small>© <span id="year">2026</span> Aroldo Barber · Site TR Design</small></div></footer>
