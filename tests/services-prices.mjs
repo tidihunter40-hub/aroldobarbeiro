@@ -64,6 +64,13 @@ try {
     assert.ok(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth + 1), `${width}px: sem rolagem horizontal`);
     assert.deepEqual(errors, [], `${width}px: sem erros de JavaScript`);
     if (width === 390) {
+      await page.locator('[data-price-category="coloracao"]').click();
+      assert.equal(await page.locator('#services-prices-detail').getAttribute('data-art-ready'), 'true');
+      await page.locator('.services-prices-detail-book').first().click();
+      assert.equal(new URL(page.url()).pathname, '/agendamento');
+      assert.match(await page.locator('#booking-preselected').textContent(), /Nevou.*R\$\s*200,00/);
+      await page.goto(`${origin}/servicos-precos`, { waitUntil: 'domcontentloaded' });
+      await page.waitForFunction(() => document.getElementById('services-prices-status').textContent === '');
       await page.locator('[data-price-category="combos"]').click();
       await page.locator('.services-prices-detail-book').first().click();
       assert.equal(new URL(page.url()).pathname, '/agendamento');

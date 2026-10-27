@@ -1,5 +1,5 @@
 const CACHE_PREFIX = 'aroldo-barber-';
-const CACHE_NAME = `${CACHE_PREFIX}v54`;
+const CACHE_NAME = `${CACHE_PREFIX}v55`;
 const APP_SHELL = './index.html';
 const PRECACHE = [
   './',
@@ -40,6 +40,7 @@ const PRECACHE = [
   './assets/aroldo-logo-fachada.png',
   './assets/aroldo-logo-oficial.png',
   './assets/servicos-precos-referencia.png',
+  './assets/coloracao-servicos-referencia.png',
   './assets/categories/masculinos.webp',
   './assets/categories/infantis.webp',
   './assets/categories/barbas.webp',

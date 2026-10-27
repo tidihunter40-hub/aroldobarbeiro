@@ -26,6 +26,10 @@
     'Nevou', 'Luzes', 'Luzes platinadas', 'Pigmentar cabelo', 'Pigmentar barba', 'Banho de brilho',
     'Cabelo + barba simples', 'Cabelo + barba com espuma quente', 'Cabelo + barboterapia com vapor de ozônio'
   ];
+  const coloracaoReferencePrices = new Map([
+    ['Nevou', 20000], ['Luzes', 10000], ['Luzes platinadas', 15000],
+    ['Pigmentar cabelo', 3500], ['Pigmentar barba', 3000], ['Banho de brilho', 4000]
+  ]);
   const photos = {
     'Corte com máquina': ['./assets/cortes/masculinos/tradicional.webp', true],
     'Corte na tesoura': ['./assets/cortes/masculinos/mid-fade.webp', true],
@@ -184,6 +188,8 @@
     const position = name => { const index = order.indexOf(name); return index < 0 ? 999 : index; };
     const matching = services.filter(service => groupFor(service) === activeGroup)
       .sort((a, b) => position(a.name) - position(b.name));
+    detail.dataset.artReady = String(activeGroup === 'coloracao' && matching.length === coloracaoReferencePrices.size &&
+      matching.every(service => coloracaoReferencePrices.get(service.name) === service.priceCents));
     if (matching.length) list.append(...matching.map(serviceRow));
     else {
       const empty = document.createElement('p');
@@ -197,6 +203,7 @@
     if (!groups[group]) return;
     timeRequest += 1;
     activeGroup = group;
+    detail.dataset.group = group;
     selectedService = null;
     selectedLabel.textContent = 'Escolha um serviço acima para começar.';
     bookingDay.value = '';

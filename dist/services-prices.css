@@ -286,3 +286,47 @@ body[data-route="servicos-precos"]:not(.services-detail-open) .app-bottom-nav { 
   .services-prices-category-title p { letter-spacing: .03em; }
   .app-bottom-nav a { font-size: 7px; }
 }
+.services-prices-detail[data-group="coloracao"][data-art-ready="true"] .services-prices-detail-content { width: min(100% - 28px, 1700px); }
+.services-prices-detail[data-group="coloracao"][data-art-ready="true"] .services-prices-detail-list {
+  position: relative;
+  display: block;
+  width: 100%;
+  aspect-ratio: 1700 / 925;
+  background: #030303 url('./assets/coloracao-servicos-referencia.png') center / 100% 100% no-repeat;
+}
+.services-prices-detail[data-group="coloracao"][data-art-ready="true"] .services-prices-detail-row {
+  position: absolute;
+  left: 5.8%;
+  display: block;
+  width: 88.4%;
+  height: 14.6%;
+  min-height: 0;
+  padding: 0;
+  border: 0;
+  border-radius: 13px;
+  background: transparent;
+  box-shadow: none;
+  overflow: visible;
+}
+.services-prices-detail[data-group="coloracao"][data-art-ready="true"] .services-prices-detail-row:nth-child(1) { top: 1.6%; }
+.services-prices-detail[data-group="coloracao"][data-art-ready="true"] .services-prices-detail-row:nth-child(2) { top: 18%; }
+.services-prices-detail[data-group="coloracao"][data-art-ready="true"] .services-prices-detail-row:nth-child(3) { top: 34%; }
+.services-prices-detail[data-group="coloracao"][data-art-ready="true"] .services-prices-detail-row:nth-child(4) { top: 50.2%; }
+.services-prices-detail[data-group="coloracao"][data-art-ready="true"] .services-prices-detail-row:nth-child(5) { top: 66.5%; }
+.services-prices-detail[data-group="coloracao"][data-art-ready="true"] .services-prices-detail-row:nth-child(6) { top: 82.8%; }
+.services-prices-detail[data-group="coloracao"][data-art-ready="true"] .services-prices-detail-row > :not(.services-prices-detail-book) { display: none; }
+.services-prices-detail[data-group="coloracao"][data-art-ready="true"] .services-prices-detail-book {
+  position: absolute;
+  top: 5%;
+  right: 0;
+  width: 16%;
+  height: 90%;
+  min-height: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  opacity: 0;
+}
+.services-prices-detail[data-group="coloracao"][data-art-ready="true"] .services-prices-detail-row:hover { outline: 2px solid #ffe39b; outline-offset: -2px; }
+.services-prices-detail[data-group="coloracao"][data-art-ready="true"] .services-prices-detail-row.is-selected { outline: 2px solid #ffe197; outline-offset: -2px; box-shadow: 0 0 14px #e7a62eaa; }
+.services-prices-detail[data-group="coloracao"][data-art-ready="true"] .services-prices-detail-book:focus-visible { opacity: 1; outline: 3px solid #fff; outline-offset: -3px; }
