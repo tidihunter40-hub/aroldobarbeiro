@@ -35,11 +35,18 @@ try {
     await page.evaluate(() => document.fonts.ready);
     assert.equal(await page.locator('main > section:not([hidden])').count(), 1);
     assert.equal(await page.locator('.services-prices-category').count(), 4);
+    assert.equal(await page.locator('.brand img').getAttribute('src'), './assets/aroldo-logo-fachada.png', 'logo da fachada preservada');
+    const landingLogo = page.locator('.services-prices-landing-original-logo');
+    assert.equal(await landingLogo.getAttribute('src'), './assets/aroldo-logo-oficial.png');
+    assert.equal(await landingLogo.isVisible(), true, 'logo original visível na capa');
     if (width === 390 || width === 1366) await page.screenshot({ path: resolve(`preview-services-prices-${width}.png`), fullPage: true });
     for (const [category, count] of [['cabelo', 7], ['barba', 5], ['coloracao', 6], ['combos', 3]]) {
       await page.locator(`[data-price-category="${category}"]`).click();
       assert.equal(await page.locator('.services-prices-detail-row').count(), count, `${category}: serviços visíveis`);
       assert.equal(await page.locator('#services-prices-detail').isVisible(), true);
+      const detailLogo = page.locator('.services-prices-detail-logo');
+      assert.equal(await detailLogo.getAttribute('src'), './assets/aroldo-logo-oficial.png');
+      assert.equal(await detailLogo.isVisible(), true, `${category}: logo original visível`);
       assert.equal(await page.locator('#services-prices-booking-bar').count(), 0, `${category}: sem painel duplicado`);
       assert.equal(await page.locator('.services-prices-detail-book').count(), count, `${category}: um botão AGENDAR por serviço`);
       if (category === 'cabelo' || category === 'barba' || category === 'coloracao' || category === 'combos') {

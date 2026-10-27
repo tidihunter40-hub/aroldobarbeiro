@@ -1135,3 +1135,28 @@ body[data-route="servicos-precos"]:not(.services-detail-open) .app-bottom-nav { 
   .services-prices-detail[data-group="barba"][data-art-ready="true"] .services-prices-detail-row > .services-prices-detail-price,
   .services-prices-detail[data-group="barba"][data-art-ready="true"] .services-prices-detail-book { z-index: 2; }
 }
+.services-prices-landing-original-logo,
+.services-prices-detail[data-art-ready="true"] .services-prices-detail-logo {
+  position: absolute;
+  z-index: 4;
+  display: block;
+  width: 34%;
+  height: auto;
+  max-height: none;
+  object-fit: contain;
+  filter: drop-shadow(0 4px 10px #000b);
+  -webkit-mask-image: radial-gradient(ellipse 50% 49% at 50% 50%, #000 91%, transparent 100%);
+  mask-image: radial-gradient(ellipse 50% 49% at 50% 50%, #000 91%, transparent 100%);
+  pointer-events: none;
+}
+.services-prices-landing-original-logo {
+  top: 0;
+  left: 22.5%;
+  width: 55%;
+}
+.services-prices-detail:is([data-group="cabelo"], [data-group="barba"], [data-group="coloracao"], [data-group="combos"])[data-art-ready="true"] .services-prices-detail-logo {
+  top: 3px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: block;
+}

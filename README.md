@@ -57,6 +57,10 @@ Na página pública, a seção **Cortes e preços** mostra os serviços ativos a
 
 A aba **Serviços & Preços** usa a arte de referência enviada pelo responsável na tela de entrada, com os quatro cartões clicáveis nas mesmas posições. Cada categoria abre uma tela de serviços e preços com botão AGENDAR por item. O painel repetido de data, horário e WhatsApp foi removido; a data e o horário são escolhidos na agenda interna depois que o serviço já está selecionado. A lista de Coloração usa a arte enviada pelo responsável quando os seis preços oficiais coincidem com ela; se forem alterados no painel, aparecem os cartões dinâmicos com os valores atuais. A tabela corrigida pelo responsável define 19 serviços ativos e seus preços. Cabelo inclui **Corte com máquina R$ 35**, **Corte na tesoura R$ 40** e **Corte infantil R$ 40**. As outras categorias usam os valores da tabela, mesmo quando as imagens de conceito mostram preços diferentes. Em todas as categorias, **AGENDAR** abre a agenda interna com o serviço já selecionado. No celular, os cartões são maiores para manter nomes e preços legíveis. As durações sugeridas em `official-services.mjs` são provisórias, pois a tabela não informa tempos de atendimento. Revise-as no painel assim que os tempos reais forem definidos.
 
+### Logos
+
+`dist/assets/aroldo-logo-oficial.png` é a logo original enviada pelo responsável e deve ser usada em qualquer lugar que mostre o emblema oval da barbearia, inclusive sobre as logos parecidas incorporadas nas artes de Serviços & Preços. `dist/assets/aroldo-logo-fachada.png` e as fotos da fachada representam uma identidade visual diferente e devem continuar separadas. As telas de Serviços & Preços posicionam a logo original em HTML/CSS sobre as artes de referência para manter o desenho enviado sem alterar os serviços ou seus preços.
+
 O catálogo local foi aplicado com `node setup-official-services.mjs`, preservando agendamentos existentes e desativando os serviços fora da tabela oficial. O script pode ser executado novamente sem duplicar serviços.
 
 O fuso da agenda é `America/Bahia`. Na prévia local é possível mudar o caminho do banco com `AROLDO_DB_PATH` e a porta com `PORT`. Mudanças de expediente não cancelam automaticamente agendamentos já confirmados; revise a agenda antes de alterar os horários. Confirme com Aroldo o prazo da pendência, as durações e o expediente antes de produção. Defina um processo de retenção e exclusão de dados pessoais adequado ao negócio.
@@ -81,7 +85,7 @@ O ajuste final em `dist/booking.css` aumentou rótulos e botões pequenos, prese
 ## Para a troca das fotos e publicação final
 
 - Substitua as quatro imagens ilustrativas ainda exibidas por fotografias oficiais de prótese, visagismo e Escola. Use autorização de quem aparece.
-- Envie a logomarca oficial, caso deseje substituir a assinatura tipográfica AROLDO BARBEIRO no cabeçalho e rever os ícones provisórios do PWA.
+- A logo original do emblema oval já está no projeto; qualquer futura troca da assinatura do cabeçalho ou dos ícones do PWA deve respeitar a distinção entre essa logo e a marca da fachada.
 - Para uma futura galeria de antes/depois, envie pares do mesmo atendimento e autorização de uso. A galeria atual mostra trabalhos reais sem simular pares.
 - Para depoimentos, envie avaliações verdadeiras com autorização. O painel correspondente apresenta o perfil da empresa por enquanto.
 - Confirme endereço, horários, serviços, oferta de cursos, detalhes dos títulos e eventual catálogo de produtos.
@@ -90,7 +94,7 @@ O ajuste final em `dist/booking.css` aumentou rótulos e botões pequenos, prese
 
 O site tem manifest, ícones para Android/iOS, botão de instalação quando o navegador oferece essa opção e cache offline da página e das imagens locais. Para instalar, abra a prévia em `http://127.0.0.1:5180/` ou publique em HTTPS; abrir `dist/index.html` diretamente não ativa o service worker. Isso segue os [requisitos atuais de instalação de PWA](https://developer.mozilla.org/en-US/docs/Web/Progressive_web_apps/Guides/Making_PWAs_installable).
 
-Os recursos locais usam rede primeiro e recorrem ao cache quando não há conexão; o service worker é registrado com `updateViaCache: 'none'`. A versão atual é `v63`. O precache inclui os recursos usados pela página. A API e o painel administrativo não são guardados em cache. Ao publicar uma atualização, continue alterando `CACHE_NAME` em `dist/sw.js` para eliminar caches antigos. Links externos como WhatsApp e Instagram continuam dependentes de internet.
+Os recursos locais usam rede primeiro e recorrem ao cache quando não há conexão; o service worker é registrado com `updateViaCache: 'none'`. A versão atual é `v64`. O precache inclui os recursos usados pela página. A API e o painel administrativo não são guardados em cache. Ao publicar uma atualização, continue alterando `CACHE_NAME` em `dist/sw.js` para eliminar caches antigos. Links externos como WhatsApp e Instagram continuam dependentes de internet.
 
 ## Arquivos
 
