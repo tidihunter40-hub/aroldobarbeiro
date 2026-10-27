@@ -11,9 +11,9 @@ const sw = read('sw.js');
 
 const mainNav = html.match(/<nav class="nav"[^>]*>([\s\S]*?)<\/nav>/)?.[1] || '';
 const navItems = [...mainNav.matchAll(/<a href="(\/[^"]*)"[^>]*>([^<]+)<\/a>/g)].map(match => [match[1], match[2].trim()]);
-assert.deepEqual(navItems, [['/','Início'],['/agendamento','Agendamento'],['/cortes','Cortes'],['/galeria','Galeria'],['/servicos-precos','Serviços &amp; Preços'],['/contato','Contato']], 'Menu público deve ter os seis destinos aprovados');
+assert.deepEqual(navItems, [['/','Início'],['/agendamento','Agendamento'],['/cortes','Cortes'],['/protese-capilar','Prótese capilar'],['/galeria','Galeria'],['/servicos-precos','Serviços &amp; Preços'],['/contato','Contato']], 'Prótese capilar deve ter uma aba própria no menu público');
 const bottomNav = html.match(/<nav class="app-bottom-nav"[^>]*>([\s\S]*?)<\/nav>/)?.[1] || '';
-assert.deepEqual([...bottomNav.matchAll(/<a href="(\/[^"]*)"/g)].map(match => match[1]), navItems.map(([path]) => path), 'Barra inferior deve refletir as seis telas');
+assert.deepEqual([...bottomNav.matchAll(/<a href="(\/[^"]*)"/g)].map(match => match[1]), navItems.filter(([path]) => path !== '/protese-capilar').map(([path]) => path), 'Barra inferior deve preservar os seis atalhos existentes');
 assert.doesNotMatch(mainNav, /Sobre/i, 'Menu público não deve incluir seções removidas');
 assert.match(html, /id="servicos-precos"/, 'Vitrine de serviços e preços deve ter uma tela própria');
 assert.deepEqual([...html.matchAll(/data-price-category="([^"]+)"/g)].map(match => match[1]), ['cabelo','barba','coloracao','combos'], 'Vitrine deve ter as quatro categorias');
@@ -21,9 +21,12 @@ assert.match(html, /<section class="hero hero-home" id="inicio"/, 'A fachada dev
 assert.match(html, /id="agendar"/, 'A agenda deve permanecer disponível no fluxo público');
 assert.deepEqual([...html.matchAll(/data-category-choice="([^"]+)"/g)].map(match => match[1]), ['masculinos','infantis','barbas'], 'Entrada do catálogo deve conter três categorias');
 assert.doesNotMatch(html, /data-cut-filter=/, 'Cortes individuais não devem aparecer como filtro da tela inicial');
-assert.deepEqual([...html.matchAll(/data-gallery-category="([^"]+)"/g)].map(match => match[1]), ['cortes','visagismo','proteses','barbas','outros'], 'A Galeria deve apresentar as cinco categorias');
-assert.match(html, /id="protese-results"/, 'A prótese capilar deve ter espaço para resultados reais');
-assert.match(html, /Imagem ilustrativa\. Consulte os registros reais abaixo\./, 'A capa ilustrativa deve ser identificada');
+assert.deepEqual([...html.matchAll(/data-gallery-category="([^"]+)"/g)].map(match => match[1]), ['cortes','visagismo','proteses','barbas','desenhos','platinados','outros'], 'A Galeria deve apresentar categorias de fotografias reais');
+assert.match(html, /<section class="site-protese" id="protese-capilar"/, 'Prótese capilar deve ter uma tela própria');
+const gallerySection = html.split('<section class="site-gallery"')[1].split('<section class="site-contact"')[0];
+assert.doesNotMatch(gallerySection, /protese-hero|protese-benefits|protese-process|protese-final/, 'Galeria não deve conter a página do serviço');
+assert.match(gallerySection, /data-gallery-category="proteses"><img src="\.\/assets\/protese-instagram\.jpg"/, 'Capa de prótese na Galeria deve usar foto real');
+assert.match(html, /Imagem ilustrativa\. As fotos reais dos atendimentos estão na Galeria\./, 'A imagem da página de serviço deve ser identificada');
 assert.match(read('script.js'), /corte-kids-instagram\.jpg/, 'Cortes infantis devem permanecer entre os trabalhos');
 assert.match(read('script.js'), /destaque-premiacoes-02\.jpg/, 'Outros trabalhos devem preservar os registros originais');
 

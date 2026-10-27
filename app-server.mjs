@@ -106,7 +106,7 @@ export function createServer(dbPath = process.env.AROLDO_DB_PATH || resolve('dat
         if (unblock && request.method === 'DELETE') return send(response, 200, api.unblock(unblock[1]));
         return send(response, 404, { error: 'Rota não encontrada.' });
       }
-      const screenPath = ['/agendamento', '/cortes', '/galeria', '/servicos-precos', '/contato'].includes(path) ? '/index.html' : path;
+      const screenPath = ['/agendamento', '/cortes', '/protese-capilar', '/galeria', '/servicos-precos', '/contato'].includes(path) ? '/index.html' : path;
       const file = resolve(root, '.' + decodeURIComponent(screenPath.replace(/\/$/, '/index.html')));
       if (file !== root && !file.startsWith(root + sep)) { response.writeHead(403).end(); return; }
       const content = await readFile(file);

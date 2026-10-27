@@ -58,3 +58,17 @@
 @media(max-width:700px){.site-gallery{padding-bottom:calc(108px + env(safe-area-inset-bottom))}}
 .protese-categories[hidden],#gallery-detail[hidden],#gallery-standard[hidden],#protese-detail[hidden],#protese-controls[hidden],#protese-empty[hidden]{display:none!important}
 .booking-service-placeholder{display:grid;place-items:center;flex:0 0 72px;width:72px;min-height:72px;background:linear-gradient(135deg,#24221d,#0d0f0f);color:#d4aa58;font-size:32px}
+
+/* Página do serviço separada da galeria de fotografias. */
+.site-protese{min-height:calc(100svh - 74px);padding:clamp(32px,5vw,70px) 0 80px;background:#080909}
+.site-protese .protese-hero h2{margin:14px 0;color:#fff;font:800 clamp(48px,6vw,92px)/.84 'Barlow Condensed',sans-serif;letter-spacing:-.02em}
+.site-protese .protese-hero h2 em,.site-protese em{color:#ddb562;font-style:normal}
+.site-protese .protese-section-heading h3,.site-protese .protese-benefits h3,.site-protese .protese-final h3{margin:0;color:#f6f4f0;font:800 clamp(25px,3vw,37px)/1 'Barlow Condensed',sans-serif}
+.site-protese .protese-benefit-grid h4,.site-protese .protese-steps h4{margin:0 0 6px;color:#fff;font:700 13px/1.25 'Inter',sans-serif}
+.protese-categories{grid-template-columns:repeat(4,minmax(0,1fr))}
+.protese-categories button,.protese-categories button:nth-child(n+4){grid-column:auto;min-height:245px}
+.protese-categories button[data-gallery-category="desenhos"] img{object-position:center 35%}
+.protese-categories button[data-gallery-category="platinados"] img{object-position:center 30%}
+@media(max-width:1000px){.site-protese{min-height:calc(100svh - 70px);padding-top:max(84px,calc(env(safe-area-inset-top) + 78px));padding-bottom:calc(108px + env(safe-area-inset-bottom))}}
+@media(max-width:900px){.protese-categories{grid-template-columns:repeat(2,minmax(0,1fr))}.protese-categories button:last-child{grid-column:span 2}}
+@media(max-width:640px){.protese-categories{gap:10px}.protese-categories button,.protese-categories button:nth-child(n+4){min-height:178px}.protese-categories button:last-child{grid-column:span 2;min-height:194px}.site-protese .protese-hero h2{font-size:56px}.site-protese .protese-section-heading h3,.site-protese .protese-benefits h3,.site-protese .protese-final h3{font-size:28px}}

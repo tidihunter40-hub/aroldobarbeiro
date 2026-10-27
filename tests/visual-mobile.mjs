@@ -133,7 +133,7 @@ try {
     await page.screenshot({ path: resolve(`preview-${path.slice(1)}-390.png`), fullPage: true });
   }
   await page.locator('.app-bottom-nav a[href="/galeria"]').click();
-  await page.locator('[data-gallery-filter="barbas"]').click();
+  await page.locator('[data-gallery-category="barbas"]').click();
   assert.equal(await page.locator('.gallery-work-card').count(), 2);
   await page.locator('.gallery-work-card').first().click();
   assert.equal(await page.locator('#gallery-dialog').evaluate(dialog => dialog.open), true);
@@ -171,7 +171,11 @@ try {
   await page.locator('#service-next').click();
   assert.equal(await page.locator('#booking-stage-confirm').isVisible(), true);
   await page.locator('.menu-toggle').click();
-  assert.equal(await page.locator('.nav.open a:visible').count(), 6);
+  assert.equal(await page.locator('.nav.open a:visible').count(), 7);
+  await page.locator('.nav.open a[href="/protese-capilar"]').click();
+  assert.equal(new URL(page.url()).pathname, '/protese-capilar');
+  assert.equal(await page.locator('#protese-capilar:visible').count(), 1);
+  await page.locator('.menu-toggle').click();
   await page.locator('.nav.open a[href="/"]').click();
   assert.equal(new URL(page.url()).pathname, '/');
   console.log('Rotas, botão de agenda, menu, recarregamento e voltar: OK');

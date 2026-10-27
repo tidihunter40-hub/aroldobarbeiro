@@ -27,12 +27,12 @@
   <link rel="stylesheet" href="./app-navigation.css?v=2026-10-27-13">
   <link rel="stylesheet" href="./cut-categories.css?v=2026-10-27-2">
   <link rel="stylesheet" href="./service-step.css?v=2026-10-27-3">
-  <link rel="stylesheet" href="./protese.css?v=2026-10-26-1">
+  <link rel="stylesheet" href="./protese.css?v=2026-10-27-2">
   <link rel="stylesheet" href="./services-prices.css?v=2026-10-27-11">
   <script src="./script.js" defer></script>
   <script src="./booking-experience.js?v=2026-10-27-1" defer></script>
   <script src="./cortes-catalogo.js?v=2026-10-27-2" defer></script>
-  <script src="./protese.js?v=2026-10-26-1" defer></script>
+  <script src="./protese.js?v=2026-10-27-2" defer></script>
   <script src="./services-prices.js?v=2026-10-27-9" defer></script>
 </head>
 <body>
@@ -44,6 +44,7 @@
       <a href="/" aria-current="page">Início</a>
       <a href="/agendamento">Agendamento</a>
       <a href="/cortes">Cortes</a>
+      <a href="/protese-capilar">Prótese capilar</a>
       <a href="/galeria">Galeria</a>
       <a href="/servicos-precos">Serviços &amp; Preços</a>
       <a href="/contato">Contato</a>
@@ -174,6 +175,40 @@
         </div>
       </div>
     </section>
+    <section class="site-protese" id="protese-capilar" aria-labelledby="protese-title">
+      <div class="wide-wrap">
+        <div class="protese-hero">
+          <img src="./assets/concept-protese.jpg" alt="Imagem ilustrativa de um visual com prótese capilar" loading="lazy">
+          <div class="protese-hero-copy">
+            <span class="protese-rule"></span>
+            <p class="overline">AROLDO BARBER · PRÓTESE CAPILAR</p>
+            <h2 id="protese-title">PRÓTESE <em>CAPILAR</em></h2>
+            <strong>Uma nova versão de você começa aqui.</strong>
+            <p>Soluções de prótese capilar desenvolvidas com cuidado, técnica e atenção ao seu estilo.</p>
+            <a class="protese-cta" href="/contato">FALE SOBRE UMA AVALIAÇÃO <span aria-hidden="true">→</span></a>
+            <small>Imagem ilustrativa. As fotos reais dos atendimentos estão na Galeria.</small>
+          </div>
+        </div>
+        <section class="protese-benefits" aria-labelledby="protese-benefits-title">
+          <h3 id="protese-benefits-title">PRINCIPAIS <em>BENEFÍCIOS</em></h3>
+          <div class="protese-benefit-grid">
+            <article><b aria-hidden="true">✧</b><div><h4>Aparência Natural</h4><p>Soluções desenvolvidas para proporcionar um visual harmonioso.</p></div></article>
+            <article><b aria-hidden="true">✂</b><div><h4>Visual Personalizado</h4><p>Escolha de estilo considerando as características de cada cliente.</p></div></article>
+            <article><b aria-hidden="true">☆</b><div><h4>Transformação Estética</h4><p>Uma alternativa para renovar o visual sem procedimento cirúrgico.</p></div></article>
+            <article><b aria-hidden="true">◇</b><div><h4>Acompanhamento Profissional</h4><p>Orientações sobre aplicação, manutenção e cuidados.</p></div></article>
+          </div>
+        </section>
+        <section class="protese-process" aria-labelledby="protese-process-title">
+          <div class="protese-section-heading"><div><h3 id="protese-process-title">COMO FUNCIONA</h3><p>Um processo simples e personalizado.</p></div></div>
+          <div class="protese-steps">
+            <article><b>01</b><h4>Avaliação</h4><p>O profissional analisa as necessidades e expectativas do cliente.</p></article>
+            <article><b>02</b><h4>Personalização e Aplicação</h4><p>Definição da solução adequada e realização do procedimento.</p></article>
+            <article><b>03</b><h4>Cuidados e Manutenção</h4><p>Orientações para conservação, higienização e manutenção da prótese.</p></article>
+          </div>
+        </section>
+        <div class="protese-final"><div><h3>PRONTO PARA TRANSFORMAR <em>SEU VISUAL?</em></h3><p>Converse com a equipe sobre uma avaliação e descubra a melhor solução para o seu caso.</p></div><a class="protese-cta" href="/contato">FALAR SOBRE PRÓTESE CAPILAR <span aria-hidden="true">→</span></a></div>
+      </div>
+    </section>
     <section class="site-gallery" id="galeria" aria-labelledby="gallery-title">
       <div class="wide-wrap">
         <header class="site-section-heading">
@@ -183,9 +218,11 @@
         </header>
         <div id="gallery-categories" class="protese-categories" role="group" aria-label="Categorias da galeria">
           <button type="button" data-gallery-category="cortes"><img src="./assets/corte-classico-instagram.jpg" alt="" loading="lazy"><span>Cortes realizados</span></button>
-          <button type="button" data-gallery-category="visagismo"><img src="./assets/concept-visagismo.jpg" alt="" loading="lazy"><span>Visagismo</span><small>Imagem ilustrativa</small></button>
-          <button type="button" data-gallery-category="proteses"><img src="./assets/concept-protese.jpg" alt="" loading="lazy"><span>Próteses capilares</span><small>Imagem ilustrativa</small></button>
+          <button type="button" data-gallery-category="visagismo"><img src="./assets/espaco-instagram.jpg" alt="" loading="lazy"><span>Visagismo</span><small>Sem registros publicados</small></button>
+          <button type="button" data-gallery-category="proteses"><img src="./assets/protese-instagram.jpg" alt="" loading="lazy"><span>Próteses capilares</span></button>
           <button type="button" data-gallery-category="barbas"><img src="./assets/destaque-barbas-02.jpg" alt="" loading="lazy"><span>Barbas</span></button>
+          <button type="button" data-gallery-category="desenhos"><img src="./assets/destaque-desenhos-01.jpg" alt="" loading="lazy"><span>Desenhos</span></button>
+          <button type="button" data-gallery-category="platinados"><img src="./assets/destaque-nevou-01.jpg" alt="" loading="lazy"><span>Platinados</span></button>
           <button type="button" data-gallery-category="outros"><img src="./assets/desondulacao-instagram.jpg" alt="" loading="lazy"><span>Outros trabalhos</span></button>
         </div>
         <div id="gallery-detail" hidden>
@@ -195,18 +232,6 @@
             <p id="gallery-status" class="gallery-status" role="status" aria-live="polite"></p>
             <div id="gallery-grid" class="gallery-grid"></div>
             <div id="gallery-empty" class="gallery-empty" hidden><p>Ainda não há trabalhos publicados nesta categoria.</p></div>
-            <a class="gallery-profile-link" href="https://www.instagram.com/aroldobarbeirooficial/" target="_blank" rel="noopener noreferrer">VER PERFIL OFICIAL NO INSTAGRAM ↗</a>
-          </div>
-          <div id="protese-detail" hidden>
-            <div class="protese-hero">
-              <img src="./assets/concept-protese.jpg" alt="Visual ilustrativo de prótese capilar" loading="lazy">
-              <div class="protese-hero-copy"><span class="protese-rule"></span><p class="overline">AROLDO BARBER · PRÓTESE CAPILAR</p><h3>PRÓTESE <em>CAPILAR</em></h3><strong id="protese-intro">Uma nova versão de você começa aqui.</strong><p id="protese-description">Soluções de prótese capilar desenvolvidas com cuidado, técnica e atenção ao seu estilo.</p><a class="protese-cta" href="/agendamento" data-service="Avaliação de Prótese Capilar">QUERO AGENDAR UMA AVALIAÇÃO <span aria-hidden="true">→</span></a><small>Imagem ilustrativa. Consulte os registros reais abaixo.</small></div>
-            </div>
-            <section class="protese-transformations" aria-labelledby="protese-transformations-title"><div class="protese-section-heading"><div><h4 id="protese-transformations-title">TRANSFORMAÇÕES <em>REAIS</em></h4><p>Resultados publicados com autorização dos clientes.</p></div><div id="protese-controls" hidden><button type="button" id="protese-prev" aria-label="Resultado anterior">‹</button><button type="button" id="protese-next" aria-label="Próximo resultado">›</button></div></div><div id="protese-results" class="protese-results"></div><p id="protese-empty" class="protese-empty">Em breve, fotos reais e autorizadas de antes e depois. <a href="https://www.instagram.com/aroldobarbeirooficial/reel/Da8t6IGR1Lg/" target="_blank" rel="noopener noreferrer">Veja a publicação oficial ↗</a></p></section>
-            <section class="protese-work" aria-labelledby="protese-work-title"><div class="protese-section-heading"><div><h4 id="protese-work-title">REGISTROS DO <em>ATENDIMENTO</em></h4><p>Fotografias reais cadastradas na Galeria.</p></div></div><div id="protese-work-grid" class="gallery-grid"></div></section>
-            <section class="protese-benefits" aria-labelledby="protese-benefits-title"><h4 id="protese-benefits-title">PRINCIPAIS <em>BENEFÍCIOS</em></h4><div class="protese-benefit-grid"><article><b aria-hidden="true">✧</b><div><h5>Aparência Natural</h5><p>Soluções desenvolvidas para proporcionar um visual harmonioso.</p></div></article><article><b aria-hidden="true">✂</b><div><h5>Visual Personalizado</h5><p>Escolha de estilo considerando as características de cada cliente.</p></div></article><article><b aria-hidden="true">☆</b><div><h5>Transformação Estética</h5><p>Uma alternativa para renovar o visual sem procedimento cirúrgico.</p></div></article><article><b aria-hidden="true">◇</b><div><h5>Acompanhamento Profissional</h5><p>Orientações sobre aplicação, manutenção e cuidados.</p></div></article></div></section>
-            <section class="protese-process" aria-labelledby="protese-process-title"><div class="protese-section-heading"><div><h4 id="protese-process-title">COMO FUNCIONA</h4><p>Um processo simples e personalizado.</p></div></div><div class="protese-steps"><article><b>01</b><h5>Avaliação</h5><p>O profissional analisa as necessidades e expectativas do cliente.</p></article><article><b>02</b><h5>Personalização e Aplicação</h5><p>Definição da solução adequada e realização do procedimento.</p></article><article><b>03</b><h5>Cuidados e Manutenção</h5><p>Orientações para conservação, higienização e manutenção da prótese.</p></article></div></section>
-            <div class="protese-final"><div><h4>PRONTO PARA TRANSFORMAR <em>SEU VISUAL?</em></h4><p>Agende uma avaliação e descubra a melhor solução para o seu caso.</p></div><a class="protese-cta" href="/agendamento" data-service="Avaliação de Prótese Capilar">AGENDAR AVALIAÇÃO DE PRÓTESE CAPILAR <span aria-hidden="true">→</span></a></div>
           </div>
         </div>
       </div>

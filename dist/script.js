@@ -33,13 +33,14 @@ const screens = new Map([
   ['/', document.getElementById('inicio')],
   ['/agendamento', document.getElementById('agendar')],
   ['/cortes', document.getElementById('cortes')],
+  ['/protese-capilar', document.getElementById('protese-capilar')],
   ['/galeria', document.getElementById('galeria')],
   ['/servicos-precos', document.getElementById('servicos-precos')],
   ['/contato', document.getElementById('contato')]
 ]);
 const legacyRoutes = { '#inicio': '/', '#agendar': '/agendamento', '#cortes': '/cortes', '#galeria': '/galeria', '#contato': '/contato' };
 const routeLinks = [...document.querySelectorAll('a[href^="/"]')].filter(link => screens.has(link.getAttribute('href')));
-const routeTitles = { '/': 'Início', '/agendamento': 'Agendamento', '/cortes': 'Cortes', '/galeria': 'Galeria', '/servicos-precos': 'Serviços & Preços', '/contato': 'Contato' };
+const routeTitles = { '/': 'Início', '/agendamento': 'Agendamento', '/cortes': 'Cortes', '/protese-capilar': 'Prótese capilar', '/galeria': 'Galeria', '/servicos-precos': 'Serviços & Preços', '/contato': 'Contato' };
 function showRoute(path, { push = false, focus = false } = {}) {
   const route = screens.has(path) ? path : '/';
   if (push && location.pathname !== route) history.pushState({ route }, '', route);
@@ -105,12 +106,16 @@ const galleryItems = {
     {src:'./assets/destaque-barbas-01.jpg',alt:'Acabamento de barba publicado no destaque oficial',caption:'Acabamento de barba',url:workUrl.beards},
     {src:'./assets/destaque-barbas-02.jpg',alt:'Barba publicada no destaque oficial',caption:'Barba',url:workUrl.beards}
   ],
+  desenhos: [
+    {src:'./assets/destaque-desenhos-01.jpg',alt:'Desenho no cabelo publicado no destaque oficial',caption:'Desenho no cabelo',url:workUrl.drawings},
+    {src:'./assets/destaque-desenhos-02.jpg',alt:'Outro desenho publicado no destaque oficial',caption:'Desenho no cabelo',url:workUrl.drawings}
+  ],
+  platinados: [
+    {src:'./assets/destaque-nevou-01.jpg',alt:'Platinado publicado no destaque oficial',caption:'Platinado',url:workUrl.nevou},
+    {src:'./assets/destaque-nevou-02.jpg',alt:'Descoloração publicada no destaque oficial',caption:'Descoloração',url:workUrl.nevou}
+  ],
   outros: [
     {src:'./assets/desondulacao-instagram.jpg',alt:'Desondulação publicada no perfil oficial',caption:'Desondulação capilar',url:workUrl.perfil},
-    {src:'./assets/destaque-nevou-01.jpg',alt:'Platinado publicado no destaque oficial',caption:'Platinado',url:workUrl.nevou},
-    {src:'./assets/destaque-nevou-02.jpg',alt:'Descoloração publicada no destaque oficial',caption:'Descoloração',url:workUrl.nevou},
-    {src:'./assets/destaque-desenhos-01.jpg',alt:'Desenho no cabelo publicado no destaque oficial',caption:'Desenho no cabelo',url:workUrl.drawings},
-    {src:'./assets/destaque-desenhos-02.jpg',alt:'Outro desenho publicado no destaque oficial',caption:'Desenho no cabelo',url:workUrl.drawings},
     {src:'./assets/destaque-artistas-01.jpg',alt:'Encontro publicado no destaque oficial',caption:'Encontro e bastidores',url:workUrl.artists},
     {src:'./assets/destaque-artistas-02.jpg',alt:'Bastidores publicados no destaque oficial',caption:'Bastidores',url:workUrl.artists},
     {src:'./assets/destaque-premiacoes-01.jpg',alt:'Certificado publicado no destaque oficial',caption:'Certificado',url:workUrl.awards},
@@ -146,7 +151,7 @@ function renderGallery(category = 'cortes') {
   const status = document.getElementById('gallery-status');
   grid.replaceChildren();
   empty.hidden = items.length > 0;
-  status.textContent = items.length ? `${items.length} trabalhos nesta categoria` : 'Ainda não há fotografias cadastradas nesta categoria.';
+  status.textContent = items.length ? `${items.length} ${items.length === 1 ? 'trabalho' : 'trabalhos'} nesta categoria` : 'Ainda não há fotografias cadastradas nesta categoria.';
   items.forEach((item, index) => {
     const button = document.createElement('button');
     button.type = 'button';
