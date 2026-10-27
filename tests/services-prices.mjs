@@ -42,6 +42,9 @@ try {
       assert.equal(await page.locator('#services-prices-detail').isVisible(), true);
       assert.equal(await page.locator('#services-prices-booking-bar').count(), 0, `${category}: sem painel duplicado`);
       assert.equal(await page.locator('.services-prices-detail-book').count(), count, `${category}: um botão AGENDAR por serviço`);
+      if (category === 'cabelo' || category === 'coloracao') {
+        assert.equal(await page.locator('#services-prices-detail').getAttribute('data-art-ready'), 'true', `${category}: arte de referência com preços oficiais`);
+      }
       assert.ok(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth + 1), `${category} ${width}px: sem rolagem horizontal`);
       const brokenPhotos = await page.locator('.services-prices-detail-photo').evaluateAll(async images => {
         await Promise.all(images.map(image => image.decode().catch(() => {})));
@@ -83,6 +86,12 @@ try {
       await page.locator('#booking-stage-confirm:visible').waitFor();
       assert.match(await page.locator('#booking-summary').textContent(), /Cabelo \+ barba simples/);
       assert.equal(await page.locator('#booking-stage-service').isVisible(), false);
+    }
+    if (width === 941) {
+      await page.locator('[data-price-category="cabelo"]').click();
+      await page.locator('.services-prices-detail-book').first().click();
+      assert.equal(new URL(page.url()).pathname, '/agendamento');
+      assert.match(await page.locator('#booking-preselected').textContent(), /Corte com máquina.*R\$\s*35,00/);
     }
     await page.close();
   }

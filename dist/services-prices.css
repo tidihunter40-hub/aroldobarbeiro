@@ -252,6 +252,50 @@ body[data-route="servicos-precos"]:not(.services-detail-open) .app-bottom-nav { 
   .app-bottom-nav a { font-size: 7px; }
 }
 @media (min-width: 701px) {
+.services-prices-detail[data-group="cabelo"][data-art-ready="true"] .services-prices-detail-content { width: min(100% - 28px, 2097px); }
+.services-prices-detail[data-group="cabelo"][data-art-ready="true"] .services-prices-detail-list {
+  position: relative;
+  display: block;
+  width: 100%;
+  aspect-ratio: 2097 / 750;
+  background: #030303 url('./assets/cabelo-servicos-referencia.png') center / 100% 100% no-repeat;
+}
+.services-prices-detail[data-group="cabelo"][data-art-ready="true"] .services-prices-detail-row {
+  position: absolute;
+  left: 3.2%;
+  display: block;
+  width: 91.3%;
+  height: 13.4%;
+  min-height: 0;
+  padding: 0;
+  border: 0;
+  border-radius: 12px;
+  background: transparent;
+  box-shadow: none;
+  overflow: visible;
+}
+.services-prices-detail[data-group="cabelo"][data-art-ready="true"] .services-prices-detail-row:nth-child(1) { top: 1.2%; }
+.services-prices-detail[data-group="cabelo"][data-art-ready="true"] .services-prices-detail-row:nth-child(2) { top: 15.5%; }
+.services-prices-detail[data-group="cabelo"][data-art-ready="true"] .services-prices-detail-row:nth-child(3) { top: 29.9%; }
+.services-prices-detail[data-group="cabelo"][data-art-ready="true"] .services-prices-detail-row:nth-child(4) { top: 44.2%; }
+.services-prices-detail[data-group="cabelo"][data-art-ready="true"] .services-prices-detail-row:nth-child(5) { top: 57.8%; }
+.services-prices-detail[data-group="cabelo"][data-art-ready="true"] .services-prices-detail-row:nth-child(6) { top: 70.7%; }
+.services-prices-detail[data-group="cabelo"][data-art-ready="true"] .services-prices-detail-row:nth-child(7) { top: 83.5%; }
+.services-prices-detail[data-group="cabelo"][data-art-ready="true"] .services-prices-detail-row > :not(.services-prices-detail-book) { display: none; }
+.services-prices-detail[data-group="cabelo"][data-art-ready="true"] .services-prices-detail-book {
+  position: absolute;
+  top: 15%;
+  right: 1%;
+  width: 12%;
+  height: 70%;
+  min-height: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  opacity: 0;
+}
+.services-prices-detail[data-group="cabelo"][data-art-ready="true"] .services-prices-detail-row:hover { outline: 2px solid #ffe39b; outline-offset: -2px; }
+.services-prices-detail[data-group="cabelo"][data-art-ready="true"] .services-prices-detail-book:focus-visible { opacity: 1; outline: 3px solid #fff; outline-offset: -3px; }
 .services-prices-detail[data-group="coloracao"][data-art-ready="true"] .services-prices-detail-content { width: min(100% - 28px, 1700px); }
 .services-prices-detail[data-group="coloracao"][data-art-ready="true"] .services-prices-detail-list {
   position: relative;

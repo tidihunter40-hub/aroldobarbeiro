@@ -21,6 +21,10 @@
     'Nevou', 'Luzes', 'Luzes platinadas', 'Pigmentar cabelo', 'Pigmentar barba', 'Banho de brilho',
     'Cabelo + barba simples', 'Cabelo + barba com espuma quente', 'Cabelo + barboterapia com vapor de ozônio'
   ];
+  const cabeloReferencePrices = new Map([
+    ['Corte com máquina', 3500], ['Corte na tesoura', 4000], ['Corte infantil', 4000],
+    ['Pezinho', 1000], ['Sobrancelha', 1000], ['Hidratação', 3000], ['Relaxamento capilar', 3500]
+  ]);
   const coloracaoReferencePrices = new Map([
     ['Nevou', 20000], ['Luzes', 10000], ['Luzes platinadas', 15000],
     ['Pigmentar cabelo', 3500], ['Pigmentar barba', 3000], ['Banho de brilho', 4000]
@@ -125,8 +129,10 @@
     const position = name => { const index = order.indexOf(name); return index < 0 ? 999 : index; };
     const matching = services.filter(service => groupFor(service) === activeGroup)
       .sort((a, b) => position(a.name) - position(b.name));
-    detail.dataset.artReady = String(activeGroup === 'coloracao' && matching.length === coloracaoReferencePrices.size &&
-      matching.every(service => coloracaoReferencePrices.get(service.name) === service.priceCents));
+    const referencePrices = activeGroup === 'cabelo' ? cabeloReferencePrices :
+      activeGroup === 'coloracao' ? coloracaoReferencePrices : null;
+    detail.dataset.artReady = String(referencePrices !== null && matching.length === referencePrices.size &&
+      matching.every(service => referencePrices.get(service.name) === service.priceCents));
     if (matching.length) list.append(...matching.map(serviceRow));
     else {
       const empty = document.createElement('p');
