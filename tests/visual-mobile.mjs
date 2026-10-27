@@ -143,6 +143,7 @@ try {
     await page.locator(`[data-category-choice="${category}"]`).click();
     assert.equal(await page.locator('.cut-category-card:visible').count(), 0);
     assert.equal(await page.locator('.cut-card').count(), count);
+    assert.equal(await page.locator('.cut-card-media h4').count(), count, `${category}: nome de cada estilo sobre a foto`);
     if (category === 'masculinos') assert.match(await page.locator('.cut-card').first().locator('.cut-card-price').textContent(), /30,00/);
     const brokenCutImages = await page.locator('.cut-card-media img').evaluateAll(async images => {
       await Promise.all(images.map(async image => {

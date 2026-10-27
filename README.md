@@ -57,6 +57,8 @@ Na página pública, a seção **Cortes e preços** mostra os serviços ativos a
 
 A aba **Serviços & Preços** usa a arte de referência enviada pelo responsável na tela de entrada, com os quatro cartões clicáveis nas mesmas posições. Cada categoria abre uma tela de serviços e preços com botão AGENDAR por item. O painel repetido de data, horário e WhatsApp foi removido; a data e o horário são escolhidos na agenda interna depois que o serviço já está selecionado. A lista de Coloração usa a arte enviada pelo responsável quando os seis preços oficiais coincidem com ela; se forem alterados no painel, aparecem os cartões dinâmicos com os valores atuais. A tabela corrigida pelo responsável define 19 serviços ativos e seus preços. Cabelo inclui **Corte com máquina R$ 35**, **Corte na tesoura R$ 40** e **Corte infantil R$ 40**. As outras categorias usam os valores da tabela, mesmo quando as imagens de conceito mostram preços diferentes. Em todas as categorias, **AGENDAR** abre a agenda interna com o serviço já selecionado. No celular, os cartões são maiores para manter nomes e preços legíveis. As durações sugeridas em `official-services.mjs` são provisórias, pois a tabela não informa tempos de atendimento. Revise-as no painel assim que os tempos reais forem definidos.
 
+Na aba **Cortes**, o nome de cada estilo usa a fonte Sora sobre a parte inferior da foto, com gradiente para leitura. O mesmo cartão atende cortes masculinos, infantis e estilos de barba; o botão de agendamento fica abaixo da imagem.
+
 ### Logos
 
 `dist/assets/aroldo-logo-oficial.png` é a logo original enviada pelo responsável e deve ser usada em qualquer lugar que mostre o emblema oval da barbearia, inclusive sobre as logos parecidas incorporadas nas artes de Serviços & Preços. `dist/assets/aroldo-logo-fachada.png` e as fotos da fachada representam uma identidade visual diferente e devem continuar separadas. As telas de Serviços & Preços posicionam a logo original em HTML/CSS sobre as artes de referência para manter o desenho enviado sem alterar os serviços ou seus preços.
@@ -94,7 +96,7 @@ O ajuste final em `dist/booking.css` aumentou rótulos e botões pequenos, prese
 
 O site tem manifest, ícones para Android/iOS, botão de instalação quando o navegador oferece essa opção e cache offline da página e das imagens locais. Para instalar, abra a prévia em `http://127.0.0.1:5180/` ou publique em HTTPS; abrir `dist/index.html` diretamente não ativa o service worker. Isso segue os [requisitos atuais de instalação de PWA](https://developer.mozilla.org/en-US/docs/Web/Progressive_web_apps/Guides/Making_PWAs_installable).
 
-Os recursos locais usam rede primeiro e recorrem ao cache quando não há conexão; o service worker é registrado com `updateViaCache: 'none'`. A versão atual é `v64`. O precache inclui os recursos usados pela página. A API e o painel administrativo não são guardados em cache. Ao publicar uma atualização, continue alterando `CACHE_NAME` em `dist/sw.js` para eliminar caches antigos. Links externos como WhatsApp e Instagram continuam dependentes de internet.
+Os recursos locais usam rede primeiro e recorrem ao cache quando não há conexão; o service worker é registrado com `updateViaCache: 'none'`. A versão atual é `v65`. O precache inclui os recursos usados pela página. A API e o painel administrativo não são guardados em cache. Ao publicar uma atualização, continue alterando `CACHE_NAME` em `dist/sw.js` para eliminar caches antigos. Links externos como WhatsApp e Instagram continuam dependentes de internet.
 
 ## Arquivos
 

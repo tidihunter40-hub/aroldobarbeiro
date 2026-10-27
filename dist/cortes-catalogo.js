@@ -32,19 +32,19 @@
     photo.alt = `Referência de ${item.nome}`;
     photo.loading = 'lazy';
     photo.decoding = 'async';
-    media.append(photo);
+    const title = document.createElement('h4');
+    title.textContent = item.nome;
+    media.append(photo, title);
 
     const body = document.createElement('div');
     body.className = 'cut-card-body';
-    const title = document.createElement('h4');
-    title.textContent = item.nome;
     const registeredService = serviceFor(item.nome);
     if (registeredService) {
       const price = document.createElement('p');
       price.className = 'cut-card-price';
       price.textContent = money(registeredService.priceCents);
-      body.append(title, price);
-    } else body.append(title);
+      body.append(price);
+    }
 
     const button = document.createElement('button');
     button.type = 'button';

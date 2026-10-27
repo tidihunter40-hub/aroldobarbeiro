@@ -126,7 +126,6 @@
 .cut-catalog-status { margin: 0 0 25px; text-align: left; }
 .cut-detail-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 18px; }
 .cut-detail-grid .cut-card { height: 100%; }
-.cut-detail-grid .cut-card-body h4 { min-height: 2.5em; }
 .cut-detail-grid .cut-card-choose { font-size: clamp(9px, 1vw, 11px); }
 
 @media (max-width: 1000px) {
@@ -149,7 +148,7 @@
   .cut-category-arrow { width: 37px; height: 37px; font-size: 24px; }
   .cut-detail-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
   .cut-category-back { margin-bottom: 20px; }
-  .cut-detail-grid .cut-card-choose { min-height: 48px; font-size: 9px; }
+  .cut-detail-grid .cut-card-choose { min-height: 48px; font-size: 10px; }
 }
 @media (max-width: 350px) {
   .cut-category-bar { inset: auto 8px 8px; gap: 8px; padding: 9px; }
