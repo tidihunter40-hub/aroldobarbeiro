@@ -1,5 +1,5 @@
 const CACHE_PREFIX = 'aroldo-barber-';
-const CACHE_NAME = `${CACHE_PREFIX}v58`;
+const CACHE_NAME = `${CACHE_PREFIX}v59`;
 const APP_SHELL = './index.html';
 const PRECACHE = [
   './',

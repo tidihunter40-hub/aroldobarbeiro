@@ -46,13 +46,15 @@ try {
         assert.equal(await page.locator('#services-prices-detail').getAttribute('data-art-ready'), 'true', `${category}: arte de referência com preços oficiais`);
       }
       if (category === 'coloracao') {
+        const artSelector = width <= 700 ? '#services-prices-detail-list .services-prices-detail-row' : '#services-prices-detail-list';
         const art = await page.locator('#services-prices-detail-list').evaluate(element => ({
-          background: getComputedStyle(element).backgroundImage,
+          background: getComputedStyle(innerWidth <= 700 ? element.firstElementChild : element).backgroundImage,
           width: element.getBoundingClientRect().width,
+          height: element.getBoundingClientRect().height,
           viewportWidth: element.parentElement.clientWidth,
           scrollable: element.parentElement.scrollWidth > element.parentElement.clientWidth
         }));
-        await page.locator('#services-prices-detail-list').evaluate(async element => {
+        await page.locator(artSelector).first().evaluate(async element => {
           const source = getComputedStyle(element).backgroundImage.match(/^url\(["']?(.*?)["']?\)$/)?.[1];
           const image = new Image();
           image.src = source;
@@ -62,6 +64,7 @@ try {
         if (width <= 700) {
           assert.ok(art.width <= art.viewportWidth + 1, 'coloracao: imagem inteira no celular');
           assert.equal(art.scrollable, false, 'coloracao: sem corte horizontal');
+          assert.ok(art.height >= 450, 'coloracao: faixas grandes no celular');
         }
       }
       assert.ok(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth + 1), `${category} ${width}px: sem rolagem horizontal`);
@@ -70,7 +73,9 @@ try {
         return images.filter(image => !image.naturalWidth).map(image => image.src);
       });
       assert.deepEqual(brokenPhotos, [], `${category}: fotos carregadas`);
-      if (width === 390 || width === 941) await page.screenshot({ path: resolve(`preview-services-prices-${category}-${width}.png`), fullPage: true });
+      if (width === 390 || width === 941 || (width === 320 && category === 'coloracao')) {
+        await page.screenshot({ path: resolve(`preview-services-prices-${category}-${width}.png`), fullPage: true });
+      }
       if (width === 390 && category === 'cabelo') {
         const rows = await page.locator('.services-prices-detail-row').allTextContents();
         assert.match(rows[0], /Corte com máquina.*R\$\s*35,00/);
