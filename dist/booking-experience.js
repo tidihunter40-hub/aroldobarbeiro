@@ -240,6 +240,8 @@
   function renderShowcase() {
     showcase.replaceChildren();
     showcaseStatus.textContent = '';
+    window.aroldoServicesCatalog = catalog;
+    window.aroldoServicesLoadError = false;
     window.dispatchEvent(new CustomEvent('aroldo:servicos-carregados', { detail: { services: catalog } }));
   }
 
@@ -380,6 +382,7 @@
       await loadAgenda();
     } catch {
       say(status, navigator.onLine ? 'Agenda indisponível no momento. Tente novamente ou fale pelo WhatsApp.' : 'Você está offline. Conecte-se para consultar a agenda.', true);
+      window.aroldoServicesLoadError = true;
       window.dispatchEvent(new Event('aroldo:servicos-erro'));
     }
   }

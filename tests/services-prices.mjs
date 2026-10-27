@@ -45,6 +45,19 @@ try {
       if (category === 'cabelo' || category === 'coloracao' || category === 'combos') {
         assert.equal(await page.locator('#services-prices-detail').getAttribute('data-art-ready'), 'true', `${category}: arte de referência com preços oficiais`);
       }
+      if (category === 'cabelo') {
+        const artSelector = width <= 700 ? '.services-prices-detail-row' : '#services-prices-detail';
+        const art = await page.locator(artSelector).first().evaluate(async element => {
+          const background = getComputedStyle(element).backgroundImage;
+          const source = background.match(/^url\(["']?(.*?)["']?\)$/)?.[1];
+          const image = new Image();
+          image.src = source;
+          await image.decode();
+          return { background, height: element.getBoundingClientRect().height };
+        });
+        assert.match(art.background, /cabelos-pagina-referencia\.png/);
+        if (width <= 700) assert.ok(art.height >= 65, 'cabelo: faixas legíveis no celular');
+      }
       if (category === 'combos') {
         const art = await page.locator('#services-prices-detail').evaluate(async element => {
           const background = getComputedStyle(element).backgroundImage;
@@ -85,7 +98,7 @@ try {
         return images.filter(image => !image.naturalWidth).map(image => image.src);
       });
       assert.deepEqual(brokenPhotos, [], `${category}: fotos carregadas`);
-      if (width === 390 || width === 941 || (width === 320 && category === 'coloracao')) {
+      if (width === 390 || width === 941 || (width === 320 && (category === 'coloracao' || category === 'cabelo'))) {
         await page.screenshot({ path: resolve(`preview-services-prices-${category}-${width}.png`), fullPage: true });
       }
       if (width === 390 && category === 'cabelo') {
@@ -94,7 +107,7 @@ try {
         assert.match(rows[1], /Corte na tesoura.*R\$\s*40,00/);
         assert.match(rows[2], /Corte infantil.*R\$\s*40,00/);
       }
-      if (width === 390 && category === 'combos') {
+      if (width === 390 && (category === 'combos' || category === 'cabelo')) {
         await page.locator('.menu-toggle').click();
         assert.equal(await page.locator('.site-header').evaluate(header => header.classList.contains('menu-open')), true);
         await page.locator('.menu-toggle').click();
@@ -152,6 +165,14 @@ try {
     assert.match(await page.locator('#booking-preselected').textContent(), expected);
     await page.close();
   }
+  const hairPage = await browser.newPage({ viewport: { width: 390, height: 844 } });
+  await hairPage.goto(`${origin}/servicos-precos`, { waitUntil: 'domcontentloaded' });
+  await hairPage.waitForFunction(() => document.getElementById('services-prices-status').textContent === '');
+  await hairPage.locator('[data-price-category="cabelo"]').click();
+  await hairPage.locator('.services-prices-detail-book').last().click();
+  assert.equal(new URL(hairPage.url()).pathname, '/agendamento');
+  assert.match(await hairPage.locator('#booking-preselected').textContent(), /Relaxamento capilar.*R\$\s*35,00/);
+  await hairPage.close();
   console.log('Serviços & Preços: quatro categorias, preços, rota e agendamento pré-selecionado OK');
 } finally {
   await browser.close();

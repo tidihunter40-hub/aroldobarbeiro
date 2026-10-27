@@ -10,7 +10,7 @@
   const icon = document.getElementById('services-prices-detail-icon');
   const hero = document.querySelector('.services-prices-detail-hero');
   const groups = {
-    cabelo: { title: 'CABELO', subtitle: 'CORTES E TRATAMENTOS', hint: 'Escolha o serviço, veja o preço e agende seu horário.', icon: '✂', photo: './assets/concept-corte.jpg' },
+    cabelo: { title: 'CABELOS', subtitle: 'ESTILO EM TODOS OS DETALHES', hint: 'Escolha o corte ideal, veja o preço e agende seu horário.', icon: '✂', photo: './assets/concept-corte.jpg' },
     barba: { title: 'BARBA', subtitle: 'CUIDADOS E ESTILO', hint: 'Escolha o serviço que deseja, veja o preço e agende seu horário.', icon: '♢', photo: './assets/concept-barba.jpg' },
     coloracao: { title: 'COLORAÇÃO', subtitle: 'REALCE O SEU ESTILO', hint: 'Mais personalidade, mais estilo. Escolha o serviço e agende seu horário.', icon: '◈', photo: './assets/concept-platinado.jpg' },
     combos: { title: 'COMBOS', subtitle: 'MAIS ESTILO, MAIS COMPLETO', hint: 'Escolha o combo ideal, veja o preço e agende seu horário.', icon: '✦', photo: './assets/concept-visagismo.jpg' }
@@ -179,12 +179,15 @@
   document.querySelectorAll('[data-price-category]').forEach(button => button.addEventListener('click', () => showCategory(button.dataset.priceCategory)));
   document.getElementById('services-prices-back').addEventListener('click', showLanding);
   window.addEventListener('aroldo:route', event => { if (event.detail?.route !== '/servicos-precos' && activeGroup) showLanding(); });
-  window.addEventListener('aroldo:servicos-carregados', event => {
-    services = Array.isArray(event.detail?.services) ? event.detail.services.filter(service => order.includes(service.name)) : [];
+  function receiveServices(catalog) {
+    services = Array.isArray(catalog) ? catalog.filter(service => order.includes(service.name)) : [];
     status.textContent = services.length ? '' : 'Os serviços ainda não estão disponíveis para agendamento.';
     renderDetail();
-  });
+  }
+  window.addEventListener('aroldo:servicos-carregados', event => receiveServices(event.detail?.services));
   window.addEventListener('aroldo:servicos-erro', () => {
     status.textContent = 'Não foi possível carregar os serviços agora. Tente novamente mais tarde.';
   });
+  if (Array.isArray(window.aroldoServicesCatalog)) receiveServices(window.aroldoServicesCatalog);
+  else if (window.aroldoServicesLoadError) status.textContent = 'Não foi possível carregar os serviços agora. Tente novamente mais tarde.';
 })();
