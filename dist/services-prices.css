@@ -457,3 +457,120 @@ body[data-route="servicos-precos"]:not(.services-detail-open) .app-bottom-nav { 
   .services-prices-detail[data-group="coloracao"][data-art-ready="true"] .services-prices-detail-row > .services-prices-detail-price,
   .services-prices-detail[data-group="coloracao"][data-art-ready="true"] .services-prices-detail-book { z-index: 2; }
 }
+.services-prices-detail[data-group="combos"][data-art-ready="true"] {
+  position: relative;
+  width: min(100%, 941px);
+  aspect-ratio: 941 / 1277;
+  margin-inline: auto;
+  overflow: hidden;
+  background: #030303 url('./assets/combos-servicos-referencia.png') center top / 100% auto no-repeat;
+}
+.services-prices-detail[data-group="combos"][data-art-ready="true"] .services-prices-detail-hero {
+  position: absolute;
+  z-index: 2;
+  inset: 0 0 auto;
+  width: 100%;
+  height: 41.7%;
+  min-height: 0;
+  overflow: visible;
+  background: none;
+}
+.services-prices-detail[data-group="combos"][data-art-ready="true"] .services-prices-detail-hero::before,
+.services-prices-detail[data-group="combos"][data-art-ready="true"] .services-prices-detail-hero::after,
+.services-prices-detail[data-group="combos"][data-art-ready="true"] .services-prices-detail-logo,
+.services-prices-detail[data-group="combos"][data-art-ready="true"] .services-prices-detail-image-note { display: none; }
+.services-prices-detail[data-group="combos"][data-art-ready="true"] .services-prices-detail-hero-inner {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  min-height: 0;
+  padding: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+}
+.services-prices-detail[data-group="combos"][data-art-ready="true"] .services-prices-back {
+  top: 3.6%;
+  left: 2.3%;
+  width: 20.5%;
+  height: 10.2%;
+  min-height: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: transparent;
+  opacity: 0;
+}
+.services-prices-detail[data-group="combos"][data-art-ready="true"] .services-prices-back:focus-visible {
+  opacity: 1;
+  outline: 3px solid #fff;
+  outline-offset: -3px;
+}
+.services-prices-detail[data-group="combos"][data-art-ready="true"] .services-prices-detail-content {
+  position: absolute;
+  z-index: 1;
+  inset: 0;
+  width: 100%;
+  padding: 0;
+}
+.services-prices-detail[data-group="combos"][data-art-ready="true"] .services-prices-detail-list {
+  position: absolute;
+  inset: 0;
+  display: block;
+}
+.services-prices-detail[data-group="combos"][data-art-ready="true"] .services-prices-combo-row {
+  position: absolute;
+  left: 2.3%;
+  display: block;
+  width: 95.4%;
+  height: 18.5%;
+  min-height: 0;
+  padding: 0;
+  border: 0;
+  border-radius: 14px;
+  background: transparent;
+  box-shadow: none;
+  overflow: visible;
+}
+.services-prices-detail[data-group="combos"][data-art-ready="true"] .services-prices-combo-row:nth-child(1) { top: 41.7%; }
+.services-prices-detail[data-group="combos"][data-art-ready="true"] .services-prices-combo-row:nth-child(2) { top: 60.5%; }
+.services-prices-detail[data-group="combos"][data-art-ready="true"] .services-prices-combo-row:nth-child(3) { top: 80.2%; }
+.services-prices-detail[data-group="combos"][data-art-ready="true"] .services-prices-combo-row > :not(.services-prices-detail-book) { display: none; }
+.services-prices-detail[data-group="combos"][data-art-ready="true"] .services-prices-detail-book {
+  position: absolute;
+  top: 52%;
+  right: 2%;
+  width: 24%;
+  height: 33%;
+  min-height: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  opacity: 0;
+}
+.services-prices-detail[data-group="combos"][data-art-ready="true"] .services-prices-combo-row:hover { outline: 2px solid #ffe39b; outline-offset: -2px; }
+.services-prices-detail[data-group="combos"][data-art-ready="true"] .services-prices-detail-book:focus-visible { opacity: 1; outline: 3px solid #fff; outline-offset: -3px; }
+@media (max-width: 1000px) {
+  body:has(.services-prices-detail[data-group="combos"][data-art-ready="true"]:not([hidden])) .site-header:not(.menu-open) {
+    top: clamp(7px, 2vw, 19px);
+    right: 2.3%;
+    width: clamp(42px, 9vw, 85px);
+    height: clamp(42px, 6.4vw, 60px);
+  }
+  body:has(.services-prices-detail[data-group="combos"][data-art-ready="true"]:not([hidden])) .site-header:not(.menu-open) .menu-toggle {
+    width: 100%;
+    height: 100%;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    box-shadow: none;
+    opacity: 0;
+  }
+  body:has(.services-prices-detail[data-group="combos"][data-art-ready="true"]:not([hidden])) .site-header:not(.menu-open) .menu-toggle:focus-visible {
+    opacity: 1;
+    outline: 3px solid #fff;
+    outline-offset: -3px;
+  }
+}
+@media (max-width: 700px) {
+  .services-prices-detail[data-group="combos"][data-art-ready="true"] .services-prices-back { min-height: 40px; }
+}

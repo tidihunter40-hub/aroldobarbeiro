@@ -29,6 +29,11 @@
     ['Nevou', 20000], ['Luzes', 10000], ['Luzes platinadas', 15000],
     ['Pigmentar cabelo', 3500], ['Pigmentar barba', 3000], ['Banho de brilho', 4000]
   ]);
+  const combosReferencePrices = new Map([
+    ['Cabelo + barba simples', 5000],
+    ['Cabelo + barba com espuma quente', 5500],
+    ['Cabelo + barboterapia com vapor de ozônio', 6000]
+  ]);
   const photos = {
     'Corte com máquina': ['./assets/cortes/masculinos/tradicional.webp', true],
     'Corte na tesoura': ['./assets/cortes/masculinos/mid-fade.webp', true],
@@ -130,7 +135,8 @@
     const matching = services.filter(service => groupFor(service) === activeGroup)
       .sort((a, b) => position(a.name) - position(b.name));
     const referencePrices = activeGroup === 'cabelo' ? cabeloReferencePrices :
-      activeGroup === 'coloracao' ? coloracaoReferencePrices : null;
+      activeGroup === 'coloracao' ? coloracaoReferencePrices :
+      activeGroup === 'combos' ? combosReferencePrices : null;
     detail.dataset.artReady = String(referencePrices !== null && matching.length === referencePrices.size &&
       matching.every(service => referencePrices.get(service.name) === service.priceCents));
     if (matching.length) list.append(...matching.map(serviceRow));

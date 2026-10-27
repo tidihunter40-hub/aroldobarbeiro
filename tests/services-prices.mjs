@@ -42,8 +42,20 @@ try {
       assert.equal(await page.locator('#services-prices-detail').isVisible(), true);
       assert.equal(await page.locator('#services-prices-booking-bar').count(), 0, `${category}: sem painel duplicado`);
       assert.equal(await page.locator('.services-prices-detail-book').count(), count, `${category}: um botão AGENDAR por serviço`);
-      if (category === 'cabelo' || category === 'coloracao') {
+      if (category === 'cabelo' || category === 'coloracao' || category === 'combos') {
         assert.equal(await page.locator('#services-prices-detail').getAttribute('data-art-ready'), 'true', `${category}: arte de referência com preços oficiais`);
+      }
+      if (category === 'combos') {
+        const art = await page.locator('#services-prices-detail').evaluate(async element => {
+          const background = getComputedStyle(element).backgroundImage;
+          const source = background.match(/^url\(["']?(.*?)["']?\)$/)?.[1];
+          const image = new Image();
+          image.src = source;
+          await image.decode();
+          return { background, width: element.clientWidth, height: element.clientHeight };
+        });
+        assert.match(art.background, /combos-servicos-referencia\.png/);
+        assert.ok(art.height <= art.width * 1.36 + 1, 'combos: painel inferior fora da arte');
       }
       if (category === 'coloracao') {
         const artSelector = width <= 700 ? '#services-prices-detail-list .services-prices-detail-row' : '#services-prices-detail-list';
@@ -81,6 +93,11 @@ try {
         assert.match(rows[0], /Corte com máquina.*R\$\s*35,00/);
         assert.match(rows[1], /Corte na tesoura.*R\$\s*40,00/);
         assert.match(rows[2], /Corte infantil.*R\$\s*40,00/);
+      }
+      if (width === 390 && category === 'combos') {
+        await page.locator('.menu-toggle').click();
+        assert.equal(await page.locator('.site-header').evaluate(header => header.classList.contains('menu-open')), true);
+        await page.locator('.menu-toggle').click();
       }
       await page.locator('#services-prices-back').click();
     }
@@ -120,6 +137,19 @@ try {
       assert.equal(new URL(page.url()).pathname, '/agendamento');
       assert.match(await page.locator('#booking-preselected').textContent(), /Corte com máquina.*R\$\s*35,00/);
     }
+    await page.close();
+  }
+  for (const [index, expected] of [
+    [1, /Cabelo \+ barba com espuma quente.*R\$\s*55,00/],
+    [2, /Cabelo \+ barboterapia com vapor de ozônio.*R\$\s*60,00/]
+  ]) {
+    const page = await browser.newPage({ viewport: { width: 390, height: 844 } });
+    await page.goto(`${origin}/servicos-precos`, { waitUntil: 'domcontentloaded' });
+    await page.waitForFunction(() => document.getElementById('services-prices-status').textContent === '');
+    await page.locator('[data-price-category="combos"]').click();
+    await page.locator('.services-prices-detail-book').nth(index).click();
+    assert.equal(new URL(page.url()).pathname, '/agendamento');
+    assert.match(await page.locator('#booking-preselected').textContent(), expected);
     await page.close();
   }
   console.log('Serviços & Preços: quatro categorias, preços, rota e agendamento pré-selecionado OK');
