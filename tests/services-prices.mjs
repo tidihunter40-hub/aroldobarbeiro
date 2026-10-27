@@ -45,6 +45,25 @@ try {
       if (category === 'cabelo' || category === 'coloracao') {
         assert.equal(await page.locator('#services-prices-detail').getAttribute('data-art-ready'), 'true', `${category}: arte de referência com preços oficiais`);
       }
+      if (category === 'coloracao') {
+        const art = await page.locator('#services-prices-detail-list').evaluate(element => ({
+          background: getComputedStyle(element).backgroundImage,
+          width: element.getBoundingClientRect().width,
+          viewportWidth: element.parentElement.clientWidth,
+          scrollable: element.parentElement.scrollWidth > element.parentElement.clientWidth
+        }));
+        await page.locator('#services-prices-detail-list').evaluate(async element => {
+          const source = getComputedStyle(element).backgroundImage.match(/^url\(["']?(.*?)["']?\)$/)?.[1];
+          const image = new Image();
+          image.src = source;
+          await image.decode();
+        });
+        assert.match(art.background, /coloracao-servicos-referencia\.png/);
+        if (width <= 700) {
+          assert.ok(art.width <= art.viewportWidth + 1, 'coloracao: imagem inteira no celular');
+          assert.equal(art.scrollable, false, 'coloracao: sem corte horizontal');
+        }
+      }
       assert.ok(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth + 1), `${category} ${width}px: sem rolagem horizontal`);
       const brokenPhotos = await page.locator('.services-prices-detail-photo').evaluateAll(async images => {
         await Promise.all(images.map(image => image.decode().catch(() => {})));
@@ -69,7 +88,10 @@ try {
       assert.equal(new URL(page.url()).pathname, '/agendamento');
       assert.match(await page.locator('#booking-preselected').textContent(), /Corte com máquina.*R\$\s*35,00/);
       await page.goto(`${origin}/servicos-precos`, { waitUntil: 'domcontentloaded' });
-      await page.waitForFunction(() => document.getElementById('services-prices-status').textContent === '');
+      await page.waitForFunction(() => document.getElementById('services-prices-status').textContent === '').catch(async error => {
+        console.error('Falha ao recarregar serviços:', page.url(), await page.locator('#services-prices-status').textContent(), errors);
+        throw error;
+      });
       await page.locator('[data-price-category="coloracao"]').click();
       assert.equal(await page.locator('#services-prices-detail').getAttribute('data-art-ready'), 'true');
       await page.locator('.services-prices-detail-book').first().click();

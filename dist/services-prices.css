@@ -296,6 +296,7 @@ body[data-route="servicos-precos"]:not(.services-detail-open) .app-bottom-nav { 
 }
 .services-prices-detail[data-group="cabelo"][data-art-ready="true"] .services-prices-detail-row:hover { outline: 2px solid #ffe39b; outline-offset: -2px; }
 .services-prices-detail[data-group="cabelo"][data-art-ready="true"] .services-prices-detail-book:focus-visible { opacity: 1; outline: 3px solid #fff; outline-offset: -3px; }
+}
 .services-prices-detail[data-group="coloracao"][data-art-ready="true"] .services-prices-detail-content { width: min(100% - 28px, 1700px); }
 .services-prices-detail[data-group="coloracao"][data-art-ready="true"] .services-prices-detail-list {
   position: relative;
@@ -339,7 +340,6 @@ body[data-route="servicos-precos"]:not(.services-detail-open) .app-bottom-nav { 
 }
 .services-prices-detail[data-group="coloracao"][data-art-ready="true"] .services-prices-detail-row:hover { outline: 2px solid #ffe39b; outline-offset: -2px; }
 .services-prices-detail[data-group="coloracao"][data-art-ready="true"] .services-prices-detail-book:focus-visible { opacity: 1; outline: 3px solid #fff; outline-offset: -3px; }
-}
 @media (max-width: 700px) {
   .services-prices-detail-hero { min-height: 260px; }
   .services-prices-detail-content { width: min(100% - 20px, 600px); }
@@ -377,4 +377,5 @@ body[data-route="servicos-precos"]:not(.services-detail-open) .app-bottom-nav { 
     padding: 5px;
     font-size: clamp(11px, 3.6vw, 15px);
   }
+  .services-prices-detail[data-group="coloracao"][data-art-ready="true"] .services-prices-detail-content { width: min(100% - 20px, 600px); }
 }

@@ -90,7 +90,7 @@ O ajuste final em `dist/booking.css` aumentou rótulos e botões pequenos, prese
 
 O site tem manifest, ícones para Android/iOS, botão de instalação quando o navegador oferece essa opção e cache offline da página e das imagens locais. Para instalar, abra a prévia em `http://127.0.0.1:5180/` ou publique em HTTPS; abrir `dist/index.html` diretamente não ativa o service worker. Isso segue os [requisitos atuais de instalação de PWA](https://developer.mozilla.org/en-US/docs/Web/Progressive_web_apps/Guides/Making_PWAs_installable).
 
-Os recursos locais usam rede primeiro e recorrem ao cache quando não há conexão; o service worker é registrado com `updateViaCache: 'none'`. A versão atual é `v57`. O precache inclui os recursos usados pela página. A API e o painel administrativo não são guardados em cache. Ao publicar uma atualização, continue alterando `CACHE_NAME` em `dist/sw.js` para eliminar caches antigos. Links externos como WhatsApp e Instagram continuam dependentes de internet.
+Os recursos locais usam rede primeiro e recorrem ao cache quando não há conexão; o service worker é registrado com `updateViaCache: 'none'`. A versão atual é `v58`. O precache inclui os recursos usados pela página. A API e o painel administrativo não são guardados em cache. Ao publicar uma atualização, continue alterando `CACHE_NAME` em `dist/sw.js` para eliminar caches antigos. Links externos como WhatsApp e Instagram continuam dependentes de internet.
 
 ## Arquivos
 
