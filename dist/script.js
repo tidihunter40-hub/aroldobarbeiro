@@ -51,6 +51,7 @@ function showRoute(path, { push = false, focus = false } = {}) {
   });
   document.title = `${routeTitles[route]} — Aroldo Barber`;
   document.body.dataset.route = route === '/' ? 'inicio' : route.slice(1);
+  window.dispatchEvent(new CustomEvent('aroldo:route', { detail: { route } }));
   window.scrollTo({ top: 0, behavior: 'instant' });
   if (focus) {
     const heading = screens.get(route).querySelector('h1,h2');
@@ -91,16 +92,20 @@ const workUrl = {
 const galleryItems = {
   cortes: [
     {src:'./assets/corte-perfil-instagram.jpg',alt:'Corte masculino publicado no perfil oficial',caption:'Corte masculino',url:workUrl.perfil},
+    {src:'./assets/corte-classico-instagram.jpg',alt:'Corte clássico publicado no perfil oficial',caption:'Corte clássico',url:workUrl.perfil},
     {src:'./assets/corte-kids-instagram.jpg',alt:'Corte infantil publicado no perfil oficial',caption:'Corte infantil',url:workUrl.kids},
     {src:'./assets/destaque-kids-02.jpg',alt:'Outro corte infantil publicado no destaque oficial',caption:'Corte infantil',url:workUrl.kids}
   ],
   visagismo: [],
-  proteses: [],
+  proteses: [
+    {src:'./assets/protese-instagram.jpg',alt:'Registro real de preparação para prótese capilar publicado no perfil oficial',caption:'Preparação para prótese capilar · registro do atendimento',url:'https://www.instagram.com/aroldobarbeirooficial/reel/Da8t6IGR1Lg/'}
+  ],
   barbas: [
     {src:'./assets/destaque-barbas-01.jpg',alt:'Acabamento de barba publicado no destaque oficial',caption:'Acabamento de barba',url:workUrl.beards},
     {src:'./assets/destaque-barbas-02.jpg',alt:'Barba publicada no destaque oficial',caption:'Barba',url:workUrl.beards}
   ],
   outros: [
+    {src:'./assets/desondulacao-instagram.jpg',alt:'Desondulação publicada no perfil oficial',caption:'Desondulação capilar',url:workUrl.perfil},
     {src:'./assets/destaque-nevou-01.jpg',alt:'Platinado publicado no destaque oficial',caption:'Platinado',url:workUrl.nevou},
     {src:'./assets/destaque-nevou-02.jpg',alt:'Descoloração publicada no destaque oficial',caption:'Descoloração',url:workUrl.nevou},
     {src:'./assets/destaque-desenhos-01.jpg',alt:'Desenho no cabelo publicado no destaque oficial',caption:'Desenho no cabelo',url:workUrl.drawings},
@@ -122,7 +127,9 @@ function showImage(index) {
   document.getElementById('lightbox-image').src = item.src;
   document.getElementById('lightbox-image').alt = item.alt;
   document.getElementById('lightbox-caption').textContent = item.caption;
-  document.getElementById('lightbox-link').href = item.url;
+  const source = document.getElementById('lightbox-link');
+  source.hidden = !item.url;
+  if (item.url) source.href = item.url;
 }
 function openGallery(items, index) { currentItems = items; showImage(index); dialog.showModal(); }
 document.querySelector('.lightbox-close').addEventListener('click', () => dialog.close());
@@ -132,16 +139,13 @@ dialog.addEventListener('click', event => { if (event.target === dialog) dialog.
 dialog.addEventListener('keydown', event => { if (event.key === 'ArrowLeft') showImage(currentIndex - 1); if (event.key === 'ArrowRight') showImage(currentIndex + 1); });
 
 function renderGallery(category = 'cortes') {
-  const items = galleryItems[category] || [];
+  const items = [...(galleryItems[category] || []), ...(window.aroldoGalleryExtras?.[category] || [])];
   const grid = document.getElementById('gallery-grid');
   const empty = document.getElementById('gallery-empty');
   const status = document.getElementById('gallery-status');
-  const source = document.querySelector('[data-gallery-source]');
   grid.replaceChildren();
-  document.querySelectorAll('[data-gallery-filter]').forEach(button => button.setAttribute('aria-pressed', String(button.dataset.galleryFilter === category)));
   empty.hidden = items.length > 0;
-  source.hidden = category !== 'proteses';
-  status.textContent = items.length ? `${items.length} registros oficiais` : category === 'proteses' ? 'Veja a publicação oficial; ainda não há fotos da categoria no catálogo local.' : 'Ainda não há registros oficiais desta categoria no catálogo local.';
+  status.textContent = items.length ? `${items.length} trabalhos nesta categoria` : 'Ainda não há fotografias cadastradas nesta categoria.';
   items.forEach((item, index) => {
     const button = document.createElement('button');
     button.type = 'button';
@@ -159,8 +163,6 @@ function renderGallery(category = 'cortes') {
     grid.append(button);
   });
 }
-document.querySelectorAll('[data-gallery-filter]').forEach(button => button.addEventListener('click', () => renderGallery(button.dataset.galleryFilter)));
-renderGallery();
 document.getElementById('year').textContent = new Date().getFullYear();
 
 const securePwaOrigin = location.protocol === 'https:' || ['localhost', '127.0.0.1'].includes(location.hostname);

@@ -1,0 +1,60 @@
+.protese-categories{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:16px;margin:28px auto 0;max-width:1180px}
+.protese-categories button{position:relative;grid-column:span 2;min-width:0;min-height:245px;padding:0;overflow:hidden;border:1px solid #54472e;border-radius:10px;background:#151513;color:#fff;text-align:left;cursor:pointer;box-shadow:0 14px 28px #0005;isolation:isolate}
+.protese-categories button:nth-child(n+4){grid-column:span 3;min-height:268px}
+.protese-categories button::after{content:"";position:absolute;inset:25% 0 0;z-index:0;background:linear-gradient(transparent,rgba(0,0,0,.33) 38%,rgba(0,0,0,.91));transition:background .25s ease}
+.protese-categories img{position:absolute;inset:0;display:block;width:100%;height:100%;object-fit:cover;transition:transform .35s ease,filter .35s ease}
+.protese-categories button[data-gallery-category="cortes"] img{object-position:center 28%}
+.protese-categories button[data-gallery-category="visagismo"] img{object-position:72% center}
+.protese-categories button[data-gallery-category="proteses"] img{object-position:center 35%}
+.protese-categories button[data-gallery-category="barbas"] img{object-position:center 26%}
+.protese-categories button[data-gallery-category="outros"] img{object-position:center 28%}
+.protese-categories button:hover,.protese-categories button:focus-visible{border-color:#ddb562}
+.protese-categories button:hover img,.protese-categories button:focus-visible img{transform:scale(1.045);filter:brightness(1.09)}
+.protese-categories span,.protese-categories small{position:absolute;z-index:1;left:20px;right:16px;text-shadow:0 1px 7px #000}
+.protese-categories span{bottom:22px;font:800 clamp(18px,2.1vw,26px)/1.05 'Barlow Condensed','Inter',sans-serif;letter-spacing:.025em;text-transform:uppercase}
+.protese-categories small{bottom:8px;font:600 10px/1 'Inter',sans-serif;color:#ebe2d0}
+.protese-categories button:has(small:not([hidden])) span{bottom:27px}
+.protese-categories small[hidden],#lightbox-link[hidden]{display:none!important}
+.protese-categories button:focus-visible,.protese-back:focus-visible,.protese-cta:focus-visible,.protese-section-heading button:focus-visible,.protese-compare input:focus-visible{outline:3px solid #f3d993;outline-offset:3px}
+.protese-back{margin:20px 0 22px;padding:10px 0;background:none;border:0;color:#e8c777;font:700 13px 'Inter',sans-serif;cursor:pointer}
+#gallery-category-title{margin:0 0 18px;color:#f8f6f0;text-align:center;text-transform:uppercase;font:700 clamp(30px,4vw,48px) 'Barlow Condensed',sans-serif}
+.protese-hero{position:relative;min-height:420px;overflow:hidden;border:1px solid #322c22;border-radius:10px;background:#090909}
+.protese-hero>img{position:absolute;width:100%;height:100%;object-fit:cover;object-position:64% 33%}
+.protese-hero::after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,#070808 0%,rgba(7,8,8,.97) 25%,rgba(7,8,8,.56) 58%,rgba(7,8,8,.02) 100%)}
+.protese-hero-copy{position:relative;z-index:1;width:min(52%,510px);padding:clamp(28px,4vw,54px)}
+.protese-rule{display:block;width:68px;height:2px;background:#d9ad59;margin-bottom:20px}
+.protese-hero-copy .overline{color:#d9ad59;letter-spacing:.13em;font-size:11px}
+.protese-hero h3{margin:14px 0;color:#fff;font:800 clamp(48px,6vw,92px)/.84 'Barlow Condensed',sans-serif;letter-spacing:-.02em}
+.protese-hero h3 em,.protese-detail em,.protese-transformations em,.protese-benefits em,.protese-final em{color:#ddb562;font-style:normal}
+.protese-hero-copy>strong{display:block;color:#fff;font:500 clamp(20px,2.2vw,29px)/1.2 'Inter',sans-serif}
+.protese-hero-copy>p:not(.overline){color:#d8d6d1;font:400 15px/1.55 'Inter',sans-serif;max-width:400px}
+.protese-hero-copy>small{display:block;margin-top:12px;color:#d2ccc1;font:11px 'Inter',sans-serif}
+.protese-cta{display:inline-flex;align-items:center;justify-content:space-between;gap:22px;min-height:53px;max-width:100%;padding:12px 18px;border-radius:7px;background:linear-gradient(110deg,#f0cf7c,#c7953c);color:#120f09;text-decoration:none;font:800 12px/1.25 'Inter',sans-serif;box-shadow:0 9px 25px #0006}
+.protese-cta:hover{filter:brightness(1.08)}
+.protese-cta span{font-size:22px;font-weight:400}
+.protese-transformations,.protese-benefits,.protese-process{margin-top:32px}
+.protese-work{margin-top:32px}.protese-work .gallery-grid{grid-template-columns:repeat(3,minmax(0,1fr))}
+.protese-section-heading{display:flex;justify-content:space-between;align-items:center;gap:20px;margin:0 0 15px}
+.protese-section-heading h4,.protese-benefits h4,.protese-final h4{margin:0;color:#f6f4f0;font:800 clamp(25px,3vw,37px)/1 'Barlow Condensed',sans-serif}
+.protese-section-heading p{margin:5px 0;color:#bbb9b4;font:13px/1.4 'Inter',sans-serif}
+#protese-controls{display:flex;gap:10px}#protese-controls button{width:39px;height:39px;border:1px solid #b58c43;border-radius:50%;background:#101010;color:#e5ba65;font-size:27px;cursor:pointer}
+.protese-results{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:15px}
+.protese-result{min-width:0}.protese-compare{position:relative;aspect-ratio:1.5;overflow:hidden;border:1px solid #5b5140;border-radius:8px;background:#141414}
+.protese-compare img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}.protese-compare .protese-after{clip-path:inset(0 0 0 var(--split,50%))}
+.protese-divider{position:absolute;top:0;bottom:0;left:var(--split,50%);width:2px;background:#fff;pointer-events:none}.protese-divider::after{content:'↔';position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);display:grid;place-items:center;width:30px;height:30px;border-radius:50%;background:#fff;color:#111;font:18px 'Inter',sans-serif}
+.protese-compare input{position:absolute;inset:0;width:100%;height:100%;margin:0;opacity:0;cursor:ew-resize;touch-action:none}
+.protese-compare-labels{position:absolute;inset:auto 12px 12px;display:flex;justify-content:space-between;pointer-events:none}.protese-compare-labels b{padding:6px 12px;border-radius:4px;background:#0a0b0be8;color:#fff;font:700 11px 'Inter',sans-serif}.protese-compare-labels b:last-child{background:#d3a755;color:#16100a}
+.protese-result>p{color:#d8d4cc;margin:9px 0 0;font:12px/1.4 'Inter',sans-serif}
+.protese-empty{margin:0;padding:23px;border:1px solid #3d372b;border-radius:8px;background:#111210;color:#e1ddd4;font:13px/1.5 'Inter',sans-serif}.protese-empty a{color:#e9c875}
+.protese-benefits{padding:24px;border:1px solid #302b24;border-radius:8px;background:linear-gradient(140deg,#141615,#0b0d0e)}
+.protese-benefit-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:0;margin-top:19px}.protese-benefit-grid article{display:flex;gap:14px;padding:7px 16px;border-left:1px solid #292a28}.protese-benefit-grid article:first-child{border-left:0;padding-left:0}.protese-benefit-grid b{color:#e4ba63;font-size:34px;font-weight:400;line-height:1}.protese-benefit-grid h5,.protese-steps h5{margin:0 0 6px;color:#fff;font:700 13px/1.25 'Inter',sans-serif}.protese-benefit-grid p,.protese-steps p{margin:0;color:#c8c6c1;font:12px/1.5 'Inter',sans-serif}
+.protese-steps{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}.protese-steps article{min-height:136px;padding:21px;border:1px solid #272927;border-radius:9px;background:linear-gradient(135deg,#17191a,#0d0f10)}.protese-steps b{display:block;margin-bottom:10px;color:#e6bc66;font:800 18px 'Barlow Condensed',sans-serif}
+.protese-final{display:flex;align-items:center;justify-content:space-between;gap:25px;margin-top:32px;padding:29px;border:1px solid #514329;border-radius:8px;background:linear-gradient(110deg,#1c1c1a,#080909)}.protese-final p{margin:9px 0 0;color:#d1cec8;font:13px/1.5 'Inter',sans-serif}.protese-final .protese-cta{max-width:330px}
+@media(max-width:900px){.protese-categories{grid-template-columns:repeat(2,minmax(0,1fr))}.protese-categories button,.protese-categories button:nth-child(n+4){grid-column:auto;min-height:230px}.protese-categories button:last-child{grid-column:span 2}.protese-benefit-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}.protese-benefit-grid article:nth-child(3){border-left:0;padding-left:0}.protese-results{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:640px){.protese-categories{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.protese-categories button,.protese-categories button:nth-child(n+4){min-height:178px}.protese-categories button:last-child{grid-column:span 2;min-height:194px}.protese-categories span,.protese-categories small{left:11px;right:8px}.protese-categories span{bottom:13px;font-size:19px;line-height:1.02}.protese-categories small{bottom:4px;font-size:9px}.protese-categories button:has(small:not([hidden])) span{bottom:16px}.protese-hero{min-height:590px}.protese-hero>img{height:55%;object-position:center 28%}.protese-hero::after{background:linear-gradient(0deg,#080909 0%,#080909 42%,rgba(8,9,9,.14) 80%)}.protese-hero-copy{position:absolute;bottom:0;width:100%;padding:24px}.protese-hero h3{font-size:56px}.protese-hero-copy>p:not(.overline){font-size:13px}.protese-cta{width:100%;font-size:11px}.protese-results{grid-template-columns:1fr}.protese-benefits{padding:20px}.protese-benefit-grid{grid-template-columns:1fr;gap:16px}.protese-benefit-grid article{border-left:0;padding:0}.protese-steps{grid-template-columns:1fr;gap:10px}.protese-steps article{min-height:0}.protese-final{display:block;padding:22px}.protese-final .protese-cta{max-width:none;margin-top:18px}.protese-section-heading h4,.protese-benefits h4,.protese-final h4{font-size:28px}}
+@media(prefers-reduced-motion:reduce){.protese-categories img{transition:none}}
+@media(max-width:900px){.protese-work .gallery-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:640px){.protese-work .gallery-grid{grid-template-columns:1fr}}
+@media(max-width:700px){.site-gallery{padding-bottom:calc(108px + env(safe-area-inset-bottom))}}
+.protese-categories[hidden],#gallery-detail[hidden],#gallery-standard[hidden],#protese-detail[hidden],#protese-controls[hidden],#protese-empty[hidden]{display:none!important}
+.booking-service-placeholder{display:grid;place-items:center;flex:0 0 72px;width:72px;min-height:72px;background:linear-gradient(135deg,#24221d,#0d0f0f);color:#d4aa58;font-size:32px}

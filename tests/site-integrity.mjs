@@ -19,7 +19,11 @@ assert.match(html, /<section class="hero hero-home" id="inicio"/, 'A fachada dev
 assert.match(html, /id="agendar"/, 'A agenda deve permanecer disponível no fluxo público');
 assert.deepEqual([...html.matchAll(/data-category-choice="([^"]+)"/g)].map(match => match[1]), ['masculinos','infantis','barbas'], 'Entrada do catálogo deve conter três categorias');
 assert.doesNotMatch(html, /data-cut-filter=/, 'Cortes individuais não devem aparecer como filtro da tela inicial');
-assert.deepEqual([...html.matchAll(/data-gallery-filter="([^"]+)"/g)].map(match => match[1]), ['cortes','visagismo','proteses','barbas','outros'], 'A galeria deve ter os cinco filtros internos');
+assert.deepEqual([...html.matchAll(/data-gallery-category="([^"]+)"/g)].map(match => match[1]), ['cortes','visagismo','proteses','barbas','outros'], 'A Galeria deve apresentar as cinco categorias');
+assert.match(html, /id="protese-results"/, 'A prótese capilar deve ter espaço para resultados reais');
+assert.match(html, /Imagem ilustrativa\. Consulte os registros reais abaixo\./, 'A capa ilustrativa deve ser identificada');
+assert.match(read('script.js'), /corte-kids-instagram\.jpg/, 'Cortes infantis devem permanecer entre os trabalhos');
+assert.match(read('script.js'), /destaque-premiacoes-02\.jpg/, 'Outros trabalhos devem preservar os registros originais');
 
 const ids = new Set([...html.matchAll(/\bid="([^"]+)"/g)].map(match => match[1]));
 const anchors = [...html.matchAll(/\bhref="#([^"]+)"/g)].map(match => match[1]);

@@ -1,5 +1,5 @@
 const CACHE_PREFIX = 'aroldo-barber-';
-const CACHE_NAME = `${CACHE_PREFIX}v47`;
+const CACHE_NAME = `${CACHE_PREFIX}v49`;
 const APP_SHELL = './index.html';
 const PRECACHE = [
   './',
@@ -15,7 +15,9 @@ const PRECACHE = [
   './app-navigation.css',
   './cut-categories.css',
   './service-step.css',
+  './protese.css',
   './script.js',
+  './protese.js',
   './booking-experience.js',
   './cortes-catalogo.js',
   './cortes-catalogo.json',
@@ -66,7 +68,9 @@ const PRECACHE = [
   './assets/cortes/tratamentos/barbaterapia-vapor-ozonio.svg',
   './assets/aroldo-oculos-recorte.png',
   './assets/corte-kids-instagram.jpg',
+  './assets/corte-classico-instagram.jpg',
   './assets/corte-perfil-instagram.jpg',
+  './assets/protese-instagram.jpg',
   './assets/desondulacao-instagram.jpg',
   './assets/destaque-artistas-01.jpg',
   './assets/destaque-artistas-02.jpg',
