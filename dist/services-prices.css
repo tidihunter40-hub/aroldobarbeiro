@@ -149,27 +149,6 @@ body[data-route="servicos-precos"]:not(.services-detail-open) .app-bottom-nav { 
 .services-prices-combo-parts { margin-top: 9px !important; color: #e9b750 !important; font-weight: 700 !important; letter-spacing: .05em; }
 .services-prices-detail-book:focus-visible, .services-prices-back:focus-visible { outline: 3px solid #fff; outline-offset: 3px; }
 .services-prices-detail-note { margin: 21px 0 5px; color: #d1c5b3; font: 400 12px/1.5 'Inter', sans-serif; text-align: center; }
-.services-prices-detail-row.is-selected { border-color: #ffe197; box-shadow: 0 0 0 1px #e7a62e, 0 8px 20px #000; }
-.services-prices-detail-book.services-prices-select { width: 48px; min-width: 48px; height: 48px; padding: 0; border: 0; border-radius: 50%; background: none; color: #fff; font: 300 49px/1 'Inter', sans-serif; }
-.services-prices-detail-row.is-selected .services-prices-select { color: #f4b942; }
-.services-prices-booking-bar { margin-top: 22px; padding: clamp(18px, 2.4vw, 30px); border: 2px solid #eba92a; border-radius: 23px; background: linear-gradient(140deg, #0b0b0b, #020202); box-shadow: 0 10px 25px #0009; }
-.services-prices-booking-heading { display: flex; align-items: center; gap: 17px; }
-.services-prices-booking-heading > span { color: #f1b530; font: 800 49px/1 'Inter', sans-serif; }
-.services-prices-booking-heading h3 { margin: 0; color: #fff; font: 800 clamp(25px, 3vw, 34px)/1 'Barlow Condensed', Impact, sans-serif; }
-.services-prices-booking-heading p { margin: 6px 0 0; color: #d6d1c7; font: 400 15px/1.4 'Inter', sans-serif; }
-.services-prices-selected { min-height: 20px; margin: 13px 0; color: #f2be58; font: 600 13px/1.4 'Inter', sans-serif; }
-.services-prices-booking-fields { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-.services-prices-booking-fields label { display: flex; align-items: center; gap: 12px; min-width: 0; padding: 12px 15px; border: 1px solid #54514c; border-radius: 13px; color: #f4bf4c; }
-.services-prices-booking-fields label > span:first-child { font: 700 36px/1 'Inter', sans-serif; }
-.services-prices-booking-fields label > span:last-child { display: flex; min-width: 0; flex: 1; flex-direction: column; gap: 5px; color: #f6f1e8; font: 500 12px/1.3 'Inter', sans-serif; }
-.services-prices-booking-fields input, .services-prices-booking-fields select { width: 100%; min-width: 0; height: 42px; padding: 7px 12px; border: 1px solid #817d76; border-radius: 30px; background: #050505; color: #fff; font: 500 14px/1 'Inter', sans-serif; }
-.services-prices-booking-fields input:focus-visible, .services-prices-booking-fields select:focus-visible { outline: 3px solid #f4bd4b; }
-.services-prices-whatsapp { display: flex; align-items: center; justify-content: space-between; gap: 8px; min-height: 60px; margin-top: 14px; padding: 11px 20px; border: 1px solid #64ff75; border-radius: 34px; background: linear-gradient(#22d550, #079b32); color: #fff; font: 800 clamp(18px, 3vw, 30px)/1.2 'Barlow Condensed', Impact, sans-serif; letter-spacing: .03em; text-align: center; }
-.services-prices-whatsapp > span { font: 800 31px/1 'Inter', sans-serif; }
-.services-prices-whatsapp svg { width: 34px; height: 34px; flex: none; fill: none; stroke: #fff; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
-.services-prices-whatsapp b { font: 700 35px/1 'Inter', sans-serif; }
-.services-prices-whatsapp[aria-disabled="true"] { cursor: not-allowed; }
-.services-prices-booking-status { margin: 11px 0 0; color: #c9c0b0; font: 400 11px/1.4 'Inter', sans-serif; text-align: center; }
 .services-prices-detail-hero { background: #090807; }
 .services-prices-detail-hero::before { content: ''; position: absolute; z-index: 0; inset: 0; background: var(--detail-photo, url('./assets/concept-corte.jpg')) center 35%/cover no-repeat; transform: scaleX(-1); }
 .services-prices-detail-hero::after { z-index: 1; background: linear-gradient(90deg, #0001 0%, #0008 42%, #000e 72%), linear-gradient(0deg, #030303 0%, #0000 35%); }
@@ -194,7 +173,7 @@ body[data-route="servicos-precos"]:not(.services-detail-open) .app-bottom-nav { 
   .services-prices-detail-row { grid-template-columns: 180px minmax(0, 1fr) 150px 170px; min-height: 140px; }
   .services-prices-detail-photo, .services-prices-detail-placeholder { width: 180px; height: 124px; }
   .services-prices-detail-price { min-width: 0; }
-  .services-prices-detail-book:not(.services-prices-select) { min-height: 58px; }
+  .services-prices-detail-book { min-height: 58px; }
   .services-prices-combo-row { min-height: 180px; }
   .services-prices-combo-row .services-prices-detail-photo { width: 180px; height: 163px; }
 }
@@ -265,27 +244,14 @@ body[data-route="servicos-precos"]:not(.services-detail-open) .app-bottom-nav { 
   .services-prices-detail-copy small { font-size: 10px; }
   .services-prices-detail-price { grid-column: 3; grid-row: 1; min-width: 0; padding: 8px 0 8px 5px; font-size: 17px; white-space: normal; }
   .services-prices-detail-book { grid-column: 4; grid-row: 1; width: 69px; min-height: 37px; padding: 3px; font-size: 10px; }
-  .services-prices-detail-book.services-prices-select { width: 40px; min-width: 40px; height: 40px; justify-self: center; font-size: 40px; }
   .services-prices-combo-label { font-size: 13px; }
-  .services-prices-booking-bar { margin-top: 16px; padding: 14px 12px; border-radius: 16px; }
-  .services-prices-booking-heading > span { font-size: 32px; }
-  .services-prices-booking-heading h3 { font-size: 25px; }
-  .services-prices-booking-heading p { font-size: 11px; }
-  .services-prices-booking-fields { gap: 6px; }
-  .services-prices-booking-fields label { gap: 5px; padding: 7px; }
-  .services-prices-booking-fields label > span:first-child { font-size: 24px; }
-  .services-prices-booking-fields label > span:last-child { font-size: 10px; }
-  .services-prices-booking-fields input, .services-prices-booking-fields select { height: 34px; padding: 4px 6px; font-size: 11px; }
-  .services-prices-whatsapp { min-height: 48px; padding: 8px 12px; font-size: 17px; }
-  .services-prices-whatsapp > span { font-size: 25px; }
-  .services-prices-whatsapp svg { width: 26px; height: 26px; }
-  .services-prices-whatsapp b { font-size: 28px; }
 }
 @media (max-width: 360px) {
   .services-prices-hero h2 { font-size: 40px; }
   .services-prices-category-title p { letter-spacing: .03em; }
   .app-bottom-nav a { font-size: 7px; }
 }
+@media (min-width: 701px) {
 .services-prices-detail[data-group="coloracao"][data-art-ready="true"] .services-prices-detail-content { width: min(100% - 28px, 1700px); }
 .services-prices-detail[data-group="coloracao"][data-art-ready="true"] .services-prices-detail-list {
   position: relative;
@@ -328,5 +294,43 @@ body[data-route="servicos-precos"]:not(.services-detail-open) .app-bottom-nav { 
   opacity: 0;
 }
 .services-prices-detail[data-group="coloracao"][data-art-ready="true"] .services-prices-detail-row:hover { outline: 2px solid #ffe39b; outline-offset: -2px; }
-.services-prices-detail[data-group="coloracao"][data-art-ready="true"] .services-prices-detail-row.is-selected { outline: 2px solid #ffe197; outline-offset: -2px; box-shadow: 0 0 14px #e7a62eaa; }
 .services-prices-detail[data-group="coloracao"][data-art-ready="true"] .services-prices-detail-book:focus-visible { opacity: 1; outline: 3px solid #fff; outline-offset: -3px; }
+}
+@media (max-width: 700px) {
+  .services-prices-detail-hero { min-height: 260px; }
+  .services-prices-detail-content { width: min(100% - 20px, 600px); }
+  .services-prices-detail-list { gap: 11px; }
+  .services-prices-detail-row, .services-prices-combo-row {
+    grid-template-columns: minmax(70px, 24%) minmax(0, 1fr) minmax(84px, 24%);
+    grid-template-rows: auto auto;
+    gap: 8px;
+    min-height: 126px;
+    padding: 8px;
+  }
+  .services-prices-detail-photo, .services-prices-detail-placeholder,
+  .services-prices-combo-row .services-prices-detail-photo {
+    grid-column: 1;
+    grid-row: 1 / 3;
+    width: 100%;
+    height: 100%;
+    min-height: 108px;
+  }
+  .services-prices-detail-copy { grid-column: 2; grid-row: 1 / 3; align-self: center; }
+  .services-prices-detail-copy strong { font-size: clamp(17px, 5vw, 23px); }
+  .services-prices-detail-copy small { font-size: 11px; }
+  .services-prices-detail-price {
+    grid-column: 3;
+    grid-row: 1;
+    align-self: end;
+    padding: 5px 0 5px 7px;
+    font-size: clamp(18px, 5vw, 25px);
+  }
+  .services-prices-detail-book {
+    grid-column: 3;
+    grid-row: 2;
+    width: 100%;
+    min-height: 43px;
+    padding: 5px;
+    font-size: clamp(11px, 3.6vw, 15px);
+  }
+}

@@ -40,6 +40,9 @@ try {
       await page.locator(`[data-price-category="${category}"]`).click();
       assert.equal(await page.locator('.services-prices-detail-row').count(), count, `${category}: serviços visíveis`);
       assert.equal(await page.locator('#services-prices-detail').isVisible(), true);
+      assert.equal(await page.locator('#services-prices-booking-bar').count(), 0, `${category}: sem painel duplicado`);
+      assert.equal(await page.locator('.services-prices-detail-book').count(), count, `${category}: um botão AGENDAR por serviço`);
+      assert.ok(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth + 1), `${category} ${width}px: sem rolagem horizontal`);
       const brokenPhotos = await page.locator('.services-prices-detail-photo').evaluateAll(async images => {
         await Promise.all(images.map(image => image.decode().catch(() => {})));
         return images.filter(image => !image.naturalWidth).map(image => image.src);
@@ -51,12 +54,6 @@ try {
         assert.match(rows[0], /Corte com máquina.*R\$\s*35,00/);
         assert.match(rows[1], /Corte na tesoura.*R\$\s*40,00/);
         assert.match(rows[2], /Corte infantil.*R\$\s*40,00/);
-        await page.locator('.services-prices-select').first().click();
-        await page.locator('#services-prices-day').fill(day);
-        await page.waitForFunction(() => document.querySelectorAll('#services-prices-time option').length > 1);
-        const firstTime = await page.locator('#services-prices-time option').nth(1).getAttribute('value');
-        await page.locator('#services-prices-time').selectOption(firstTime);
-        assert.match(await page.locator('#services-prices-whatsapp').getAttribute('href'), /wa\.me\/5511948446801/);
       }
       await page.locator('#services-prices-back').click();
     }
@@ -64,6 +61,12 @@ try {
     assert.ok(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth + 1), `${width}px: sem rolagem horizontal`);
     assert.deepEqual(errors, [], `${width}px: sem erros de JavaScript`);
     if (width === 390) {
+      await page.locator('[data-price-category="cabelo"]').click();
+      await page.locator('.services-prices-detail-book').first().click();
+      assert.equal(new URL(page.url()).pathname, '/agendamento');
+      assert.match(await page.locator('#booking-preselected').textContent(), /Corte com máquina.*R\$\s*35,00/);
+      await page.goto(`${origin}/servicos-precos`, { waitUntil: 'domcontentloaded' });
+      await page.waitForFunction(() => document.getElementById('services-prices-status').textContent === '');
       await page.locator('[data-price-category="coloracao"]').click();
       assert.equal(await page.locator('#services-prices-detail').getAttribute('data-art-ready'), 'true');
       await page.locator('.services-prices-detail-book').first().click();

@@ -9,11 +9,6 @@
   const hint = document.getElementById('services-prices-detail-hint');
   const icon = document.getElementById('services-prices-detail-icon');
   const hero = document.querySelector('.services-prices-detail-hero');
-  const selectedLabel = document.getElementById('services-prices-selected');
-  const bookingDay = document.getElementById('services-prices-day');
-  const bookingTime = document.getElementById('services-prices-time');
-  const bookingStatus = document.getElementById('services-prices-booking-status');
-  const whatsapp = document.getElementById('services-prices-whatsapp');
   const groups = {
     cabelo: { title: 'CABELO', subtitle: 'CORTES E TRATAMENTOS', hint: 'Escolha o serviço, veja o preço e agende seu horário.', icon: '✂', photo: './assets/concept-corte.jpg' },
     barba: { title: 'BARBA', subtitle: 'CUIDADOS E ESTILO', hint: 'Escolha o serviço que deseja, veja o preço e agende seu horário.', icon: '♢', photo: './assets/concept-barba.jpg' },
@@ -55,60 +50,6 @@
   const normalize = value => String(value || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLocaleLowerCase('pt-BR');
   let services = [];
   let activeGroup = null;
-  let selectedService = null;
-  let timeRequest = 0;
-  const today = new Intl.DateTimeFormat('en-CA', { timeZone: 'America/Bahia', year: 'numeric', month: '2-digit', day: '2-digit' }).format(new Date());
-  const plusDays = count => new Date(Date.parse(`${today}T12:00:00Z`) + count * 86400000).toISOString().slice(0, 10);
-  bookingDay.min = today;
-  bookingDay.max = plusDays(60);
-
-  function updateWhatsapp() {
-    const ready = selectedService && bookingDay.value && bookingTime.value;
-    whatsapp.setAttribute('aria-disabled', String(!ready));
-    if (!ready) { whatsapp.href = '#services-prices-booking-bar'; return; }
-    const price = Number.isInteger(selectedService.priceCents) ? money(selectedService.priceCents) : 'valor a confirmar';
-    const message = `Olá, Aroldo! Gostaria de consultar o horário ${bookingDay.value} às ${bookingTime.value} para ${selectedService.name} (${price}). Aguardo sua confirmação.`;
-    whatsapp.href = `https://wa.me/5511948446801?text=${encodeURIComponent(message)}`;
-    whatsapp.target = '_blank';
-    whatsapp.rel = 'noopener noreferrer';
-  }
-  function selectService(service) {
-    selectedService = service;
-    selectedLabel.textContent = `Serviço selecionado: ${service.name} · ${Number.isInteger(service.priceCents) ? money(service.priceCents) : 'Valor a confirmar'}`;
-    list.querySelectorAll('.services-prices-detail-row').forEach(row => row.classList.toggle('is-selected', row.dataset.serviceId === String(service.id)));
-    bookingTime.replaceChildren(new Option('Selecionar', ''));
-    bookingTime.disabled = true;
-    updateWhatsapp();
-    if (bookingDay.value) loadTimes();
-  }
-  async function loadTimes() {
-    const sequence = ++timeRequest;
-    bookingTime.replaceChildren(new Option('Selecionar', ''));
-    bookingTime.disabled = true;
-    updateWhatsapp();
-    if (!selectedService || !bookingDay.value) return;
-    bookingStatus.textContent = 'Consultando horários disponíveis…';
-    try {
-      const response = await fetch(`/api/public/slots?day=${encodeURIComponent(bookingDay.value)}&serviceId=${selectedService.id}`, { cache: 'no-store' });
-      const data = await response.json();
-      if (!response.ok) throw new Error(data.error || 'Não foi possível consultar horários.');
-      if (sequence !== timeRequest) return;
-      const available = data.slots.filter(slot => slot.status === 'available');
-      for (const slot of available) bookingTime.add(new Option(slot.time, slot.time));
-      bookingTime.disabled = !available.length;
-      bookingStatus.textContent = available.length ? 'Escolha um horário livre. Aroldo confirma pelo WhatsApp.' : 'Sem horários para este serviço nessa data.';
-    } catch (error) {
-      if (sequence === timeRequest) bookingStatus.textContent = error.message;
-    }
-  }
-  bookingDay.addEventListener('change', loadTimes);
-  bookingTime.addEventListener('change', updateWhatsapp);
-  whatsapp.addEventListener('click', event => {
-    if (whatsapp.getAttribute('aria-disabled') === 'true') {
-      event.preventDefault();
-      bookingStatus.textContent = 'Escolha um serviço, uma data e um horário antes de continuar.';
-    }
-  });
 
   function groupFor(service) {
     const name = normalize(service.name);
@@ -169,15 +110,11 @@
     price.textContent = Number.isInteger(service.priceCents) ? money(service.priceCents) : 'Valor a confirmar';
     const button = document.createElement('button');
     button.type = 'button';
-    button.className = activeGroup === 'cabelo' ? 'services-prices-detail-book services-prices-select' : 'services-prices-detail-book';
-    button.textContent = activeGroup === 'cabelo' ? '○' : 'AGENDAR';
-    button.setAttribute('aria-label', activeGroup === 'cabelo' ? `Selecionar ${service.name}` : `Agendar ${service.name}`);
-    button.addEventListener('click', () => {
-      selectService(service);
-      if (activeGroup === 'cabelo') document.getElementById('services-prices-booking-bar').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-      else window.dispatchEvent(new CustomEvent('aroldo:selecionar-servico', { detail: { id: service.id } }));
-    });
-    row.addEventListener('click', event => { if (!event.target.closest('button')) selectService(service); });
+    button.className = 'services-prices-detail-book';
+    button.textContent = 'AGENDAR';
+    button.setAttribute('aria-label', `Agendar ${service.name}`);
+    button.addEventListener('click', () => window.dispatchEvent(new CustomEvent('aroldo:selecionar-servico', { detail: { id: service.id } })));
+    row.addEventListener('click', event => { if (!event.target.closest('button')) button.click(); });
     row.append(photo, copy, price, button);
     return row;
   }
@@ -201,16 +138,8 @@
 
   function showCategory(group) {
     if (!groups[group]) return;
-    timeRequest += 1;
     activeGroup = group;
     detail.dataset.group = group;
-    selectedService = null;
-    selectedLabel.textContent = 'Escolha um serviço acima para começar.';
-    bookingDay.value = '';
-    bookingTime.replaceChildren(new Option('Selecionar', ''));
-    bookingTime.disabled = true;
-    bookingStatus.textContent = 'Aroldo confirma a disponibilidade pelo WhatsApp.';
-    updateWhatsapp();
     title.textContent = groups[group].title;
     subtitle.textContent = groups[group].subtitle;
     hint.textContent = groups[group].hint;
