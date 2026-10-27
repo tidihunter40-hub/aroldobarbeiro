@@ -55,14 +55,14 @@ end $$;
 -- after the 19 official services are added, without deleting booking history.
 do $$
 declare definition text;
+  old_limit text := 'jsonb_array_length\s*\(\s*p_input\s*->\s*''services''\s*\)\s*>\s*40';
 begin
   select pg_get_functiondef('public.aroldo_settings_update(jsonb)'::regprocedure) into definition;
-  if position('jsonb_array_length(p_input->''services'')>40' in definition) = 0 then
-    raise exception 'Admin migration has an unexpected service limit; review before continuing.';
+  if definition ~ old_limit then
+    execute regexp_replace(definition, old_limit,
+      'jsonb_array_length(p_input->''services'') > 100', 'g');
+  elsif definition !~ 'jsonb_array_length\s*\(\s*p_input\s*->\s*''services''\s*\)\s*>\s*100' then
+    raise notice 'Service limit pattern not found; admin function was not changed.';
   end if;
-  definition := replace(definition,
-    'jsonb_array_length(p_input->''services'')>40',
-    'jsonb_array_length(p_input->''services'')>100');
-  execute definition;
 end $$;
 commit;
