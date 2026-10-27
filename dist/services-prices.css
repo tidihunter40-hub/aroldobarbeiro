@@ -117,8 +117,7 @@
 .services-prices-landing [data-price-category="coloracao"] { top: 62.3%; height: 14.2%; }
 .services-prices-landing [data-price-category="combos"] { top: 77.2%; height: 13.9%; }
 body[data-route="servicos-precos"]:not(.services-detail-open) .services-prices { min-height: 0; padding: 0; background: #030303; }
-body[data-route="servicos-precos"]:not(.services-detail-open) .site-header,
-body[data-route="servicos-precos"]:not(.services-detail-open) .app-bottom-nav { display: none; }
+body[data-route="servicos-precos"]:not(.services-detail-open) .site-header { display: none; }
 .services-prices-detail-hero { position: relative; isolation: isolate; min-height: clamp(310px, 30vw, 440px); overflow: hidden; background: linear-gradient(90deg, #03030300 0%, #0303036b 43%, #030303e8 76%), linear-gradient(0deg, #030303 0%, #03030300 42%), var(--detail-photo, url('./assets/concept-corte.jpg')) center 36%/cover no-repeat, #090807; }
 .services-prices-detail-image-note { position: absolute; right: 14px; bottom: 8px; color: #decba9; font: 500 9px/1.2 'Inter', sans-serif; text-shadow: 0 1px 5px #000; }
 .services-prices-detail-hero::after { content: ''; position: absolute; z-index: -1; inset: 0; background: radial-gradient(ellipse at 85% 65%, #a060192b, transparent 54%); }
@@ -157,8 +156,6 @@ body[data-route="servicos-precos"]:not(.services-detail-open) .app-bottom-nav { 
 @media (min-width: 1001px) { .site-header .nav { gap: clamp(8px, 1.3vw, 20px); } .site-header .nav a { font-size: 10px; } }
 @media (max-width: 1000px) {
   .services-prices { min-height: calc(100svh - 70px); padding-top: max(70px, env(safe-area-inset-top)); }
-  body.services-detail-open { padding-bottom: 0; }
-  body.services-detail-open .app-bottom-nav { display: none; }
   body.services-detail-open .services-prices { padding-top: 0; }
   .app-bottom-nav { grid-template-columns: repeat(6, minmax(0, 1fr)); }
   .app-bottom-nav a { font-size: clamp(7px, 1.8vw, 9px); }
@@ -1159,4 +1156,59 @@ body[data-route="servicos-precos"]:not(.services-detail-open) .app-bottom-nav { 
   left: 50%;
   transform: translateX(-50%);
   display: block;
+}
+@media (max-width: 700px) {
+  .services-prices-detail:is([data-group="cabelo"], [data-group="barba"], [data-group="coloracao"])[data-art-ready="true"] .services-prices-detail-content {
+    width: calc(100% - 8px);
+    max-width: none;
+  }
+}
+@media (max-width: 700px) {
+  .services-prices-detail:is([data-group="cabelo"], [data-group="barba"], [data-group="coloracao"])[data-art-ready="true"] .services-prices-detail-row::before {
+    content: '';
+    position: absolute;
+    inset: 0 0 0 clamp(100px, 30vw, 124px);
+    z-index: 1;
+    right: 0;
+    width: auto;
+    background: linear-gradient(100deg, #030303, #0b0805 65%, #030303);
+  }
+  .services-prices-detail[data-group="cabelo"][data-art-ready="true"] .services-prices-detail-row::before {
+    left: clamp(93px, 19vw, 110px);
+  }
+  .services-prices-detail:is([data-group="cabelo"], [data-group="barba"], [data-group="coloracao"])[data-art-ready="true"] .services-prices-detail-row > .services-prices-detail-copy {
+    position: absolute;
+    inset: 0 clamp(88px, 20vw, 105px) 0 calc(clamp(100px, 30vw, 124px) + 8px);
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start;
+    min-width: 0;
+  }
+  .services-prices-detail[data-group="cabelo"][data-art-ready="true"] .services-prices-detail-row > .services-prices-detail-copy {
+    left: calc(clamp(93px, 19vw, 110px) + 8px);
+  }
+  .services-prices-detail:is([data-group="cabelo"], [data-group="barba"], [data-group="coloracao"])[data-art-ready="true"] .services-prices-detail-copy strong {
+    font-size: clamp(14px, 4vw, 18px);
+    line-height: .98;
+    text-shadow: 0 2px 3px #000;
+    overflow-wrap: anywhere;
+  }
+  .services-prices-detail:is([data-group="cabelo"], [data-group="barba"], [data-group="coloracao"])[data-art-ready="true"] .services-prices-detail-copy small { display: none; }
+  .services-prices-detail:is([data-group="cabelo"], [data-group="barba"], [data-group="coloracao"])[data-art-ready="true"] .services-prices-detail-row > .services-prices-detail-price,
+  .services-prices-detail:is([data-group="cabelo"], [data-group="barba"], [data-group="coloracao"])[data-art-ready="true"] .services-prices-detail-book {
+    z-index: 3;
+  }
+}
+@media (min-width: 450px) and (max-width: 700px) {
+  .services-prices-detail:is([data-group="cabelo"], [data-group="barba"], [data-group="coloracao"])[data-art-ready="true"] .services-prices-detail-copy small:not(.services-prices-photo-note) {
+    display: -webkit-box;
+    max-height: 22px;
+    overflow: hidden;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    font-size: 10px;
+    line-height: 1.1;
+  }
 }

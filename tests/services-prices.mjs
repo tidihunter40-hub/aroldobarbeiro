@@ -26,7 +26,7 @@ const origin = `http://127.0.0.1:${server.address().port}`;
 const day = new Intl.DateTimeFormat('en-CA', { timeZone: 'America/Bahia', year: 'numeric', month: '2-digit', day: '2-digit' }).format(new Date(Date.now() + 3 * 86400000));
 
 try {
-  for (const width of [320, 390, 768, 941, 1024, 1366]) {
+  for (const width of [320, 390, 500, 768, 941, 1024, 1366]) {
     const page = await browser.newPage({ viewport: { width, height: 844 }, reducedMotion: 'reduce' });
     const errors = [];
     page.on('pageerror', error => errors.push(error.message));
@@ -35,15 +35,27 @@ try {
     await page.evaluate(() => document.fonts.ready);
     assert.equal(await page.locator('main > section:not([hidden])').count(), 1);
     assert.equal(await page.locator('.services-prices-category').count(), 4);
+    if (width <= 1000) {
+      const quickNav = page.locator('.app-bottom-nav');
+      assert.equal(await quickNav.isVisible(), true, `${width}px: atalhos visíveis na entrada`);
+      assert.equal(await quickNav.locator('a:visible').count(), 6, `${width}px: seis atalhos`);
+      assert.equal(await quickNav.locator('a[aria-current="page"]').getAttribute('href'), '/servicos-precos');
+      const navRows = await quickNav.locator('a').evaluateAll(links => links.map(link => Math.round(link.getBoundingClientRect().top)));
+      assert.equal(new Set(navRows).size, 1, `${width}px: atalhos na mesma linha`);
+    }
     assert.equal(await page.locator('.brand img').getAttribute('src'), './assets/aroldo-logo-fachada.png', 'logo da fachada preservada');
     const landingLogo = page.locator('.services-prices-landing-original-logo');
     assert.equal(await landingLogo.getAttribute('src'), './assets/aroldo-logo-oficial.png');
     assert.equal(await landingLogo.isVisible(), true, 'logo original visível na capa');
-    if (width === 390 || width === 1366) await page.screenshot({ path: resolve(`preview-services-prices-${width}.png`), fullPage: true });
+    if (width === 390 || width === 500 || width === 1366) await page.screenshot({ path: resolve(`preview-services-prices-${width}.png`), fullPage: true });
     for (const [category, count] of [['cabelo', 7], ['barba', 5], ['coloracao', 6], ['combos', 3]]) {
       await page.locator(`[data-price-category="${category}"]`).click();
       assert.equal(await page.locator('.services-prices-detail-row').count(), count, `${category}: serviços visíveis`);
       assert.equal(await page.locator('#services-prices-detail').isVisible(), true);
+      if (width <= 1000) {
+        assert.equal(await page.locator('.app-bottom-nav').isVisible(), true, `${category} ${width}px: atalhos visíveis`);
+        assert.equal(await page.locator('.app-bottom-nav a[aria-current="page"]').getAttribute('href'), '/servicos-precos', `${category} ${width}px: Serviços & Preços marcado`);
+      }
       const detailLogo = page.locator('.services-prices-detail-logo');
       assert.equal(await detailLogo.getAttribute('src'), './assets/aroldo-logo-oficial.png');
       assert.equal(await detailLogo.isVisible(), true, `${category}: logo original visível`);
@@ -124,7 +136,7 @@ try {
         return images.filter(image => !image.naturalWidth).map(image => image.src);
       });
       assert.deepEqual(brokenPhotos, [], `${category}: fotos carregadas`);
-      if (width === 390 || width === 941 || (width === 320 && (category === 'coloracao' || category === 'cabelo' || category === 'barba'))) {
+      if (width === 390 || width === 500 || width === 941 || (width === 320 && (category === 'coloracao' || category === 'cabelo' || category === 'barba'))) {
         await page.screenshot({ path: resolve(`preview-services-prices-${category}-${width}.png`), fullPage: true });
       }
       if (width === 390 && category === 'cabelo') {
@@ -169,6 +181,17 @@ try {
       await page.locator('#booking-stage-confirm:visible').waitFor();
       assert.match(await page.locator('#booking-summary').textContent(), /Cabelo \+ barba simples/);
       assert.equal(await page.locator('#booking-stage-service').isVisible(), false);
+      assert.equal(await page.locator('.app-bottom-nav').isVisible(), true, 'atalhos visíveis na confirmação da agenda');
+      for (const route of ['/', '/cortes', '/galeria', '/contato', '/agendamento', '/servicos-precos']) {
+        await page.locator(`.app-bottom-nav a[href="${route}"]`).click();
+        assert.equal(new URL(page.url()).pathname, route);
+        assert.equal(await page.locator('.app-bottom-nav a[aria-current="page"]').getAttribute('href'), route, `${route}: atalho marcado`);
+        assert.equal(await page.locator('.app-bottom-nav').isVisible(), true, `${route}: atalhos visíveis`);
+        if (route === '/cortes') {
+          await page.locator('[data-category-choice="barbas"]').click();
+          assert.equal(await page.locator('.app-bottom-nav a[aria-current="page"]').getAttribute('href'), '/cortes', 'Cortes marcado dentro da categoria');
+        }
+      }
     }
     if (width === 941) {
       await page.locator('[data-price-category="cabelo"]').click();

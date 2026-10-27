@@ -59,6 +59,8 @@ A aba **Serviços & Preços** usa a arte de referência enviada pelo responsáve
 
 Na aba **Cortes**, o nome de cada estilo usa a fonte Sora sobre a parte inferior da foto, com gradiente para leitura. O mesmo cartão atende cortes masculinos, infantis e estilos de barba; o botão de agendamento fica abaixo da imagem.
 
+No celular, a barra inferior com seis atalhos permanece visível na entrada de Serviços & Preços, nas quatro categorias e nas etapas da agenda. O atalho da rota aberta fica marcado. Nos cartões móveis das artes de serviços, cada preço aparece uma única vez; os nomes e descrições ficam legíveis ao lado da foto.
+
 ### Logos
 
 `dist/assets/aroldo-logo-oficial.png` é a logo original enviada pelo responsável e deve ser usada em qualquer lugar que mostre o emblema oval da barbearia, inclusive sobre as logos parecidas incorporadas nas artes de Serviços & Preços. `dist/assets/aroldo-logo-fachada.png` e as fotos da fachada representam uma identidade visual diferente e devem continuar separadas. As telas de Serviços & Preços posicionam a logo original em HTML/CSS sobre as artes de referência para manter o desenho enviado sem alterar os serviços ou seus preços.
@@ -96,7 +98,7 @@ O ajuste final em `dist/booking.css` aumentou rótulos e botões pequenos, prese
 
 O site tem manifest, ícones para Android/iOS, botão de instalação quando o navegador oferece essa opção e cache offline da página e das imagens locais. Para instalar, abra a prévia em `http://127.0.0.1:5180/` ou publique em HTTPS; abrir `dist/index.html` diretamente não ativa o service worker. Isso segue os [requisitos atuais de instalação de PWA](https://developer.mozilla.org/en-US/docs/Web/Progressive_web_apps/Guides/Making_PWAs_installable).
 
-Os recursos locais usam rede primeiro e recorrem ao cache quando não há conexão; o service worker é registrado com `updateViaCache: 'none'`. A versão atual é `v65`. O precache inclui os recursos usados pela página. A API e o painel administrativo não são guardados em cache. Ao publicar uma atualização, continue alterando `CACHE_NAME` em `dist/sw.js` para eliminar caches antigos. Links externos como WhatsApp e Instagram continuam dependentes de internet.
+Os recursos locais usam rede primeiro e recorrem ao cache quando não há conexão; o service worker é registrado com `updateViaCache: 'none'`. A versão atual é `v66`. O precache inclui os recursos usados pela página. A API e o painel administrativo não são guardados em cache. Ao publicar uma atualização, continue alterando `CACHE_NAME` em `dist/sw.js` para eliminar caches antigos. Links externos como WhatsApp e Instagram continuam dependentes de internet.
 
 ## Arquivos
 

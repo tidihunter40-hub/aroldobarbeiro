@@ -38,6 +38,14 @@
     ['Cabelo + barba com espuma quente', 5500],
     ['Cabelo + barboterapia com vapor de ozônio', 6000]
   ]);
+  const coloracaoDescriptions = new Map([
+    ['Nevou', 'Técnica para um loiro bem claro e uniforme.'],
+    ['Luzes', 'Iluminação dos fios para um visual moderno.'],
+    ['Luzes platinadas', 'Luzes em tom platinado para um visual diferenciado.'],
+    ['Pigmentar cabelo', 'Realce da cor com pigmentação profissional.'],
+    ['Pigmentar barba', 'Uniformiza e realça a cor da barba.'],
+    ['Banho de brilho', 'Tratamento que realça a cor, dá brilho e vitalidade aos fios.']
+  ]);
   const photos = {
     'Corte com máquina': ['./assets/cortes/masculinos/tradicional.webp', true],
     'Corte na tesoura': ['./assets/cortes/masculinos/mid-fade.webp', true],
@@ -101,9 +109,10 @@
     const name = document.createElement('strong');
     name.textContent = service.name;
     copy.append(name);
-    if (service.description) {
+    const descriptionText = service.description || coloracaoDescriptions.get(service.name);
+    if (descriptionText) {
       const description = document.createElement('small');
-      description.textContent = service.description;
+      description.textContent = descriptionText;
       copy.append(description);
     }
     if (activeGroup === 'combos') {

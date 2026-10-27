@@ -133,12 +133,6 @@
 #booking-stage-service #service-next:disabled { opacity: .72; }
 
 @media (max-width: 700px) {
-  body[data-route="agendamento"][data-booking-step="service"],
-  body[data-route="agendamento"][data-booking-step="confirm"],
-  body[data-route="agendamento"][data-booking-step="result"] { padding-bottom: 0; }
-  body[data-route="agendamento"][data-booking-step="service"] .app-bottom-nav,
-  body[data-route="agendamento"][data-booking-step="confirm"] .app-bottom-nav,
-  body[data-route="agendamento"][data-booking-step="result"] .app-bottom-nav { display: none; }
   .booking[data-step="service"], .booking[data-step="confirm"], .booking[data-step="result"] {
     padding-top: max(82px, env(safe-area-inset-top));
     background: radial-gradient(ellipse at 90% 8%, #6a42152c, transparent 42%), #050505;
