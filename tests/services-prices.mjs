@@ -71,9 +71,9 @@ try {
         assert.ok(art.height <= art.width * 1.36 + 1, 'combos: painel inferior fora da arte');
       }
       if (category === 'coloracao') {
-        const artSelector = width <= 700 ? '#services-prices-detail-list .services-prices-detail-row' : '#services-prices-detail-list';
+        const artSelector = width <= 700 ? '#services-prices-detail-list .services-prices-detail-row' : '#services-prices-detail';
         const art = await page.locator('#services-prices-detail-list').evaluate(element => ({
-          background: getComputedStyle(innerWidth <= 700 ? element.firstElementChild : element).backgroundImage,
+          background: getComputedStyle(innerWidth <= 700 ? element.firstElementChild : element.closest('.services-prices-detail')).backgroundImage,
           width: element.getBoundingClientRect().width,
           height: element.getBoundingClientRect().height,
           viewportWidth: element.parentElement.clientWidth,
@@ -85,7 +85,7 @@ try {
           image.src = source;
           await image.decode();
         });
-        assert.match(art.background, /coloracao-servicos-referencia\.png/);
+        assert.match(art.background, /coloracao-pagina-referencia\.png/);
         if (width <= 700) {
           assert.ok(art.width <= art.viewportWidth + 1, 'coloracao: imagem inteira no celular');
           assert.equal(art.scrollable, false, 'coloracao: sem corte horizontal');
@@ -107,7 +107,7 @@ try {
         assert.match(rows[1], /Corte na tesoura.*R\$\s*40,00/);
         assert.match(rows[2], /Corte infantil.*R\$\s*40,00/);
       }
-      if (width === 390 && (category === 'combos' || category === 'cabelo')) {
+      if (width === 390 && (category === 'combos' || category === 'cabelo' || category === 'coloracao')) {
         await page.locator('.menu-toggle').click();
         assert.equal(await page.locator('.site-header').evaluate(header => header.classList.contains('menu-open')), true);
         await page.locator('.menu-toggle').click();

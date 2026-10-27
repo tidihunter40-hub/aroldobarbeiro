@@ -12,7 +12,7 @@
   const groups = {
     cabelo: { title: 'CABELOS', subtitle: 'ESTILO EM TODOS OS DETALHES', hint: 'Escolha o corte ideal, veja o preço e agende seu horário.', icon: '✂', photo: './assets/concept-corte.jpg' },
     barba: { title: 'BARBA', subtitle: 'CUIDADOS E ESTILO', hint: 'Escolha o serviço que deseja, veja o preço e agende seu horário.', icon: '♢', photo: './assets/concept-barba.jpg' },
-    coloracao: { title: 'COLORAÇÃO', subtitle: 'REALCE O SEU ESTILO', hint: 'Mais personalidade, mais estilo. Escolha o serviço e agende seu horário.', icon: '◈', photo: './assets/concept-platinado.jpg' },
+    coloracao: { title: 'COLORAÇÃO', subtitle: 'MAIS ESTILO, MAIS PERSONALIDADE', hint: 'Escolha o serviço ideal, veja o preço e agende seu horário.', icon: '◈', photo: './assets/concept-platinado.jpg' },
     combos: { title: 'COMBOS', subtitle: 'MAIS ESTILO, MAIS COMPLETO', hint: 'Escolha o combo ideal, veja o preço e agende seu horário.', icon: '✦', photo: './assets/concept-visagismo.jpg' }
   };
   const order = [
