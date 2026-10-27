@@ -920,3 +920,218 @@ body[data-route="servicos-precos"]:not(.services-detail-open) .app-bottom-nav { 
   .services-prices-detail[data-group="coloracao"][data-art-ready="true"] .services-prices-detail-row > .services-prices-detail-price,
   .services-prices-detail[data-group="coloracao"][data-art-ready="true"] .services-prices-detail-book { z-index: 2; }
 }
+.services-prices-detail[data-group="barba"][data-art-ready="true"] {
+  position: relative;
+  width: min(100%, 941px);
+  aspect-ratio: 941 / 1260;
+  margin-inline: auto;
+  overflow: hidden;
+  background: #030303 url('./assets/barba-pagina-referencia.png') center top / 100% auto no-repeat;
+}
+.services-prices-detail[data-group="barba"][data-art-ready="true"] .services-prices-detail-hero {
+  position: absolute;
+  z-index: 2;
+  inset: 0 0 auto;
+  width: 100%;
+  height: 41.7%;
+  min-height: 0;
+  overflow: visible;
+  background: none;
+}
+.services-prices-detail[data-group="barba"][data-art-ready="true"] .services-prices-detail-hero::before,
+.services-prices-detail[data-group="barba"][data-art-ready="true"] .services-prices-detail-hero::after,
+.services-prices-detail[data-group="barba"][data-art-ready="true"] .services-prices-detail-logo,
+.services-prices-detail[data-group="barba"][data-art-ready="true"] .services-prices-detail-image-note { display: none; }
+.services-prices-detail[data-group="barba"][data-art-ready="true"] .services-prices-detail-hero-inner {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  min-height: 0;
+  padding: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+}
+.services-prices-detail[data-group="barba"][data-art-ready="true"] .services-prices-back {
+  top: 3.7%;
+  left: 2.3%;
+  width: 20.3%;
+  height: 10.3%;
+  min-height: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: transparent;
+  opacity: 0;
+}
+.services-prices-detail[data-group="barba"][data-art-ready="true"] .services-prices-back:focus-visible { opacity: 1; outline: 3px solid #fff; outline-offset: -3px; }
+.services-prices-detail[data-group="barba"][data-art-ready="true"] .services-prices-detail-content {
+  position: absolute;
+  z-index: 1;
+  inset: 0;
+  width: 100%;
+  padding: 0;
+}
+.services-prices-detail[data-group="barba"][data-art-ready="true"] .services-prices-detail-list {
+  position: absolute;
+  inset: 0;
+  display: block;
+}
+.services-prices-detail[data-group="barba"][data-art-ready="true"] .services-prices-detail-row {
+  position: absolute;
+  left: 2.3%;
+  display: block;
+  width: 95.4%;
+  min-height: 0;
+  padding: 0;
+  border: 0;
+  border-radius: 12px;
+  background: transparent;
+  box-shadow: none;
+  overflow: visible;
+}
+.services-prices-detail[data-group="barba"][data-art-ready="true"] .services-prices-detail-row:nth-child(1) { top: 41.7%; height: 9.8%; }
+.services-prices-detail[data-group="barba"][data-art-ready="true"] .services-prices-detail-row:nth-child(2) { top: 52.1%; height: 11.7%; }
+.services-prices-detail[data-group="barba"][data-art-ready="true"] .services-prices-detail-row:nth-child(3) { top: 64.7%; height: 11.8%; }
+.services-prices-detail[data-group="barba"][data-art-ready="true"] .services-prices-detail-row:nth-child(4) { top: 77.3%; height: 10.6%; }
+.services-prices-detail[data-group="barba"][data-art-ready="true"] .services-prices-detail-row:nth-child(5) { top: 88.6%; height: 10.3%; }
+.services-prices-detail[data-group="barba"][data-art-ready="true"] .services-prices-detail-row > :not(.services-prices-detail-book) { display: none; }
+.services-prices-detail[data-group="barba"][data-art-ready="true"] .services-prices-detail-book {
+  position: absolute;
+  top: 49%;
+  right: 2%;
+  width: 23%;
+  height: 43%;
+  min-height: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  opacity: 0;
+}
+.services-prices-detail[data-group="barba"][data-art-ready="true"] .services-prices-detail-row:hover { outline: 2px solid #ffe39b; outline-offset: -2px; }
+.services-prices-detail[data-group="barba"][data-art-ready="true"] .services-prices-detail-book:focus-visible { opacity: 1; outline: 3px solid #fff; outline-offset: -3px; }
+@media (max-width: 1000px) {
+  body:has(.services-prices-detail[data-group="barba"][data-art-ready="true"]:not([hidden])) .site-header:not(.menu-open) {
+    top: clamp(7px, 2vw, 19px);
+    right: 2.3%;
+    width: clamp(42px, 9vw, 85px);
+    height: clamp(42px, 6.4vw, 60px);
+  }
+  body:has(.services-prices-detail[data-group="barba"][data-art-ready="true"]:not([hidden])) .site-header:not(.menu-open) .menu-toggle {
+    width: 100%;
+    height: 100%;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    box-shadow: none;
+    opacity: 0;
+  }
+  body:has(.services-prices-detail[data-group="barba"][data-art-ready="true"]:not([hidden])) .site-header:not(.menu-open) .menu-toggle:focus-visible {
+    opacity: 1;
+    outline: 3px solid #fff;
+    outline-offset: -3px;
+  }
+}
+@media (max-width: 700px) {
+  .services-prices-detail[data-group="barba"][data-art-ready="true"] {
+    aspect-ratio: auto;
+    overflow: visible;
+    background: none;
+  }
+  .services-prices-detail[data-group="barba"][data-art-ready="true"] .services-prices-detail-hero {
+    position: relative;
+    inset: auto;
+    height: auto;
+    aspect-ratio: 941 / 525;
+    background: #030303 url('./assets/barba-pagina-referencia.png') center top / 100% auto no-repeat;
+  }
+  .services-prices-detail[data-group="barba"][data-art-ready="true"] .services-prices-back { min-height: 40px; }
+  .services-prices-detail[data-group="barba"][data-art-ready="true"] .services-prices-detail-content {
+    position: relative;
+    inset: auto;
+    width: min(100% - 20px, 600px);
+    margin-inline: auto;
+  }
+  .services-prices-detail[data-group="barba"][data-art-ready="true"] .services-prices-detail-list {
+    position: relative;
+    inset: auto;
+    display: grid;
+    gap: 7px;
+  }
+  .services-prices-detail[data-group="barba"][data-art-ready="true"] .services-prices-detail-row {
+    position: relative;
+    top: 0 !important;
+    left: 0;
+    width: 100%;
+    height: 70px !important;
+    min-height: 70px;
+    overflow: hidden;
+    border: 1px solid #e5ab2b;
+    border-radius: 10px;
+    background: #030303 url('./assets/barba-pagina-referencia.png') -35px var(--art-y) / 489px 869px no-repeat;
+  }
+  .services-prices-detail[data-group="barba"][data-art-ready="true"] .services-prices-detail-row:nth-child(1) { --art-y: -273px; }
+  .services-prices-detail[data-group="barba"][data-art-ready="true"] .services-prices-detail-row:nth-child(2) { --art-y: -341px; }
+  .services-prices-detail[data-group="barba"][data-art-ready="true"] .services-prices-detail-row:nth-child(3) { --art-y: -423px; }
+  .services-prices-detail[data-group="barba"][data-art-ready="true"] .services-prices-detail-row:nth-child(4) { --art-y: -507px; }
+  .services-prices-detail[data-group="barba"][data-art-ready="true"] .services-prices-detail-row:nth-child(5) { --art-y: -580px; }
+  .services-prices-detail[data-group="barba"][data-art-ready="true"] .services-prices-detail-row::before {
+    content: '';
+    position: absolute;
+    inset: 0 0 0 auto;
+    width: 93px;
+    background: #030303;
+  }
+  .services-prices-detail[data-group="barba"][data-art-ready="true"] .services-prices-detail-row > .services-prices-detail-price {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    z-index: 1;
+    display: block;
+    min-width: 80px;
+    padding: 2px 3px;
+    border: 0;
+    background: #030303ed;
+    color: #f4be48;
+    font-size: 17px;
+    text-align: center;
+    white-space: nowrap;
+  }
+  .services-prices-detail[data-group="barba"][data-art-ready="true"] .services-prices-detail-book {
+    top: auto;
+    right: 5px;
+    bottom: 5px;
+    z-index: 1;
+    width: 83px;
+    height: 27px;
+    min-height: 27px;
+    border: 1px solid #efb637;
+    border-radius: 6px;
+    background: #050505;
+    color: #f4be48;
+    font-size: 11px;
+    opacity: 1;
+  }
+}
+@media (max-width: 360px) {
+  .services-prices-detail[data-group="barba"][data-art-ready="true"] .services-prices-detail-row::before {
+    inset: 0 0 0 93px;
+    width: auto;
+    background: linear-gradient(110deg, #030303, #0d0904 78%, #030303);
+  }
+  .services-prices-detail[data-group="barba"][data-art-ready="true"] .services-prices-detail-row > .services-prices-detail-copy {
+    position: absolute;
+    inset: 0 88px 0 97px;
+    z-index: 1;
+    display: flex;
+    align-items: center;
+    min-width: 0;
+  }
+  .services-prices-detail[data-group="barba"][data-art-ready="true"] .services-prices-detail-copy strong {
+    font-size: 15px;
+    line-height: .94;
+    overflow-wrap: anywhere;
+  }
+  .services-prices-detail[data-group="barba"][data-art-ready="true"] .services-prices-detail-copy small { display: none; }
+  .services-prices-detail[data-group="barba"][data-art-ready="true"] .services-prices-detail-row > .services-prices-detail-price,
+  .services-prices-detail[data-group="barba"][data-art-ready="true"] .services-prices-detail-book { z-index: 2; }
+}

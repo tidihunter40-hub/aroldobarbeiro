@@ -11,7 +11,7 @@
   const hero = document.querySelector('.services-prices-detail-hero');
   const groups = {
     cabelo: { title: 'CABELOS', subtitle: 'ESTILO EM TODOS OS DETALHES', hint: 'Escolha o corte ideal, veja o preço e agende seu horário.', icon: '✂', photo: './assets/concept-corte.jpg' },
-    barba: { title: 'BARBA', subtitle: 'CUIDADOS E ESTILO', hint: 'Escolha o serviço que deseja, veja o preço e agende seu horário.', icon: '♢', photo: './assets/concept-barba.jpg' },
+    barba: { title: 'BARBA', subtitle: 'CUIDADO, ESTILO E PRECISÃO', hint: 'Escolha o serviço ideal, veja o preço e agende seu horário.', icon: '♢', photo: './assets/concept-barba.jpg' },
     coloracao: { title: 'COLORAÇÃO', subtitle: 'MAIS ESTILO, MAIS PERSONALIDADE', hint: 'Escolha o serviço ideal, veja o preço e agende seu horário.', icon: '◈', photo: './assets/concept-platinado.jpg' },
     combos: { title: 'COMBOS', subtitle: 'MAIS ESTILO, MAIS COMPLETO', hint: 'Escolha o combo ideal, veja o preço e agende seu horário.', icon: '✦', photo: './assets/concept-visagismo.jpg' }
   };
@@ -24,6 +24,10 @@
   const cabeloReferencePrices = new Map([
     ['Corte com máquina', 3500], ['Corte na tesoura', 4000], ['Corte infantil', 4000],
     ['Pezinho', 1000], ['Sobrancelha', 1000], ['Hidratação', 3000], ['Relaxamento capilar', 3500]
+  ]);
+  const barbaReferencePrices = new Map([
+    ['Barba simples', 2000], ['Barba com espuma quente', 2500],
+    ['Barboterapia com vapor de ozônio', 3000], ['Pezinho', 1000], ['Sobrancelha', 1000]
   ]);
   const coloracaoReferencePrices = new Map([
     ['Nevou', 20000], ['Luzes', 10000], ['Luzes platinadas', 15000],
@@ -131,10 +135,13 @@
   function renderDetail() {
     if (!activeGroup) return;
     list.replaceChildren();
-    const position = name => { const index = order.indexOf(name); return index < 0 ? 999 : index; };
-    const matching = services.filter(service => groupFor(service) === activeGroup)
+    const currentOrder = activeGroup === 'barba' ? [...barbaReferencePrices.keys()] : order;
+    const position = name => { const index = currentOrder.indexOf(name); return index < 0 ? 999 : index; };
+    const matching = services.filter(service => groupFor(service) === activeGroup ||
+      (activeGroup === 'barba' && (service.name === 'Pezinho' || service.name === 'Sobrancelha')))
       .sort((a, b) => position(a.name) - position(b.name));
     const referencePrices = activeGroup === 'cabelo' ? cabeloReferencePrices :
+      activeGroup === 'barba' ? barbaReferencePrices :
       activeGroup === 'coloracao' ? coloracaoReferencePrices :
       activeGroup === 'combos' ? combosReferencePrices : null;
     detail.dataset.artReady = String(referencePrices !== null && matching.length === referencePrices.size &&

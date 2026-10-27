@@ -36,14 +36,33 @@ try {
     assert.equal(await page.locator('main > section:not([hidden])').count(), 1);
     assert.equal(await page.locator('.services-prices-category').count(), 4);
     if (width === 390 || width === 1366) await page.screenshot({ path: resolve(`preview-services-prices-${width}.png`), fullPage: true });
-    for (const [category, count] of [['cabelo', 7], ['barba', 3], ['coloracao', 6], ['combos', 3]]) {
+    for (const [category, count] of [['cabelo', 7], ['barba', 5], ['coloracao', 6], ['combos', 3]]) {
       await page.locator(`[data-price-category="${category}"]`).click();
       assert.equal(await page.locator('.services-prices-detail-row').count(), count, `${category}: serviços visíveis`);
       assert.equal(await page.locator('#services-prices-detail').isVisible(), true);
       assert.equal(await page.locator('#services-prices-booking-bar').count(), 0, `${category}: sem painel duplicado`);
       assert.equal(await page.locator('.services-prices-detail-book').count(), count, `${category}: um botão AGENDAR por serviço`);
-      if (category === 'cabelo' || category === 'coloracao' || category === 'combos') {
+      if (category === 'cabelo' || category === 'barba' || category === 'coloracao' || category === 'combos') {
         assert.equal(await page.locator('#services-prices-detail').getAttribute('data-art-ready'), 'true', `${category}: arte de referência com preços oficiais`);
+      }
+      if (category === 'barba') {
+        const artSelector = width <= 700 ? '.services-prices-detail-row' : '#services-prices-detail';
+        const art = await page.locator(artSelector).first().evaluate(async element => {
+          const background = getComputedStyle(element).backgroundImage;
+          const source = background.match(/^url\(["']?(.*?)["']?\)$/)?.[1];
+          const image = new Image();
+          image.src = source;
+          await image.decode();
+          return { background, height: element.getBoundingClientRect().height };
+        });
+        assert.match(art.background, /barba-pagina-referencia\.png/);
+        if (width <= 700) assert.ok(art.height >= 70, 'barba: faixas legíveis no celular');
+        const rows = await page.locator('.services-prices-detail-row').allTextContents();
+        assert.match(rows[0], /Barba simples.*R\$\s*20,00/);
+        assert.match(rows[1], /Barba com espuma quente.*R\$\s*25,00/);
+        assert.match(rows[2], /Barboterapia com vapor de ozônio.*R\$\s*30,00/);
+        assert.match(rows[3], /Pezinho.*R\$\s*10,00/);
+        assert.match(rows[4], /Sobrancelha.*R\$\s*10,00/);
       }
       if (category === 'cabelo') {
         const artSelector = width <= 700 ? '.services-prices-detail-row' : '#services-prices-detail';
@@ -98,7 +117,7 @@ try {
         return images.filter(image => !image.naturalWidth).map(image => image.src);
       });
       assert.deepEqual(brokenPhotos, [], `${category}: fotos carregadas`);
-      if (width === 390 || width === 941 || (width === 320 && (category === 'coloracao' || category === 'cabelo'))) {
+      if (width === 390 || width === 941 || (width === 320 && (category === 'coloracao' || category === 'cabelo' || category === 'barba'))) {
         await page.screenshot({ path: resolve(`preview-services-prices-${category}-${width}.png`), fullPage: true });
       }
       if (width === 390 && category === 'cabelo') {
@@ -107,7 +126,7 @@ try {
         assert.match(rows[1], /Corte na tesoura.*R\$\s*40,00/);
         assert.match(rows[2], /Corte infantil.*R\$\s*40,00/);
       }
-      if (width === 390 && (category === 'combos' || category === 'cabelo' || category === 'coloracao')) {
+      if (width === 390 && (category === 'combos' || category === 'cabelo' || category === 'barba' || category === 'coloracao')) {
         await page.locator('.menu-toggle').click();
         assert.equal(await page.locator('.site-header').evaluate(header => header.classList.contains('menu-open')), true);
         await page.locator('.menu-toggle').click();
@@ -173,6 +192,14 @@ try {
   assert.equal(new URL(hairPage.url()).pathname, '/agendamento');
   assert.match(await hairPage.locator('#booking-preselected').textContent(), /Relaxamento capilar.*R\$\s*35,00/);
   await hairPage.close();
+  const beardPage = await browser.newPage({ viewport: { width: 390, height: 844 } });
+  await beardPage.goto(`${origin}/servicos-precos`, { waitUntil: 'domcontentloaded' });
+  await beardPage.waitForFunction(() => document.getElementById('services-prices-status').textContent === '');
+  await beardPage.locator('[data-price-category="barba"]').click();
+  await beardPage.locator('.services-prices-detail-book').nth(3).click();
+  assert.equal(new URL(beardPage.url()).pathname, '/agendamento');
+  assert.match(await beardPage.locator('#booking-preselected').textContent(), /Pezinho.*R\$\s*10,00/);
+  await beardPage.close();
   console.log('Serviços & Preços: quatro categorias, preços, rota e agendamento pré-selecionado OK');
 } finally {
   await browser.close();
